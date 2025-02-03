@@ -1,0 +1,670 @@
+[winFrame_bm]	<50>
+[winFrame_wm]   <8>
+[winFrame_hm]   <32>  
+
+
+
+[webtx_socket_ip]   <127.0.0.1>  
+[webtx_socket_port]   <1235>  
+
+[sip_user_name] <pi>                //call linphonec use
+[sip_password_name] <raspberry>
+[sipshl_user_name] <pi>             //call siphone system controler
+[sipshl_password_name] <raspberry>
+
+[sipmd_iptype] <0>
+[sipmd_ip_str] <192.168.0.188>
+[sipmd_ipmask_str] <255.255.0.0>
+[sipmd_gateway_str] <192.168.0.1>
+
+
+[phone_name] <kevin>
+[phone_no] <301>
+[sip_server_ip] <192.168.0.3>
+[sip_server_pin] <123456789>
+[auto_answer] <1>
+[auto_answer_wait] <100>
+
+[ear_mic_sens] <9>
+[ear_speaker_vol] <9>
+[phset_mic_sens] <9>
+[phset_speaker_vol] <9>
+
+[broadcast_comp_str] <INVITE sip:301@192.168.0.153>
+[broadcast_comp_port] <5060>
+
+[web_password]<1234>
+[ntp_dns]<192.168.0.254>
+[ntp_adj_time]<60>
+[no_sipui_ip_str]<192.168.0.181>
+[no_switch_ip_str]<192.168.4.101>
+[auto_register_time]<1200>#unit = 50ms
+
+
+
+[ict_username]<mtcl>
+[ict_password]<mtcl>
+
+
+[hotline_inxA~0]<0>
+[hotline_inxA~1]<1>
+[hotline_inxA~2]<2>
+[hotline_inxA~3]<3>
+
+
+
+[hotline_nameA~0] <Name 1>
+[hotline_noA~0] <301>
+[hotline_nameA~1] <Name 2>
+[hotline_noA~1] <302>
+[hotline_nameA~2] <Name 3>
+[hotline_noA~2] <303>
+[hotline_nameA~3] <Name 4>
+[hotline_noA~3] <304>
+[hotline_nameA~4] <Name 5>
+[hotline_noA~4] <305>
+[hotline_nameA~5] <Name 6>
+[hotline_noA~5] <306>
+[hotline_nameA~6] <Name 7>
+[hotline_noA~6] <307>
+[hotline_nameA~7] <Name 8>
+[hotline_noA~7] <308>
+
+
+[carType_inx] <0>
+[carNo_inx] <0>
+
+
+//========================================================
+[carTypeName~0] <carTypeName~0>
+[carTypeName~1] <carTypeName~1>
+[carTypeName~2] <carTypeName~2>
+[carTypeName~3] <carTypeName~3>
+[carTypeName~4] <carTypeName~4>
+[carTypeName~5] <carTypeName~5>
+[carTypeName~6] <carTypeName~6>
+[carTypeName~7] <carTypeName~7>
+[carTypeName~8] <carTypeName~8>
+[carTypeName~9] <carTypeName~9>
+[carTypeName~10] <carTypeName~10>
+[carTypeName~11] <carTypeName~11>
+[carTypeName~12] <carTypeName~12>
+[carTypeName~13] <carTypeName~13>
+[carTypeName~14] <carTypeName~14>
+[carTypeName~15] <carTypeName~15>
+[carTypeName~16] <carTypeName~16>
+[carTypeName~17] <carTypeName~17>
+[carTypeName~18] <carTypeName~18>
+[carTypeName~19] <carTypeName~19>
+[carTypeName~20] <carTypeName~20>
+[carTypeName~21] <carTypeName~21>
+[carTypeName~22] <carTypeName~22>
+[carTypeName~23] <carTypeName~23>
+
+
+//Car Type 1
+//==================================
+[carInf_name~0~0] <CarNo11>
+[carInf_reg~0~0] <Reg11>
+[carInf_regno~0~0] <4011>
+[carInf_sip~0~0] <192.168.11.100>
+[carInf_pbx~0~0] <192.168.11.101>
+[carInf_local~0~0] <192.168.11.102>
+[carInf_switch~0~0] <192.168.11.103>
+//==================================
+
+//Car Type 2
+//==================================
+[carInf_name~1~0] <CarNo21>
+[carInf_reg~1~0] <Reg21>
+[carInf_regno~1~0] <4021>
+[carInf_sip~1~0] <192.168.21.100>
+[carInf_pbx~1~0] <192.168.21.101>
+[carInf_local~1~0] <192.168.21.102>
+[carInf_switch~1~0] <192.168.21.103>
+//==================================
+[carInf_name~1~1] <CarNo22>
+[carInf_reg~1~1] <Reg22>
+[carInf_regno~1~1] <4022>
+[carInf_sip~1~1] <192.168.22.100>
+[carInf_pbx~1~1] <192.168.22.101>
+[carInf_local~1~1] <192.168.22.102>
+[carInf_switch~1~1] <192.168.22.103>
+//==================================
+
+//Car Type 3
+//==================================
+[carInf_name~2~0] <CarNo31>
+[carInf_reg~2~0] <Reg31>
+[carInf_regno~2~0] <4031>
+[carInf_sip~2~0] <192.168.31.100>
+[carInf_pbx~2~0] <192.168.31.101>
+[carInf_local~2~0] <192.168.31.102>
+[carInf_switch~2~0] <192.168.31.103>
+//==================================
+[carInf_name~2~1] <CarNo32>
+[carInf_reg~2~1] <Reg32>
+[carInf_regno~2~1] <4032>
+[carInf_sip~2~1] <192.168.32.100>
+[carInf_pbx~2~1] <192.168.32.101>
+[carInf_local~2~1] <192.168.32.102>
+[carInf_switch~2~1] <192.168.32.103>
+//==================================
+[carInf_name~2~2] <CarNo33>
+[carInf_reg~2~2] <Reg33>
+[carInf_regno~2~2] <4033>
+[carInf_sip~2~2] <192.168.33.100>
+[carInf_pbx~2~2] <192.168.33.101>
+[carInf_local~2~2] <192.168.33.102>
+[carInf_switch~2~2] <192.168.33.103>
+//==================================
+//Car Type 4
+//==================================
+[carInf_name~3~0] <CarNo41>
+[carInf_reg~3~0] <Reg41>
+[carInf_regno~3~0] <4041>
+[carInf_sip~3~0] <192.168.41.100>
+[carInf_pbx~3~0] <192.168.41.101>
+[carInf_local~3~0] <192.168.41.102>
+[carInf_switch~3~0] <192.168.41.103>
+//==================================
+[carInf_name~3~1] <CarNo42>
+[carInf_reg~3~1] <Reg42>
+[carInf_regno~3~1] <4042>
+[carInf_sip~3~1] <192.168.42.100>
+[carInf_pbx~3~1] <192.168.42.101>
+[carInf_local~3~1] <192.168.42.102>
+[carInf_switch~3~1] <192.168.42.103>
+//==================================
+[carInf_name~3~2] <CarNo43>
+[carInf_reg~3~2] <Reg43>
+[carInf_regno~3~2] <4043>
+[carInf_sip~3~2] <192.168.43.100>
+[carInf_pbx~3~2] <192.168.43.101>
+[carInf_local~3~2] <192.168.43.102>
+[carInf_switch~3~2] <192.168.43.103>
+//==================================
+[carInf_name~3~3] <CarNo44>
+[carInf_reg~3~3] <Reg44>
+[carInf_regno~3~3] <4044>
+[carInf_sip~3~3] <192.168.44.100>
+[carInf_pbx~3~3] <192.168.44.101>
+[carInf_local~3~3] <192.168.44.102>
+[carInf_switch~3~3] <192.168.44.103>
+//==================================
+[carInf_name~3~4] <CarNo45>
+[carInf_reg~3~4] <Reg45>
+[carInf_regno~3~4] <4045>
+[carInf_sip~3~4] <192.168.45.100>
+[carInf_pbx~3~4] <192.168.45.101>
+[carInf_local~3~4] <192.168.45.102>
+[carInf_switch~3~4] <192.168.45.103>
+//==================================
+[carInf_name~3~5] <CarNo46>
+[carInf_reg~3~5] <Reg46>
+[carInf_regno~3~5] <4046>
+[carInf_sip~3~5] <192.168.46.100>
+[carInf_pbx~3~5] <192.168.46.101>
+[carInf_local~3~5] <192.168.46.102>
+[carInf_switch~3~5] <192.168.46.103>
+//==================================
+[carInf_name~3~6] <CarNo47>
+[carInf_reg~3~6] <Reg47>
+[carInf_regno~3~6] <4047>
+[carInf_sip~3~6] <192.168.47.100>
+[carInf_pbx~3~6] <192.168.47.101>
+[carInf_local~3~6] <192.168.47.102>
+[carInf_switch~3~6] <192.168.47.103>
+//==================================
+[carInf_name~3~7] <CarNo48>
+[carInf_reg~3~7] <Reg48>
+[carInf_regno~3~7] <4048>
+[carInf_sip~3~7] <192.168.48.100>
+[carInf_pbx~3~7] <192.168.48.101>
+[carInf_local~3~7] <192.168.48.102>
+[carInf_switch~3~7] <192.168.48.103>
+//==================================
+[carInf_name~3~8] <CarNo49>
+[carInf_reg~3~8] <Reg49>
+[carInf_regno~3~8] <4049>
+[carInf_sip~3~8] <192.168.49.100>
+[carInf_pbx~3~8] <192.168.49.101>
+[carInf_local~3~8] <192.168.49.102>
+[carInf_switch~3~8] <192.168.49.103>
+//==================================
+[carInf_name~3~9] <CarNo410>
+[carInf_reg~3~9] <Reg410>
+[carInf_regno~3~9] <40410>
+[carInf_sip~3~9] <192.168.10.100>
+[carInf_pbx~3~9] <192.168.10.101>
+[carInf_local~3~9] <192.168.10.102>
+[carInf_switch~3~9] <192.168.10.103>
+//==================================
+
+
+[carInf_name~3~10] <CarNo411>
+[carInf_reg~3~10] <Reg41>
+[carInf_regno~3~10] <4041>
+[carInf_sip~3~10] <192.168.41.100>
+[carInf_pbx~3~10] <192.168.41.101>
+[carInf_local~3~10] <192.168.41.102>
+[carInf_switch~3~10] <192.168.41.103>
+//==================================
+[carInf_name~3~11] <CarNo412>
+[carInf_reg~3~11] <Reg42>
+[carInf_regno~3~11] <4042>
+[carInf_sip~3~11] <192.168.42.100>
+[carInf_pbx~3~11] <192.168.42.101>
+[carInf_local~3~11] <192.168.42.102>
+[carInf_switch~3~11] <192.168.42.103>
+//==================================
+[carInf_name~3~12] <CarNo413>
+[carInf_reg~3~12] <Reg43>
+[carInf_regno~3~12] <4043>
+[carInf_sip~3~12] <192.168.43.100>
+[carInf_pbx~3~12] <192.168.43.101>
+[carInf_local~3~12] <192.168.43.102>
+[carInf_switch~3~12] <192.168.43.103>
+//==================================
+[carInf_name~3~13] <CarNo414>
+[carInf_reg~3~13] <Reg44>
+[carInf_regno~3~13] <4044>
+[carInf_sip~3~13] <192.168.44.100>
+[carInf_pbx~3~13] <192.168.44.101>
+[carInf_local~3~13] <192.168.44.102>
+[carInf_switch~3~13] <192.168.44.103>
+//==================================
+[carInf_name~3~14] <CarNo415>
+[carInf_reg~3~14] <Reg45>
+[carInf_regno~3~14] <4045>
+[carInf_sip~3~14] <192.168.45.100>
+[carInf_pbx~3~14] <192.168.45.101>
+[carInf_local~3~14] <192.168.45.102>
+[carInf_switch~3~14] <192.168.45.103>
+//==================================
+[carInf_name~3~15] <CarNo416>
+[carInf_reg~3~15] <Reg46>
+[carInf_regno~3~15] <4046>
+[carInf_sip~3~15] <192.168.46.100>
+[carInf_pbx~3~15] <192.168.46.101>
+[carInf_local~3~15] <192.168.46.102>
+[carInf_switch~3~15] <192.168.46.103>
+//==================================
+[carInf_name~3~16] <CarNo417>
+[carInf_reg~3~16] <Reg47>
+[carInf_regno~3~16] <4047>
+[carInf_sip~3~16] <192.168.47.100>
+[carInf_pbx~3~16] <192.168.47.101>
+[carInf_local~3~16] <192.168.47.102>
+[carInf_switch~3~16] <192.168.47.103>
+//==================================
+[carInf_name~3~17] <CarNo418>
+[carInf_reg~3~17] <Reg48>
+[carInf_regno~3~17] <4048>
+[carInf_sip~3~17] <192.168.48.100>
+[carInf_pbx~3~17] <192.168.48.101>
+[carInf_local~3~17] <192.168.48.102>
+[carInf_switch~3~17] <192.168.48.103>
+//==================================
+[carInf_name~3~18] <CarNo419>
+[carInf_reg~3~18] <Reg49>
+[carInf_regno~3~18] <4049>
+[carInf_sip~3~18] <192.168.49.100>
+[carInf_pbx~3~18] <192.168.49.101>
+[carInf_local~3~18] <192.168.49.102>
+[carInf_switch~3~18] <192.168.49.103>
+//==================================
+[carInf_name~3~19] <CarNo420>
+[carInf_reg~3~19] <Reg410>
+[carInf_regno~3~19] <40410>
+[carInf_sip~3~19] <192.168.10.100>
+[carInf_pbx~3~19] <192.168.10.101>
+[carInf_local~3~19] <192.168.10.102>
+[carInf_switch~3~19] <192.168.10.103>
+//==================================
+
+
+[carInf_name~3~20] <CarNo421>
+[carInf_reg~3~20] <Reg41>
+[carInf_regno~3~20] <4041>
+[carInf_sip~3~20] <192.168.41.100>
+[carInf_pbx~3~20] <192.168.41.101>
+[carInf_local~3~20] <192.168.41.102>
+[carInf_switch~3~20] <192.168.41.103>
+//==================================
+[carInf_name~3~21] <CarNo422>
+[carInf_reg~3~21] <Reg42>
+[carInf_regno~3~21] <4042>
+[carInf_sip~3~21] <192.168.42.100>
+[carInf_pbx~3~21] <192.168.42.101>
+[carInf_local~3~21] <192.168.42.102>
+[carInf_switch~3~21] <192.168.42.103>
+//==================================
+[carInf_name~3~22] <CarNo423>
+[carInf_reg~3~22] <Reg43>
+[carInf_regno~3~22] <4043>
+[carInf_sip~3~22] <192.168.43.100>
+[carInf_pbx~3~22] <192.168.43.101>
+[carInf_local~3~22] <192.168.43.102>
+[carInf_switch~3~22] <192.168.43.103>
+//==================================
+[carInf_name~3~23] <CarNo424>
+[carInf_reg~3~23] <Reg44>
+[carInf_regno~3~23] <4044>
+[carInf_sip~3~23] <192.168.44.100>
+[carInf_pbx~3~23] <192.168.44.101>
+[carInf_local~3~23] <192.168.44.102>
+[carInf_switch~3~23] <192.168.44.103>
+//==================================
+[carInf_name~3~24] <CarNo425>
+[carInf_reg~3~24] <Reg45>
+[carInf_regno~3~24] <4045>
+[carInf_sip~3~24] <192.168.45.100>
+[carInf_pbx~3~24] <192.168.45.101>
+[carInf_local~3~24] <192.168.45.102>
+[carInf_switch~3~24] <192.168.45.103>
+//==================================
+[carInf_name~3~25] <CarNo426>
+[carInf_reg~3~25] <Reg46>
+[carInf_regno~3~25] <4046>
+[carInf_sip~3~25] <192.168.46.100>
+[carInf_pbx~3~25] <192.168.46.101>
+[carInf_local~3~25] <192.168.46.102>
+[carInf_switch~3~25] <192.168.46.103>
+//==================================
+[carInf_name~3~26] <CarNo427>
+[carInf_reg~3~26] <Reg47>
+[carInf_regno~3~26] <4047>
+[carInf_sip~3~26] <192.168.47.100>
+[carInf_pbx~3~26] <192.168.47.101>
+[carInf_local~3~26] <192.168.47.102>
+[carInf_switch~3~26] <192.168.47.103>
+//==================================
+[carInf_name~3~27] <CarNo428>
+[carInf_reg~3~27] <Reg48>
+[carInf_regno~3~27] <4048>
+[carInf_sip~3~27] <192.168.48.100>
+[carInf_pbx~3~27] <192.168.48.101>
+[carInf_local~3~27] <192.168.48.102>
+[carInf_switch~3~27] <192.168.48.103>
+//==================================
+[carInf_name~3~28] <CarNo429>
+[carInf_reg~3~28] <Reg49>
+[carInf_regno~3~28] <4049>
+[carInf_sip~3~28] <192.168.49.100>
+[carInf_pbx~3~28] <192.168.49.101>
+[carInf_local~3~28] <192.168.49.102>
+[carInf_switch~3~28] <192.168.49.103>
+//==================================
+[carInf_name~3~29] <CarNo430>
+[carInf_reg~3~29] <Reg410>
+[carInf_regno~3~29] <40410>
+[carInf_sip~3~29] <192.168.10.100>
+[carInf_pbx~3~29] <192.168.10.101>
+[carInf_local~3~29] <192.168.10.102>
+[carInf_switch~3~29] <192.168.10.103>
+//==================================
+
+
+[carInf_name~3~30] <CarNo431>
+[carInf_reg~3~30] <Reg41>
+[carInf_regno~3~30] <4041>
+[carInf_sip~3~30] <192.168.41.100>
+[carInf_pbx~3~30] <192.168.41.101>
+[carInf_local~3~30] <192.168.41.102>
+[carInf_switch~3~30] <192.168.41.103>
+//==================================
+[carInf_name~3~31] <CarNo432>
+[carInf_reg~3~31] <Reg42>
+[carInf_regno~3~31] <4042>
+[carInf_sip~3~31] <192.168.42.100>
+[carInf_pbx~3~31] <192.168.42.101>
+[carInf_local~3~31] <192.168.42.102>
+[carInf_switch~3~31] <192.168.42.103>
+//==================================
+[carInf_name~3~32] <CarNo433>
+[carInf_reg~3~32] <Reg43>
+[carInf_regno~3~32] <4043>
+[carInf_sip~3~32] <192.168.43.100>
+[carInf_pbx~3~32] <192.168.43.101>
+[carInf_local~3~32] <192.168.43.102>
+[carInf_switch~3~32] <192.168.43.103>
+//==================================
+[carInf_name~3~33] <CarNo434>
+[carInf_reg~3~33] <Reg44>
+[carInf_regno~3~33] <4044>
+[carInf_sip~3~33] <192.168.44.100>
+[carInf_pbx~3~33] <192.168.44.101>
+[carInf_local~3~33] <192.168.44.102>
+[carInf_switch~3~33] <192.168.44.103>
+//==================================
+[carInf_name~3~34] <CarNo435>
+[carInf_reg~3~34] <Reg45>
+[carInf_regno~3~34] <4045>
+[carInf_sip~3~34] <192.168.45.100>
+[carInf_pbx~3~34] <192.168.45.101>
+[carInf_local~3~34] <192.168.45.102>
+[carInf_switch~3~34] <192.168.45.103>
+//==================================
+[carInf_name~3~35] <CarNo436>
+[carInf_reg~3~35] <Reg46>
+[carInf_regno~3~35] <4046>
+[carInf_sip~3~35] <192.168.46.100>
+[carInf_pbx~3~35] <192.168.46.101>
+[carInf_local~3~35] <192.168.46.102>
+[carInf_switch~3~35] <192.168.46.103>
+//==================================
+[carInf_name~3~36] <CarNo437>
+[carInf_reg~3~36] <Reg47>
+[carInf_regno~3~36] <4047>
+[carInf_sip~3~36] <192.168.47.100>
+[carInf_pbx~3~36] <192.168.47.101>
+[carInf_local~3~36] <192.168.47.102>
+[carInf_switch~3~36] <192.168.47.103>
+//==================================
+[carInf_name~3~37] <CarNo438>
+[carInf_reg~3~37] <Reg48>
+[carInf_regno~3~37] <4048>
+[carInf_sip~3~37] <192.168.48.100>
+[carInf_pbx~3~37] <192.168.48.101>
+[carInf_local~3~37] <192.168.48.102>
+[carInf_switch~3~37] <192.168.48.103>
+//==================================
+[carInf_name~3~38] <CarNo439>
+[carInf_reg~3~38] <Reg49>
+[carInf_regno~3~38] <4049>
+[carInf_sip~3~38] <192.168.49.100>
+[carInf_pbx~3~38] <192.168.49.101>
+[carInf_local~3~38] <192.168.49.102>
+[carInf_switch~3~38] <192.168.49.103>
+//==================================
+[carInf_name~3~39] <CarNo440>
+[carInf_reg~3~39] <Reg410>
+[carInf_regno~3~39] <40410>
+[carInf_sip~3~39] <192.168.10.100>
+[carInf_pbx~3~39] <192.168.10.101>
+[carInf_local~3~39] <192.168.10.102>
+[carInf_switch~3~39] <192.168.10.103>
+//==================================
+
+
+[carInf_name~3~40] <CarNo441>
+[carInf_reg~3~40] <Reg41>
+[carInf_regno~3~40] <4041>
+[carInf_sip~3~40] <192.168.41.100>
+[carInf_pbx~3~40] <192.168.41.101>
+[carInf_local~3~40] <192.168.41.102>
+[carInf_switch~3~40] <192.168.41.103>
+//==================================
+[carInf_name~3~41] <CarNo442>
+[carInf_reg~3~41] <Reg42>
+[carInf_regno~3~41] <4042>
+[carInf_sip~3~41] <192.168.42.100>
+[carInf_pbx~3~41] <192.168.42.101>
+[carInf_local~3~41] <192.168.42.102>
+[carInf_switch~3~41] <192.168.42.103>
+//==================================
+[carInf_name~3~42] <CarNo443>
+[carInf_reg~3~42] <Reg43>
+[carInf_regno~3~42] <4043>
+[carInf_sip~3~42] <192.168.43.100>
+[carInf_pbx~3~42] <192.168.43.101>
+[carInf_local~3~42] <192.168.43.102>
+[carInf_switch~3~42] <192.168.43.103>
+//==================================
+[carInf_name~3~43] <CarNo444>
+[carInf_reg~3~43] <Reg44>
+[carInf_regno~3~43] <4044>
+[carInf_sip~3~43] <192.168.44.100>
+[carInf_pbx~3~43] <192.168.44.101>
+[carInf_local~3~43] <192.168.44.102>
+[carInf_switch~3~43] <192.168.44.103>
+//==================================
+[carInf_name~3~44] <CarNo445>
+[carInf_reg~3~44] <Reg45>
+[carInf_regno~3~44] <4045>
+[carInf_sip~3~44] <192.168.45.100>
+[carInf_pbx~3~44] <192.168.45.101>
+[carInf_local~3~44] <192.168.45.102>
+[carInf_switch~3~44] <192.168.45.103>
+//==================================
+[carInf_name~3~45] <CarNo446>
+[carInf_reg~3~45] <Reg46>
+[carInf_regno~3~45] <4046>
+[carInf_sip~3~45] <192.168.46.100>
+[carInf_pbx~3~45] <192.168.46.101>
+[carInf_local~3~45] <192.168.46.102>
+[carInf_switch~3~45] <192.168.46.103>
+//==================================
+[carInf_name~3~46] <CarNo447>
+[carInf_reg~3~46] <Reg47>
+[carInf_regno~3~46] <4047>
+[carInf_sip~3~46] <192.168.47.100>
+[carInf_pbx~3~46] <192.168.47.101>
+[carInf_local~3~46] <192.168.47.102>
+[carInf_switch~3~46] <192.168.47.103>
+//==================================
+[carInf_name~3~47] <CarNo448>
+[carInf_reg~3~47] <Reg48>
+[carInf_regno~3~47] <4048>
+[carInf_sip~3~47] <192.168.48.100>
+[carInf_pbx~3~47] <192.168.48.101>
+[carInf_local~3~47] <192.168.48.102>
+[carInf_switch~3~47] <192.168.48.103>
+//==================================
+[carInf_name~3~48] <CarNo449>
+[carInf_reg~3~48] <Reg49>
+[carInf_regno~3~48] <4049>
+[carInf_sip~3~48] <192.168.49.100>
+[carInf_pbx~3~48] <192.168.49.101>
+[carInf_local~3~48] <192.168.49.102>
+[carInf_switch~3~48] <192.168.49.103>
+//==================================
+[carInf_name~3~49] <CarNo450>
+[carInf_reg~3~49] <Reg410>
+[carInf_regno~3~49] <40410>
+[carInf_sip~3~49] <192.168.10.100>
+[carInf_pbx~3~49] <192.168.10.101>
+[carInf_local~3~49] <192.168.10.102>
+[carInf_switch~3~49] <192.168.10.103>
+//==================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[ptt_ctype] <0>
+[ptt_on_no] <1>
+[ptt_off_no] <2>
+[cor_invert] <1>
+[first_phase_tim] <100>
+[on_min_tim] <2>
+[on_max_tim] <40>
+[off_min_tim] <2>
+[off_max_tim] <40>
+[end_phase_tim] <50>
+[act1_phase_no] <3>
+[act1_call] <303>
+[act2_phase_no] <4>
+[act2_call] <305>
+[cut_phase_no] <5>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
