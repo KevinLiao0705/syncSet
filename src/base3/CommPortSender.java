@@ -14,6 +14,7 @@ import java.io.OutputStream;
   
 public class CommPortSender {  
     OutputStream out;    
+    int encMode=0;
     MyStm stm = new MyStm();
       
     public void setWriterStream(OutputStream os) {    
@@ -22,7 +23,7 @@ public class CommPortSender {
 
     public void send() {    
         send(stm.tdata,0,stm.txlen);
-        //stm.txlen=0;
+        stm.txlen=0;
     }
     public void send(byte[] bytes) {    
         try {    

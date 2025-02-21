@@ -87,8 +87,6 @@ public class Lib {
             return 1;
         }
     }
-    
-    
 
     static void copyFileUsingStream(File source, File dest) throws IOException {
         InputStream is = null;
@@ -192,8 +190,7 @@ public class Lib {
             return -1;
         }
     }
-    
-    
+
     static String readFile(String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
         return new String(bytes, 0, bytes.length, "UTF-8");
@@ -1603,10 +1600,116 @@ interface StrObjCallback {
 
 class KvJson {
 
+    String jstr = "";
+    int keyCnt = 0;
+
     KvJson() {
 
     }
 
+    void jStart() {
+        keyCnt = 0;
+        jstr = "{";
+    }
+    String jEnd() {
+        keyCnt = 0;
+        jstr += "}";
+        return jstr;
+    }
+
+    void jadd(String key, int ii) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr +=ii;
+        keyCnt++;
+    }
+    void jadd(String key, float ff) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr +=ff;
+        keyCnt++;
+    }
+    void jadd(String key, String ss) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr +=ss;
+        keyCnt++;
+    }
+
+    void jadd(String key, int[] ia) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<ia.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr +=ia[i];
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+    
+    void jadd(String key, float[] fa) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<fa.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr +=fa[i];
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+    
+    void jadd(String key, String[] sa) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<sa.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr +=sa[i];
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+    
+    void jadd(String key, int[][] iaa) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<iaa.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr+="[";
+            for(int j=0;j<iaa[i].length;j++){
+                if(j!=0)
+                    jstr+=",";
+                jstr+=iaa[i][j];
+            }
+            jstr+="]";
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+
+
+    
     static String objToJson(Object inst) {
         String ss;
         byte bb;
@@ -1728,14 +1831,15 @@ class KvJson {
     }
 }
 
+class ConnectCla {
 
-class ConnectCla{
     String name;
-    int time=0;
-    int timeTh=0;
-    public ConnectCla(String _name,int _timeTh){
-        time=0;
-        name=_name;
-        timeTh=_timeTh;
+    int time = 0;
+    int timeTh = 0;
+
+    public ConnectCla(String _name, int _timeTh) {
+        time = 0;
+        name = _name;
+        timeTh = _timeTh;
     }
 }

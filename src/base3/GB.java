@@ -11,6 +11,7 @@ public class GB {
     //0: window ConsoleMain
     static int prgMode = 0;
     static String version = "1.2";
+    static int emulate=1;
 
     static int ctrUiPort = 1237;
     static int slotUiPort = 1236;
@@ -24,7 +25,7 @@ public class GB {
     public static String logPath="./log";
     public static String appName="pbxSet";
     public static int webSocketPort=8899;
-    public static String paraSetPath="e:/kevin/myCode/pbxSet/paraSet.json";
+    public static String paraSetPath="e:/kevin/myCode/syncSet/paraSet.json";
     
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 

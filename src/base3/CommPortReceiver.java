@@ -16,6 +16,7 @@ public class CommPortReceiver extends Thread {
     byte[] buffer = new byte[1000];
     MyStm stm = new MyStm();
     int len;
+    int encMode = 0;
 
     void setCallBack(BytesCallback callBackPrg) {
         stm.setCallBack(callBackPrg);
@@ -39,9 +40,12 @@ public class CommPortReceiver extends Thread {
                         len = 1000;
                     }
                     len = in.read(buffer, 0, len);
-                    stm.dec_mystm(buffer, len);
-                    //if(cbk!=null)
-                        //cbk.prg(buffer, len);
+                    if(encMode==1)
+                        stm.dec_mystm(buffer, len);
+                    else{
+                    if(stm.cbk!=null)
+                        stm.cbk.prg(buffer, len);
+                    }    
                     continue;
                 } else {
                     //if(cbk!=null)
