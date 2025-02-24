@@ -47,7 +47,7 @@ public class ConsoleMain {
     u16 para2
     u16 para3
     paload
-    */
+     */
     //command
     //command 1000:
     //* [openSspaPower -1]: open all enable sspaPower;
@@ -58,9 +58,6 @@ public class ConsoleMain {
     //      [openSspaPower %inx]: open enable sspaModule of serial inx ;
     //* [closeSspaModule -1]: close all sspaModule;
     //      [closeSspaPower %inx]: close sspaModule of serial inx ;
-    
-    
-    
     static public JSONObject wsCallBack(String userName, JSONObject mesJson, String actStr, JSONObject outJson) {
         try {
             String act = (String) mesJson.get("act");
@@ -68,81 +65,80 @@ public class ConsoleMain {
                 scla.transSyncData(outJson);
                 return outJson;
             }
-            if(act.equals("openAllSspaPower")){
-                if(GB.emulate==1){
-                    for(int  i=0;i<36;i++){
-                        scla.syncData.ctr1SspaPowerStatusAA[i][0]=1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][2]=1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][3]=1;
-                    }            
+            if (act.equals("openAllSspaPower")) {
+                if (GB.emulate == 1) {
+                    for (int i = 0; i < 36; i++) {
+                        scla.syncData.ctr1SspaPowerStatusAA[i][0] = 1;
+                        scla.syncData.ctr1SspaPowerStatusAA[i][2] = 1;
+                        scla.syncData.ctr1SspaPowerStatusAA[i][3] = 1;
+                    }
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            if(act.equals("closeAllSspaPower")){
-                if(GB.emulate==1){
-                    for(int  i=0;i<36;i++){
-                        scla.syncData.ctr1SspaPowerStatusAA[i][0]=1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][2]=0;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][3]=0;
-                    }            
+
+            if (act.equals("closeAllSspaPower")) {
+                if (GB.emulate == 1) {
+                    for (int i = 0; i < 36; i++) {
+                        scla.syncData.ctr1SspaPowerStatusAA[i][0] = 1;
+                        scla.syncData.ctr1SspaPowerStatusAA[i][2] = 0;
+                        scla.syncData.ctr1SspaPowerStatusAA[i][3] = 0;
+                    }
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            if(act.equals("openAllSspaModule")){
-                if(GB.emulate==1){
-                    for(int  i=0;i<36;i++){
-                        scla.syncData.ctr1SspaModuleStatusAA[i][1]=1;
-                    }            
+
+            if (act.equals("openAllSspaModule")) {
+                if (GB.emulate == 1) {
+                    for (int i = 0; i < 36; i++) {
+                        scla.syncData.ctr1SspaModuleStatusAA[i][1] = 1;
+                    }
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            if(act.equals("closeAllSspaModule")){
-                if(GB.emulate==1){
-                    for(int  i=0;i<36;i++){
-                        scla.syncData.ctr1SspaModuleStatusAA[i][1]=0;
-                    }            
+
+            if (act.equals("closeAllSspaModule")) {
+                if (GB.emulate == 1) {
+                    for (int i = 0; i < 36; i++) {
+                        scla.syncData.ctr1SspaModuleStatusAA[i][1] = 0;
+                    }
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            if(act.equals("localPulseOn")){
-                if(GB.emulate==1){
-                    scla.syncData.ctr1SystemStatusA[8]=1;
+
+            if (act.equals("localPulseOn")) {
+                if (GB.emulate == 1) {
+                    scla.syncData.ctr1SystemStatusA[8] = 1;
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            if(act.equals("localPulseOff")){
-                if(GB.emulate==1){
-                    scla.syncData.ctr1SystemStatusA[8]=0;
+
+            if (act.equals("localPulseOff")) {
+                if (GB.emulate == 1) {
+                    scla.syncData.ctr1SystemStatusA[8] = 0;
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            if(act.equals("emergencyRelease")){
-                if(GB.emulate==1){
-                    scla.syncData.ctr1SystemStatusA[9]=0;
+            if (act.equals("emergencyRelease")) {
+                if (GB.emulate == 1) {
+                    scla.syncData.ctr1SystemStatusA[9] = 0;
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            if(act.equals("emergencyStop")){
-                if(GB.emulate==1){
-                    scla.syncData.ctr1SystemStatusA[9]=1;
+            if (act.equals("emergencyStop")) {
+                if (GB.emulate == 1) {
+                    scla.syncData.ctr1SystemStatusA[9] = 1;
                 }
-                outJson.put("status","ok");
+                outJson.put("status", "ok");
                 return outJson;
             }
-            
-            
+
         } catch (Exception ex) {
 
         }
@@ -153,17 +149,17 @@ public class ConsoleMain {
     public void transSyncData(JSONObject outJson) {
         try {
             if (appId == 3) {
-                KvJson kj=new KvJson();
+                KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotIdA",syncData.slotIdA);
-                kj.jadd("slotStatusA",syncData.slotStatusA);
-                kj.jadd("slotTestStatusA",syncData.slotTestStatusA);
-                kj.jadd("ctr1SystemStatusA",syncData.ctr1SystemStatusA);
-                kj.jadd("ctr1EnvStatusA",syncData.ctr1EnvStatusA);
-                kj.jadd("ctr1MeterStatusA",syncData.ctr1MeterStatusA);
-                kj.jadd("ctr1RadarStatusA",syncData.ctr1MeterStatusA);
-                kj.jadd("ctr1SspaPowerStatusAA",syncData.ctr1SspaPowerStatusAA);
-                kj.jadd("ctr1SspaModuleStatusAA",syncData.ctr1SspaModuleStatusAA);
+                kj.jadd("slotIdA", syncData.slotIdA);
+                kj.jadd("slotStatusA", syncData.slotStatusA);
+                kj.jadd("slotTestStatusA", syncData.slotTestStatusA);
+                kj.jadd("ctr1SystemStatusA", syncData.ctr1SystemStatusA);
+                kj.jadd("ctr1EnvStatusA", syncData.ctr1EnvStatusA);
+                kj.jadd("ctr1MeterStatusA", syncData.ctr1MeterStatusA);
+                kj.jadd("ctr1RadarStatusA", syncData.ctr1MeterStatusA);
+                kj.jadd("ctr1SspaPowerStatusAA", syncData.ctr1SspaPowerStatusAA);
+                kj.jadd("ctr1SspaModuleStatusAA", syncData.ctr1SspaModuleStatusAA);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
@@ -254,6 +250,7 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
+        cmdFunc("openComPort");
         //=====================================
         System.out.println("ConsoleMain Ready.");
         while (true) {
@@ -267,6 +264,19 @@ public class ConsoleMain {
                 System.out.println(errStr);
             }
         }
+    }
+
+    public int utxParaSet() {
+        int deviceId = 25010;
+        int serialId = 0;
+        int groupId = 0xab00;
+        int cmd = 0x1000;
+        int para0 = (int) GB.paraSetMap.get("appId");
+        int para1 = 0;
+        int para2 = 0;
+        int para3 = 0;
+        return 0;
+
     }
 
     public String openUart0() {
@@ -283,6 +293,43 @@ public class ConsoleMain {
         uart0.setCallBack(new BytesCallback() {
             @Override
             public String prg(byte[] bytes, int len) {
+                int deviceId = (bytes[0] & 255) + (bytes[1] & 255) * 256;
+                int serialId = (bytes[2] & 255) + (bytes[3] & 255) * 256;
+                int groupId = (bytes[4] & 255) + (bytes[5] & 255) * 256;
+                int groupLen = (bytes[6] & 255) + (bytes[7] & 255) * 256;
+                int cmd = (bytes[8] & 255) + (bytes[9] & 255) * 256;
+                int para0 = (bytes[10] & 255) + (bytes[11] & 255) * 256;
+                int para1 = (bytes[12] & 255) + (bytes[13] & 255) * 256;
+                int para2 = (bytes[14] & 255) + (bytes[15] & 255) * 256;
+                int para3 = (bytes[16] & 255) + (bytes[17] & 255) * 256;
+                if (deviceId != 25010 || serialId != 0x0000) {
+                    return null;
+                }
+                uart0.rxSerialCnt++;
+                uart0.rxSerialCnt &= 0xffff;
+                if (uart0.rxSerialCnt != para1) {
+                    uart0.rxErrCnt++;
+                }
+                uart0.rxSerialCnt = para1;
+                uart0.rxPackageCnt++;
+                if ((uart0.rxPackageCnt % 100) == 0) {
+                    System.out.print(" uart0Rx-" + uart0.rxErrCnt);
+                    if ((uart0.rxPackageCnt % 1000) == 0) {
+                        System.out.print("\n");
+                    }
+                }
+                uart0.txDeviceId = deviceId;
+                uart0.txSerialId = serialId;
+                uart0.txGroupId = 0xac00;
+                uart0.txCmd = 0x1000;
+                uart0.txPara0 = 0x1234;
+                uart0.txPara1 = 0x5678;
+                uart0.txPara2 = 0x9abc;
+                uart0.txPara3 = 0xdef0;
+                uart0.txBufferLen = 0;
+                uart0.encSend();
+                
+
                 //uart0.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
                 return null;
             }
@@ -637,7 +684,7 @@ class SyncData {
          "語音通信模組 Ａ",     id=11; 
          "語音通信模組 Ｂ"      id=12
      */
-    int[] slotIdA = new int[]{1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    int[] slotIdA = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
     // 0:none, 1:ready, 2:error 3:warn up
     int[] slotStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     //0:none, 1:PreTest,2:testing;

@@ -27,6 +27,24 @@ public class Uart {
     public int dataBit=8;   //7 | 8
     public int txEncMode=0;   //
     public int rxEncMode=0;   //
+    public int rxSerialCnt=0;
+    public int rxErrCnt=0;
+    public int rxPackageCnt=0;
+    //========================
+    public int txDeviceId;
+    public int txSerialId;
+    public int txGroupId;
+    public int txLen;
+    public int txCmd;
+    public int txPara0;
+    public int txPara1;
+    public int txPara2;
+    public int txPara3;
+    public byte[] txBuffer=new byte[1024];
+    public int txBufferLen=0;
+    
+    
+    
     
 
     public Uart() {
@@ -59,6 +77,35 @@ public class Uart {
         return null;
     }
 
+    public void encSend(){
+        int inx=0;
+        uartTx.stm.tbuf[inx++]=(byte)(txDeviceId&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txDeviceId>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txSerialId&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txSerialId>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txGroupId&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txGroupId>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txBufferLen+10)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(((txBufferLen+10)>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txCmd&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txCmd>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txPara0&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txPara0>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txPara1&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txPara1>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txPara2&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txPara2>>8)&255);
+        uartTx.stm.tbuf[inx++]=(byte)(txPara3&255);
+        uartTx.stm.tbuf[inx++]=(byte)((txPara3>>8)&255);
+        for(int i=0;i<txBufferLen;i++){
+            uartTx.stm.tbuf[inx++]=txBuffer[i];
+        }
+        uartTx.stm.tbuf_byte=inx;
+        uartTx.stm.enc_mystm();
+        uartTx.send();
+    }
+    
+    
     public void encSend(byte[] bytes,int len){
         for(int i=0;i<len;i++){
             uartTx.stm.tbuf[i]=bytes[i];
