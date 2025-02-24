@@ -32,14 +32,14 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 3,
+    "uart0Port": 5,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
         "min": 1,
         "max": 99
     },
-    "uart0Boudrate": 966000,
+    "uart0Boudrate": 460800,
     "dsc~uart0Boudrate": {
         "title": "串列通道1速率",
         "getType": "intEnum",
@@ -55,6 +55,7 @@
             9600
         ]
     },
+
     "locationFromSource": 0,
     "dsc~locationFromSource": {
         "getType": "buttonRadio",

@@ -42,7 +42,7 @@ public class Uart {
     public int txPara3;
     public byte[] txBuffer=new byte[1024];
     public int txBufferLen=0;
-    
+    public int txAltPackCnt=0;
     
     
     
