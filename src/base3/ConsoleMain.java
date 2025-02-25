@@ -250,7 +250,11 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
-        cmdFunc("openComPort");
+        errStr=cmdFunc("openComPort");
+        if(errStr!=null)
+            System.out.println(errStr);
+        else
+            System.out.println("open com port ok.");
         //=====================================
         System.out.println("ConsoleMain Ready.");
         while (true) {
