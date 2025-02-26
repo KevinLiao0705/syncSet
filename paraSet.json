@@ -32,7 +32,7 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 5,
+    "uart0Port": 3,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",

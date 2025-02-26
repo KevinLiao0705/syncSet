@@ -250,11 +250,12 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
-        errStr=cmdFunc("openComPort");
-        if(errStr!=null)
+        errStr = cmdFunc("openComPort");
+        if (errStr != null) {
             System.out.println(errStr);
-        else
+        } else {
             System.out.println("open com port ok.");
+        }
         //=====================================
         System.out.println("ConsoleMain Ready.");
         while (true) {
@@ -316,7 +317,7 @@ public class ConsoleMain {
                 }
                 uart0.rxSerialCnt = para1;
                 uart0.rxPackageCnt++;
-                if ((uart0.rxPackageCnt % 100) == 0) {
+                if ((uart0.rxPackageCnt % 200) == 0) {
                     System.out.print(" uart0Rx-" + uart0.rxErrCnt);
                     if ((uart0.rxPackageCnt % 1000) == 0) {
                         System.out.print("\n");
@@ -324,108 +325,154 @@ public class ConsoleMain {
                 }
                 //===============================================================
                 String preText;
-                if (cmd == 0x1000) {//tick
-                    uart0.txDeviceId = deviceId;
-                    uart0.txSerialId = serialId;
-                    uart0.txGroupId = 0xac00;
-                    uart0.txCmd = 0x1000;
-                    uart0.txPara0 = para0;  //fpgaId
-                    uart0.txPara1 = para1;  //serialCnt
-                    uart0.txPara2 = 0x0000;
-                    uart0.txPara3 = 0x0000;
-                    uart0.txBufferLen = 0;
-                    int systemFlag = 0;
-                    int ibuf;
-                    preText = "";
-                    int[][] sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
-                    int[][] sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
-                    int[] systemStatusA= syncData.ctr1SystemStatusA;
-                    if (para0 == 3 || para0 == 4) {//fpgaId
-                        if (para0 == 3) {
-                            sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
-                            sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
-                            systemStatusA= syncData.ctr1SystemStatusA;;
-                            preText = "ctr1";
-                        }
-                        if (para0 == 4) {
-                            sspaPowerStatusAA = syncData.ctr2SspaPowerStatusAA;
-                            sspaModuleStatusAA = syncData.ctr2SspaPowerStatusAA;
-                            systemStatusA= syncData.ctr2SystemStatusA;
-                            preText = "ctr2";
-                        }
-                        //======
-                        ibuf = (int) GB.paraSetMap.get(preText + "Remote");//遠端遙控 0:disable 1:enable
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 0;
-                        //=======
-                        ibuf = (int) GB.paraSetMap.get(preText + "PulseSource");//脈波來源 0:同步脈波 1:本機脈波
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 1;
-                        //=======
-                        ibuf = (int) GB.paraSetMap.get(preText + "BatShort");//戰備短路 0:關閉 1:開啟
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 2;
-                        //=======
-                        ibuf = (int) GB.paraSetMap.get(preText + "TxLoad");//輸出裝置 0:假負載 1:天線
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 3;
-                        //=======
-                        ibuf=systemStatusA[8];//pulseGenStartFlag
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 4;
-                        //=======
-                        ibuf=systemStatusA[9];//emergency flag
-                        ibuf &= 1;
-                        systemFlag |= ibuf << 5;
-                        //=======
-                        int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s
-                        int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s
-                        int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
-                        //=============================================
-                        int sspaPowerEnable0 = 0;
-                        int sspaPowerEnable1 = 0;
-                        for (int i = 0; i < 32; i++) {
-                            if (sspaPowerStatusAA[i][10] == 1) {
-                                sspaPowerEnable0 |= 1 << i;
+                try {
+                    if (cmd == 0x1000) {//tick
+                        uart0.txDeviceId = deviceId;
+                        uart0.txSerialId = serialId;
+                        uart0.txGroupId = 0xac00;
+                        uart0.txCmd = 0x1000;
+                        uart0.txPara0 = para0;  //fpgaId
+                        uart0.txPara1 = para1;  //serialCnt
+                        uart0.txPara2 = 0x0000;
+                        uart0.txPara3 = 0x0000;
+                        uart0.txBufferLen = 0;
+                        int systemFlag = 0;
+                        int ibuf;
+                        preText = "";
+                        int[][] sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
+                        int[][] sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
+                        int[] systemStatusA = syncData.ctr1SystemStatusA;
+                        if (para0 == 3 || para0 == 4) {//fpgaId
+                            if (para0 == 3) {
+                                sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
+                                sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
+                                systemStatusA = syncData.ctr1SystemStatusA;;
+                                preText = "ctr1";
                             }
-                        }
-                        for (int i = 32; i < 36; i++) {
-                            if (sspaPowerStatusAA[i][10] == 1) {
-                                sspaPowerEnable1 |= 1 << (i - 32);
+                            if (para0 == 4) {
+                                sspaPowerStatusAA = syncData.ctr2SspaPowerStatusAA;
+                                sspaModuleStatusAA = syncData.ctr2SspaPowerStatusAA;
+                                systemStatusA = syncData.ctr2SystemStatusA;
+                                preText = "ctr2";
                             }
-                        }
-                        //=============================================
-                        int sspaModuleEnable0 = 0;
-                        int sspaModuleEnable1 = 0;
-                        for (int i = 0; i < 32; i++) {
-                            if (sspaModuleStatusAA[i][10] == 1) {
-                                sspaModuleEnable0 |= 1 << i;
+                            //======
+                            ibuf = (int) GB.paraSetMap.get(preText + "Remote");//遠端遙控 0:disable 1:enable
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 0;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get(preText + "PulseSource");//脈波來源 0:同步脈波 1:本機脈波
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 1;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get(preText + "BatShort");//戰備短路 0:關閉 1:開啟
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 2;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get(preText + "TxLoad");//輸出裝置 0:假負載 1:天線
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 3;
+                            //=======
+                            ibuf = systemStatusA[8];//pulseGenStartFlag
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 4;
+                            //=======
+                            ibuf = systemStatusA[9];//emergency flag
+                            ibuf &= 1;
+                            systemFlag |= ibuf << 5;
+                            //=======
+                            int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
+                            int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
+                            int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
+                            //=============================================
+                            int sspaPowerEnable0 = 0;
+                            int sspaPowerEnable1 = 0;
+                            for (int i = 0; i < 32; i++) {
+                                if (sspaPowerStatusAA[i][10] == 1) {
+                                    sspaPowerEnable0 |= 1 << i;
+                                }
                             }
-                        }
-                        for (int i = 32; i < 36; i++) {
-                            if (sspaModuleStatusAA[i][10] == 1) {
-                                sspaModuleEnable1 |= 1 << (i - 32);
+                            for (int i = 32; i < 36; i++) {
+                                if (sspaPowerStatusAA[i][10] == 1) {
+                                    sspaPowerEnable1 |= 1 << (i - 32);
+                                }
                             }
-                        }
-                        //=====================================
-                        if(uart0.txAltPackCnt>=36)
-                            uart0.txAltPackCnt=0;
-                        
-                        //String[] arr = (String[])GB.paraSetMap.get("localPulseGenParas");
-                        //String str=arr[uart0.txAltPackCnt];                        
-                        //String[] strA=str.split(" ");
-                        //ibuf =Lib.str2int(strA[0],0);
-                        //"enable pulseWidth duty freq  times"
-                        
-                        
-                        //=============================================
+                            //=============================================
+                            int sspaModuleEnable0 = 0;
+                            int sspaModuleEnable1 = 0;
+                            for (int i = 0; i < 32; i++) {
+                                if (sspaModuleStatusAA[i][10] == 1) {
+                                    sspaModuleEnable0 |= 1 << i;
+                                }
+                            }
+                            for (int i = 32; i < 36; i++) {
+                                if (sspaModuleStatusAA[i][10] == 1) {
+                                    sspaModuleEnable1 |= 1 << (i - 32);
+                                }
+                            }
+                            //=====================================
+                            if (uart0.txAltPackCnt >= 32) {
+                                uart0.txAltPackCnt = 0;
+                            }
+                            JSONArray jarr = (JSONArray) GB.paraSetMap.get("localPulseGenParas");
+                            String str;
+                            try {
+                                str = (String) jarr.get(uart0.txAltPackCnt);
+                            } catch (Exception ex) {
+                                str = "0 10 1.0 3.0 1";
+                            }
+                            String[] strA = str.split(" ");
+                            int dutyReg = Math.round((Lib.str2float(strA[2], 1) * 10));//16bit
+                            ibuf = Lib.str2int(strA[0], 0);
+                            ibuf &= 1;
+                            dutyReg += ibuf << 12;
+                            //=====================================
+                            int pulseWidth = Lib.str2int(strA[1], 10);//16 bit
+                            int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
+                            int trigTimes = Lib.str2int(strA[1], 1);//8 bit
+                            int inx = 0;
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OnDly) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OffDly) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((attenuator) & 255);
+                            //=========================================
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 16) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 24) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable1) & 255);
+                            //=========================================
+                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 16) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 24) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable1) & 255);
 
+                            uart0.txBuffer[inx++] = (byte) ((0xab) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((syncData.pulseGenItem) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((uart0.txAltPackCnt) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((dutyReg) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((dutyReg >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((pulseWidth) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((pulseWidth >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((freq) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((trigTimes) & 255);
+                            uart0.txBufferLen = inx;
+
+                            //String[] arr = (String[])GB.paraSetMap.get("localPulseGenParas");
+                            //String str=arr[uart0.txAltPackCnt];                        
+                            //String[] strA=str.split(" ");
+                            //ibuf =Lib.str2int(strA[0],0);
+                            //"enable pulseWidth duty freq  times"
+                            //=============================================
+                        }
+
+                        uart0.encSend();
+                        return null;
                     }
+                } catch (Exception ex) {
 
-                    uart0.encSend();
-                    return null;
                 }
-
                 //===============================================================
                 //uart0.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
                 return null;
@@ -875,6 +922,7 @@ class SyncData {
     //6 副控RF接收能量
     int[] sub1CommStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int[] sub2CommStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int pulseGenItem = 0;
 
     SyncData() {
         for (int i = 0; i < ctr1SspaPowerStatusAA.length; i++) {
