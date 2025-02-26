@@ -32,7 +32,7 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 3,
+    "uart0Port": 5,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
@@ -193,7 +193,7 @@
     "ctr1Remote": 1,
     "dsc~ctr1Remote": {
         "getType": "buttonRadio",
-        "title": "副控1 遠端遙控",
+        "title": "中控1 遠端遙控",
         "enum": [
             "關閉",
             "開啟"
@@ -202,7 +202,7 @@
     "ctr1PulseSource": 0,
     "dsc~ctr1PulseSource": {
         "getType": "buttonRadio",
-        "title": "副控1 脈波來源",
+        "title": "中控1 脈波來源",
         "enum": [
             "同步脈波",
             "本機脈波"
@@ -211,7 +211,7 @@
     "ctr1BatShort": 1,
     "dsc~ctr1BatShort": {
         "getType": "buttonRadio",
-        "title": "副控1 戰備短路",
+        "title": "中控1 戰備短路",
         "enum": [
             "關閉",
             "開啟"
@@ -220,7 +220,7 @@
     "ctr1TxLoad": 1,
     "dsc~ctr1TxLoad": {
         "getType": "buttonRadio",
-        "title": "副控1 輸出裝置",
+        "title": "中控1 輸出裝置",
         "enum": [
             "假負載",
             "天線"
@@ -675,7 +675,7 @@
     },
     "dsc~line3": "===============================================================================",
     "sub2Remote": 0,
-    "dsc~sub2Remote": {
+    "dsc~ctr2Remote": {
         "getType": "buttonRadio",
         "title": "副控2遠端遙控",
         "enum": [
@@ -701,6 +701,20 @@
             "本機脈波"
         ]
     },
+
+
+    "ctr2PulseSource": 0,
+    "dsc~ctr2PulseSource": {
+        "getType": "buttonRadio",
+        "title": "中控2 脈波來源",
+        "enum": [
+            "同步脈波",
+            "本機脈波"
+        ]
+    },
+
+
+
     "sub2TxLoad": 0,
     "dsc~sub2TxLoad": {
         "getType": "buttonRadio",

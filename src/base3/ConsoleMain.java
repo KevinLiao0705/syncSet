@@ -310,6 +310,22 @@ public class ConsoleMain {
                 if (deviceId != 25010 || serialId != 0x0000) {
                     return null;
                 }
+                int inx=18;
+                int ibuf=0;
+                if(cmd == 0x1000){
+                    for(int i=0;i<12;i++){
+                        ibuf=bytes[inx++] & 255;
+                        syncData.slotIdA[i]=ibuf&0x0f;
+                        syncData.slotStatusA[i]=(ibuf>>4)&0x03;
+                        syncData.slotTestStatusA[i]=(ibuf>>6)&0x03;
+                    }
+                        
+                    
+                    
+                }
+                    
+                    
+                
                 uart0.rxSerialCnt++;
                 uart0.rxSerialCnt &= 0xffff;
                 if (uart0.rxSerialCnt != para1) {
@@ -317,7 +333,7 @@ public class ConsoleMain {
                 }
                 uart0.rxSerialCnt = para1;
                 uart0.rxPackageCnt++;
-                if ((uart0.rxPackageCnt % 200) == 0) {
+                if ((uart0.rxPackageCnt % 100) == 0) {
                     System.out.print(" uart0Rx-" + uart0.rxErrCnt);
                     if ((uart0.rxPackageCnt % 1000) == 0) {
                         System.out.print("\n");
@@ -330,7 +346,7 @@ public class ConsoleMain {
                         uart0.txDeviceId = deviceId;
                         uart0.txSerialId = serialId;
                         uart0.txGroupId = 0xac00;
-                        uart0.txCmd = 0x1000;
+                        uart0.txCmd = cmd;
                         uart0.txPara0 = para0;  //fpgaId
                         uart0.txPara1 = para1;  //serialCnt
                         uart0.txPara2 = 0x0000;
@@ -372,14 +388,13 @@ public class ConsoleMain {
                             ibuf &= 1;
                             systemFlag |= ibuf << 3;
                             //=======
-                            ibuf = systemStatusA[8];//pulseGenStartFlag
-                            ibuf &= 1;
+                            ibuf = (int) GB.paraSetMap.get("emulate");
+                            ibuf &=3;
                             systemFlag |= ibuf << 4;
                             //=======
-                            ibuf = systemStatusA[9];//emergency flag
-                            ibuf &= 1;
-                            systemFlag |= ibuf << 5;
-                            //=======
+                            
+                            
+                            
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
                             int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
                             int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
@@ -430,6 +445,22 @@ public class ConsoleMain {
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
                             int trigTimes = Lib.str2int(strA[1], 1);//8 bit
                             int inx = 0;
+                            //<<debug
+                            systemFlag=0x1234;
+                            sspaPowerV32OnDly=0x56;
+                            sspaPowerV32OffDly=0x78;
+                            attenuator=0x9a;
+                            sspaPowerEnable0=0xcdef0123;
+                            sspaPowerEnable1=0x00000045;
+                            sspaModuleEnable0=0x6789abcd;
+                            sspaModuleEnable1=0x000000ef;
+                            syncData.pulseGenItem=255;
+                            dutyReg=uart0.txAltPackCnt;
+                            pulseWidth = uart0.txAltPackCnt*256+1;
+                            freq = uart0.txAltPackCnt;
+                            trigTimes = uart0.txAltPackCnt;
+                            //============================================
+                            
                             uart0.txBuffer[inx++] = (byte) ((systemFlag) & 255);
                             uart0.txBuffer[inx++] = (byte) ((systemFlag >> 8) & 255);
                             uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OnDly) & 255);
@@ -451,6 +482,7 @@ public class ConsoleMain {
                             uart0.txBuffer[inx++] = (byte) ((0xab) & 255);
                             uart0.txBuffer[inx++] = (byte) ((syncData.pulseGenItem) & 255);
                             uart0.txBuffer[inx++] = (byte) ((uart0.txAltPackCnt) & 255);
+                            uart0.txAltPackCnt++;
                             uart0.txBuffer[inx++] = (byte) ((dutyReg) & 255);
                             uart0.txBuffer[inx++] = (byte) ((dutyReg >> 8) & 255);
                             uart0.txBuffer[inx++] = (byte) ((pulseWidth) & 255);
@@ -828,89 +860,69 @@ class SyncData {
          "語音通信模組 Ａ",     id=11; 
          "語音通信模組 Ｂ"      id=12
      */
+    //slotId[3:0]
+    //slotSerNo[7:4]
     int[] slotIdA = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
     // 0:none, 1:ready, 2:error 3:warn up
     int[] slotStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     //0:none, 1:PreTest,2:testing;
     int[] slotTestStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    /*
-         0 mainStatus 0:none, 1:warn up, 2:ready, 3:error
-         1 rfPulse detect flag      0:none 1: ok
-         2 envi status 0:none ,     1:ok ,2:error           //generate
-         3 sspa power status        0:none , 1:ok ,2:error     //generate
-         4 sspa module status       0:none , 1:ok ,2:error    //generate
-         5 rfPulsee over duty flag  0:none , 1:ok ,2:error
-         6 rfPulse over width flag  0:none , 1:ok ,2:error
-         7 
-         8 local pulse generate flag    0:none 1:ok
-         9 emergency on flag            0:none 1:emergency
-         
+    //
+    
+    /*=================================================
+     mast mainStatus[1:0] 		==> 0:none, 1:warn up, 2:ready, 3:error
+     sub1 mainStatus[3:2] 		==> 0:none, 1:warn up, 2:ready, 3:error
+     sub2 mainStatus[5:4] 		==> 0:none, 1:warn up, 2:ready, 3:error
+     ctr1 mainStatus[7:6] 		==> 0:none, 1:warn up, 2:ready, 3:error
+     ctr2 mainStatus[9:8] 		==> 0:none, 1:warn up, 2:ready, 3:error
+     drv1a mainStatus[11:10] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     drv1b mainStatus[13:12] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     drv2a mainStatus[15:14] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     drv2b mainStatus[17:16] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     meter mainStatus[19:18] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     rfPulse detect flag[21:20] ==> 0:unknow ,1: none  ,2:ok
+            電源啟動[22] 					==> 0:停止 1:啟動
+     SSPA致能[23] 				==> 0:停止 1:啟動
+            本地脈波啟動[24] 				==> 0:停止 1:啟動
+            緊急停止[25] 					==> 0:備便 1:停止
      */
-    int[] mastSystemStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] ctr1SystemStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] ctr2SystemStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    /*
-         envirament status;
-         value 0:none, 1:ok, 2:error 
-         0 airFlow left
-         1 airFlow middle
-         2 airFlow right
-         3 waterFlow 1
-         4 waterFlow 2
-         5 waterFlow 3
-         6 waterFlow 4
-         7 waterFlow 5
-         8 waterFlow 6
-         9 waterFlow temperature
+    int systemStatus0;
+   /* enviStatus every item is 2 bit
+     value 0:none, 1:ok, 2:error
+     airFlow left
+     airFlow middle
+     airFlow right
+     waterFlow 1
+     waterFlow 2
+     waterFlow 3
+     waterFlow 4
+     waterFlow 5
+     waterFlow 6
+     waterFlow temperature
      */
-    int[] ctr1EnvStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] ctr2EnvStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    //0 connect, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50i, 7:v32v, 8:v32i, 9:v32t,10,enable  
-    int[][] ctr1SspaPowerStatusAA = new int[36][];
-    int[][] ctr2SspaPowerStatusAA = new int[36][];
-    //0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 7:RF輸出, 8:溫度
-    int[][] ctr1SspaModuleStatusAA = new int[36][];
-    int[][] ctr2SspaModuleStatusAA = new int[36][];
-
+    int[] enviStatusA=new int[]{0,0};    
+    
+    short[][] meterStatusAA=new short[2][6];
+    //=============================================
+    //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50t, 7:v32v, 8:v32i, 9:v32t
+    byte[][] sspaPowerStatusAA=new byte[2][36];
+    short[][] sspaPowerV50vAA=new short[2][36];
+    short[][] sspaPowerV50iAA=new short[2][36];
+    short[][] sspaPowerV50tAA=new short[2][36];
+    short[][] sspaPowerV32vAA=new short[2][36];
+    short[][] sspaPowerV32iAA=new short[2][36];
+    short[][] sspaPowerV32tAA=new short[2][36];
+    //=============================================
     /*
-         0:input rf power
-         //
-         2:pre amp output rf power
-         3:driver amp output rf power
-         4:cw output rf power
-         5:ccw output rf power
+     0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 7:RF輸出, 8:溫度
      */
-    int[] ctr1MeterStatusA = new int[]{0, 0, 0, 0, 0, 0};
-    int[] ctr2MeterStatusA = new int[]{0, 0, 0, 0, 0, 0};
-    int[] mastGpsDataA = new int[]{22, 59, 59, 99, 122, 59, 59, 99, 123, 270};
-    String mastGpsStatus = "";
-    int[] sub1GpsDataA = new int[]{22, 59, 59, 99, 122, 59, 59, 99, 123, 270};
-    String sub1GpsStatus = "";
-    int[] sub2GpsDataA = new int[]{22, 59, 59, 99, 122, 59, 59, 99, 123, 270};
-    String sub2GpsStatusA = "";
-
-    /*
-         SP雷達信號     0.0: 無信號, 0.1: 信號備便
-         脈波來源       1.0: 主雷同步, 1.1: 本機脈波
-         與副控1連線方式  2.0: 光纖, 2.1: 無線, 2.2: 自動 
-         與副控2連線方式  2.0: 光纖, 2.1: 無線, 2.2: 自動 
-     */
-    int[] mastRadarStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    /*
-         雷達狀態    0.0: 未連線, 0.1: 準備中, 0.2:本機備便, 0.3:發射備便, 0.4:發射中, 0.5:異常          
-         環控        1.0: 未連線, 1.1:良好, 1.2: 異常 
-         SSPA電源    2.0: 未連線, 2.1:良好, 2.2: 異常 
-         SSPA放大器  3.0: 未連線, 3.1:良好, 3.2: 異常 
-         SSPA功率    4.0: 未連線, 3.1:良好, 4.2: 異常 
-         戰備狀態    5.0: 未連線, 5.1:關閉, 5.2: 開啟 
-         遠端遙控    6.0: 未連線, 6.1:關閉, 6.2: 開啟 
-         脈波來源    7.0: 未連線, 7.1: 主雷同步, 7.2: 本機脈波
-         輸出裝置    8.0: 未連線, 8.1: 天線, 8.2:假負載 
-         連線方式    9.0: 未連線, 9.1: 光纖, 9.2:無線, 9.3:自動 
-     */
+    byte[][] sspaModuleStatusA=new byte[2][36];
+    short[][] sspaModuleRfOutA=new short[2][36];
+    short[][] sspaModuleTemprA=new short[2][36];
+    //=============================================
+    byte[][] gpaData=new byte[3][16];
+    
+    
     int[] ctr1RadarStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int[] ctr2RadarStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     //0 光纖連線狀態 0:未連線, 1:未連線 
