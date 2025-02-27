@@ -6,7 +6,7 @@
         "readOnly_f": 1,
         "getType": "floatStr"
     },
-    "appId": 1,
+    "appId": 3,
     "dsc~appId": {
         "title": "軟體名稱",
         "enum": [
@@ -32,7 +32,7 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 5,
+    "uart0Port": 4,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
@@ -55,7 +55,6 @@
             9600
         ]
     },
-
     "locationFromSource": 0,
     "dsc~locationFromSource": {
         "getType": "buttonRadio",
@@ -674,7 +673,7 @@
         "title": "衰減器"
     },
     "dsc~line3": "===============================================================================",
-    "sub2Remote": 0,
+    "ctr2Remote": 0,
     "dsc~ctr2Remote": {
         "getType": "buttonRadio",
         "title": "副控2遠端遙控",
@@ -683,8 +682,8 @@
             "開啟"
         ]
     },
-    "sub2BatShort": 0,
-    "dsc~sub2BatShort": {
+    "ctr2BatShort": 0,
+    "dsc~ctr2BatShort": {
         "getType": "buttonRadio",
         "title": "副控2戰備短路",
         "enum": [
@@ -701,8 +700,6 @@
             "本機脈波"
         ]
     },
-
-
     "ctr2PulseSource": 0,
     "dsc~ctr2PulseSource": {
         "getType": "buttonRadio",
@@ -712,11 +709,8 @@
             "本機脈波"
         ]
     },
-
-
-
-    "sub2TxLoad": 0,
-    "dsc~sub2TxLoad": {
+    "ctr2TxLoad": 0,
+    "dsc~ctr2TxLoad": {
         "getType": "buttonRadio",
         "title": " 副控2輸出裝置",
         "enum": [
@@ -903,6 +897,11 @@
     "dsc~test": {
         "getType": "natureA",
         "title": "Test"
+    },
+    "localPulseGenCh": 255,
+    "dsc~localPulseGenCh": {
+        "getType": "nature",
+        "title": "本地脈波頻道"
     },
     "localPulseGenParas": [
         "1 30 2.3 3.2 3",

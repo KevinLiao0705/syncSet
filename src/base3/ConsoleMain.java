@@ -119,22 +119,21 @@ public class ConsoleMain {
             if (appId == 3 || appId == 4) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotIdA", syncData.slotIdA);
-                kj.jadd("slotStatusA", syncData.slotStatusA);
-                kj.jadd("slotTestStatusA", syncData.slotTestStatusA);
+                kj.jadd("slotDataA#" + (appId), syncData.slotDataAA[appId]);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
-                kj.jadd("envStatusA#"+(appId-3), syncData.enviStatusA[appId-3]);
-                kj.jadd("meterStatusA#"+(appId-3), syncData.meterStatusAA[appId-3]);
-                kj.jadd("sspaPowerStatusA#"+(appId-3), syncData.sspaPowerStatusAA[appId-3]);
-                kj.jadd("sspaPowerV50vA#"+(appId-3), syncData.sspaPowerV50vAA[appId-3]);
-                kj.jadd("sspaPowerV50iA#"+(appId-3), syncData.sspaPowerV50iAA[appId-3]);
-                kj.jadd("sspaPowerV50tA#"+(appId-3), syncData.sspaPowerV50tAA[appId-3]);
-                kj.jadd("sspaPowerV32vA#"+(appId-3), syncData.sspaPowerV32vAA[appId-3]);
-                kj.jadd("sspaPowerV32iA#"+(appId-3), syncData.sspaPowerV32iAA[appId-3]);
-                kj.jadd("sspaPowerV32tA#"+(appId-3), syncData.sspaPowerV32tAA[appId-3]);
-                kj.jadd("sspaModuleStatusA#"+(appId-3), syncData.sspaModuleStatusAA[appId-3]);
-                kj.jadd("sspaModuleRfOutA#"+(appId-3), syncData.sspaModuleRfOutAA[appId-3]);
-                kj.jadd("sspaModuleRfTemprA#"+(appId-3), syncData.sspaModuleTemprAA[appId-3]);
+                kj.jadd("systemStatus1", syncData.systemStatus1);
+                kj.jadd("envStatusA#" + (appId - 3), syncData.enviStatusA[appId - 3]);
+                kj.jadd("meterStatusA#" + (appId - 3), syncData.meterStatusAA[appId - 3]);
+                kj.jadd("sspaPowerStatusA#" + (appId - 3), syncData.sspaPowerStatusAA[appId - 3]);
+                kj.jadd("sspaPowerV50vA#" + (appId - 3), syncData.sspaPowerV50vAA[appId - 3]);
+                kj.jadd("sspaPowerV50iA#" + (appId - 3), syncData.sspaPowerV50iAA[appId - 3]);
+                kj.jadd("sspaPowerV50tA#" + (appId - 3), syncData.sspaPowerV50tAA[appId - 3]);
+                kj.jadd("sspaPowerV32vA#" + (appId - 3), syncData.sspaPowerV32vAA[appId - 3]);
+                kj.jadd("sspaPowerV32iA#" + (appId - 3), syncData.sspaPowerV32iAA[appId - 3]);
+                kj.jadd("sspaPowerV32tA#" + (appId - 3), syncData.sspaPowerV32tAA[appId - 3]);
+                kj.jadd("sspaModuleStatusA#" + (appId - 3), syncData.sspaModuleStatusAA[appId - 3]);
+                kj.jadd("sspaModuleRfOutA#" + (appId - 3), syncData.sspaModuleRfOutAA[appId - 3]);
+                kj.jadd("sspaModuleRfTemprA#" + (appId - 3), syncData.sspaModuleTemprAA[appId - 3]);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
@@ -270,37 +269,83 @@ public class ConsoleMain {
         uart0.dataBit = 8;
         uart0.txEncMode = 1;
         uart0.rxEncMode = 1;
+        //&w
         uart0.setCallBack(new BytesCallback() {
             @Override
             public String prg(byte[] bytes, int len) {
-                int deviceId = (bytes[0] & 255) + (bytes[1] & 255) * 256;
-                int serialId = (bytes[2] & 255) + (bytes[3] & 255) * 256;
-                int groupId = (bytes[4] & 255) + (bytes[5] & 255) * 256;
-                int groupLen = (bytes[6] & 255) + (bytes[7] & 255) * 256;
-                int cmd = (bytes[8] & 255) + (bytes[9] & 255) * 256;
-                int para0 = (bytes[10] & 255) + (bytes[11] & 255) * 256;
-                int para1 = (bytes[12] & 255) + (bytes[13] & 255) * 256;
-                int para2 = (bytes[14] & 255) + (bytes[15] & 255) * 256;
-                int para3 = (bytes[16] & 255) + (bytes[17] & 255) * 256;
+                int inx = 0;
+                ByteLook bk = new ByteLook(bytes);
+                int deviceId = bk.lookShortInt();
+                int serialId = bk.lookShortInt();
+                int groupId = bk.lookShortInt();
+                int groupLen = bk.lookShortInt();
+                int cmd = bk.lookShortInt();
+                int para0 = bk.lookShortInt();
+                int para1 = bk.lookShortInt();
+                int para2 = bk.lookShortInt();
+                int para3 = bk.lookShortInt();
                 if (deviceId != 25010 || serialId != 0x0000) {
                     return null;
                 }
-                int inx=18;
-                int ibuf=0;
-                if(cmd == 0x1000){
-                    for(int i=0;i<12;i++){
-                        ibuf=bytes[inx++] & 255;
-                        syncData.slotIdA[i]=ibuf&0x0f;
-                        syncData.slotStatusA[i]=(ibuf>>4)&0x03;
-                        syncData.slotTestStatusA[i]=(ibuf>>6)&0x03;
+                int ibuf = 0;
+                int ibuf0, ibuf1, ibuf2, ibuf3;
+                if (cmd == 0x1000) {
+                    if (para0 == 3 || para0 == 4)//fpgaId
+                    {
+                        for (int i = 0; i < 12; i++) {
+                            syncData.slotDataAA[para0][i] = bk.lookShort();
+                        }
+
+                        ibuf0 = bk.lookInt();
+                        ibuf1 = bk.lookInt();
+                        if (para0 == 3) {
+                            syncData.systemStatus0 &= 0x07cc3cc0;
+                            ibuf0 &= 0x07cc3cc0;
+                            syncData.systemStatus0 |= ibuf0;
+                            syncData.systemStatus1 &= 0x00000000;
+                            ibuf1 &= 0x00000000;
+                            syncData.systemStatus1 |= ibuf1;
+                        }
+                        if (para0 == 4) {
+                            syncData.systemStatus0 &= 0xf803c300;
+                            ibuf0 &= 0xf803c300;
+                            syncData.systemStatus0 |= ibuf0;
+                            syncData.systemStatus1 &= 0x00000000;
+                            ibuf1 &= 0x00000000;
+                            syncData.systemStatus1 |= ibuf1;
+                        }
+
+                        syncData.enviStatusA[para0 - 3] = bk.lookInt();
+                        for (int i = 0; i < 6; i++) {
+                            syncData.meterStatusAA[para0 - 3][i] = bk.lookShort();
+                        }
+                        ibuf = bk.lookByteInt();
+                        if (ibuf != 0xab) {
+                            return null;
+                        }
+                        ibuf = bk.lookByteInt();
+                        if (ibuf >= 36) {
+                            return null;
+                        }
+                        syncData.sspaPowerStatusAA[para0 - 3][ibuf] = bk.lookByte();
+                        syncData.sspaPowerV50vAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaPowerV50iAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaPowerV50tAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaPowerV32vAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaPowerV32iAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaPowerV32tAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaModuleStatusAA[para0 - 3][ibuf] = bk.lookByte();
+                        syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
+                        syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
+                        int chkEnd = bk.lookByteInt();
+                        if (chkEnd != 0xcd) {
+                            return null;
+                        }
+
                     }
-                        
-                    
-                    
+
                 }
-                    
-                    
-                
+
                 uart0.rxSerialCnt++;
                 uart0.rxSerialCnt &= 0xffff;
                 if (uart0.rxSerialCnt != para1) {
@@ -308,7 +353,8 @@ public class ConsoleMain {
                 }
                 uart0.rxSerialCnt = para1;
                 uart0.rxPackageCnt++;
-                if ((uart0.rxPackageCnt % 100) == 0) {
+                if ((uart0.rxPackageCnt
+                        % 100) == 0) {
                     System.out.print(" uart0Rx-" + uart0.rxErrCnt);
                     if ((uart0.rxPackageCnt % 1000) == 0) {
                         System.out.print("\n");
@@ -316,6 +362,7 @@ public class ConsoleMain {
                 }
                 //===============================================================
                 String preText;
+
                 try {
                     if (cmd == 0x1000) {//tick
                         uart0.txDeviceId = deviceId;
@@ -328,6 +375,7 @@ public class ConsoleMain {
                         uart0.txPara3 = 0x0000;
                         uart0.txBufferLen = 0;
                         int systemFlag0 = 0;
+                        int systemFlag1 = 0;
                         preText = "";
                         if (para0 == 3 || para0 == 4) {//fpgaId
                             if (para0 == 3) {
@@ -337,55 +385,108 @@ public class ConsoleMain {
                                 preText = "ctr2";
                             }
                             //======
-                            ibuf = (int) GB.paraSetMap.get(preText + "Remote");//遠端遙控 0:disable 1:enable
+                            ibuf = (int) GB.paraSetMap.get("emulate");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 0;
-                            //=======
-                            ibuf = (int) GB.paraSetMap.get(preText + "PulseSource");//脈波來源 0:同步脈波 1:本機脈波
-                            ibuf &= 1;
-                            systemFlag0 |= ibuf << 1;
-                            //=======
-                            ibuf = (int) GB.paraSetMap.get(preText + "BatShort");//戰備短路 0:關閉 1:開啟
+                            //======
+                            ibuf = (int) GB.paraSetMap.get("ctr1Remote");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 2;
                             //=======
-                            ibuf = (int) GB.paraSetMap.get(preText + "TxLoad");//輸出裝置 0:假負載 1:天線
+                            ibuf = (int) GB.paraSetMap.get("ctr2Remote");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 3;
                             //=======
-                            ibuf = (int) GB.paraSetMap.get("emulate");
-                            ibuf &=3;
+                            ibuf = (int) GB.paraSetMap.get("mastPulseSource");
+                            ibuf &= 1;
                             systemFlag0 |= ibuf << 4;
+                            ibuf = (int) GB.paraSetMap.get("sub1PulseSource");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 5;
+                            ibuf = (int) GB.paraSetMap.get("sub1PulseSource");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 6;
+                            ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 7;
+                            ibuf = (int) GB.paraSetMap.get("ctr2PulseSource");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 8;
                             //=======
-                            
-                            
-                            
+                            ibuf = (int) GB.paraSetMap.get("ctr1BatShort");//戰備短路 0:關閉 1:開啟
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 9;
+                            ibuf = (int) GB.paraSetMap.get("ctr2BatShort");//戰備短路 0:關閉 1:開啟
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 10;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("ctr1TxLoad");//輸出裝置 0:假負載 1:天線
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 11;
+                            ibuf = (int) GB.paraSetMap.get("ctr2TxLoad");//輸出裝置 0:假負載 1:天線
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 12;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("mastToSub1CommType");
+                            ibuf &= 3;
+                            systemFlag0 |= ibuf << 13;
+                            ibuf = (int) GB.paraSetMap.get("mastToSub2CommType");
+                            ibuf &= 3;
+                            systemFlag0 |= ibuf << 15;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("sub1ChCommSet");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 17;
+                            ibuf = (int) GB.paraSetMap.get("sub2ChCommSet");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 17;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("sub1CommType");
+                            ibuf &= 3;
+                            systemFlag0 |= ibuf << 19;
+                            ibuf = (int) GB.paraSetMap.get("sub2CommType");
+                            ibuf &= 3;
+                            systemFlag0 |= ibuf << 21;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("sub1ChSyncType");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 23;
+                            ibuf = (int) GB.paraSetMap.get("sub2ChSyncType");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 24;
+                            //=======
+                            ibuf = (int) GB.paraSetMap.get("mastToSub1SpeechEnable");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 25;
+                            ibuf = (int) GB.paraSetMap.get("mastToSub2SpeechEnable");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 26;
+                            //=============================================
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
                             int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
                             int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
                             //=============================================
-                             JSONArray jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaPowerExistA");
-                            byte[] sspaPowerExistA= new byte[]{0,0,0,0,0};
+                            JSONArray jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaPowerExistA");
+                            byte[] sspaPowerExistA = new byte[]{0, 0, 0, 0, 0};
                             for (int i = 0; i < 36; i++) {
-                                ibuf=(int)jarr.get(i);
-                                if(ibuf==0)
+                                ibuf = (int) jarr.get(i);
+                                if (ibuf == 0) {
                                     continue;
-                                sspaPowerExistA[(int)(i/8)]|=1<<(i%8);
+                                }
+                                sspaPowerExistA[(int) (i / 8)] |= 1 << (i % 8);
                             }
                             //=============================================
-                             jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaModuleExistA");
-                            byte[] sspaModuleExistA= new byte[]{0,0,0,0,0};
+                            jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaModuleExistA");
+                            byte[] sspaModuleExistA = new byte[]{0, 0, 0, 0, 0};
                             for (int i = 0; i < 36; i++) {
-                                ibuf=(int)jarr.get(i);
-                                if(ibuf==0)
+                                ibuf = (int) jarr.get(i);
+                                if (ibuf == 0) {
                                     continue;
-                                sspaModuleExistA[(int)(i/8)]|=1<<(i%8);
+                                }
+                                sspaModuleExistA[(int) (i / 8)] |= 1 << (i % 8);
                             }
-                            
-                            
-                            
                             //=====================================
-                            int pulseGenCh = (int) GB.paraSetMap.get("pulseGenCh");//pulseGenCh   
+                            int pulseGenCh = (int) GB.paraSetMap.get("localPulseGenCh");//pulseGenCh   
                             if (uart0.txAltPackCnt >= 32) {
                                 uart0.txAltPackCnt = 0;
                             }
@@ -407,57 +508,57 @@ public class ConsoleMain {
                             int trigTimes = Lib.str2int(strA[1], 1);//8 bit
                             inx = 0;
                             //<<debug
-    //===============================
-                            systemFlag0=0x12345678;
-                            sspaPowerV32OnDly=0x56;
-                            sspaPowerV32OffDly=0x78;
-                            attenuator=0x9a;
-                            
-                            sspaPowerExistA[0]=(byte)0x01;
-                            sspaPowerExistA[1]=(byte)0x23;
-                            sspaPowerExistA[2]=(byte)0x45;
-                            sspaPowerExistA[3]=(byte)0x67;
-                            sspaPowerExistA[4]=(byte)0x89;
-                            
-                            sspaModuleExistA[0]=(byte)0x01;
-                            sspaModuleExistA[1]=(byte)0x23;
-                            sspaModuleExistA[2]=(byte)0x45;
-                            sspaModuleExistA[3]=(byte)0x67;
-                            sspaModuleExistA[4]=(byte)0x89;
-                            
-                            pulseGenCh=255;
-                            dutyReg=uart0.txAltPackCnt;
-                            pulseWidth = uart0.txAltPackCnt*256+1;
+                            //===============================
+                            systemFlag0 = 0x12345678;
+                            systemFlag1 = 0x12345678;
+                            sspaPowerV32OnDly = 0x56;
+                            sspaPowerV32OffDly = 0x78;
+                            attenuator = 0x9a;
+
+                            sspaPowerExistA[0] = (byte) 0x01;
+                            sspaPowerExistA[1] = (byte) 0x23;
+                            sspaPowerExistA[2] = (byte) 0x45;
+                            sspaPowerExistA[3] = (byte) 0x67;
+                            sspaPowerExistA[4] = (byte) 0x89;
+
+                            sspaModuleExistA[0] = (byte) 0x01;
+                            sspaModuleExistA[1] = (byte) 0x23;
+                            sspaModuleExistA[2] = (byte) 0x45;
+                            sspaModuleExistA[3] = (byte) 0x67;
+                            sspaModuleExistA[4] = (byte) 0x89;
+
+                            pulseGenCh = 255;
+                            dutyReg = uart0.txAltPackCnt;
+                            pulseWidth = uart0.txAltPackCnt * 256 + 1;
                             freq = uart0.txAltPackCnt;
                             trigTimes = uart0.txAltPackCnt;
                             //============================================
-                            
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag0) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 8) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 16) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 24) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OnDly) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OffDly) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((attenuator) & 255);
+                            ByteLoad lb=new ByteLoad(uart0.txBuffer);
+                            lb.wIntInt(systemFlag0);
+                            lb.wIntInt(systemFlag1);
+                            lb.wByteInt(sspaPowerV32OnDly);
+                            lb.wByteInt(sspaPowerV32OffDly);
+                            lb.wByteInt(attenuator);
                             //=========================================
-                            for(int i=0;i<5;i++){
-                                uart0.txBuffer[inx++] = (byte) ((sspaPowerExistA[i]) & 255);
+                            for (int i = 0; i < 5; i++) {
+                                lb.wByteInt(sspaPowerExistA[i]);
                             }
-                            for(int i=0;i<5;i++){
-                                uart0.txBuffer[inx++] = (byte) ((sspaModuleExistA[i]) & 255);
+                            for (int i = 0; i < 5; i++) {
+                                lb.wByteInt(sspaModuleExistA[i]);
                             }
                             //=========================================
-                            uart0.txBuffer[inx++] = (byte) ((0xab) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((pulseGenCh) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((uart0.txAltPackCnt) & 255);
+                            lb.wByteInt(pulseGenCh);
+                            lb.wByteInt(0xab);
+                            if(uart0.txAltPackCnt>=32)
+                                uart0.txAltPackCnt=0;
+                            lb.wByteInt(uart0.txAltPackCnt);
                             uart0.txAltPackCnt++;
-                            uart0.txBuffer[inx++] = (byte) ((dutyReg) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((dutyReg >> 8) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((pulseWidth) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((pulseWidth >> 8) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((freq) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((trigTimes) & 255);
-                            uart0.txBufferLen = inx;
+                            lb.wShortInt(dutyReg);
+                            lb.wShortInt(pulseWidth);
+                            lb.wByteInt(freq);
+                            lb.wByteInt(trigTimes);
+                            lb.wByteInt(0xcd);
+                            uart0.txBufferLen = lb.inx;
                         }
 
                         uart0.encSend();
@@ -468,6 +569,7 @@ public class ConsoleMain {
                 }
                 //===============================================================
                 //uart0.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
+
                 return null;
             }
         });
@@ -637,7 +739,8 @@ public class ConsoleMain {
         if (cmdstr.equals("test1")) {
             try {
                 Path file = Paths.get(GB.paraSetPath);
-                BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+                BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class
+                );
                 System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
             } catch (Exception ex) {
 
@@ -676,6 +779,7 @@ public class ConsoleMain {
         }
 
         return "Command Not Found !!!";
+
     }
 
 }
@@ -808,28 +912,23 @@ class ConsoleMainCmdExe {
 class SyncData {
 
     /*
-         "ＩＰＣ控制模組",      id=1; 
-         "ＦＰＧＡ控制模組",    id=2; 
-         "ＩＯ控制模組",        id=3; 
-         "邏輯分析模組",        id=4; 
-         "光纖傳輸模組 １",     id=5; 
-         "光纖傳輸模組 ２",     id=6; 
-         "光纖傳輸模組 ３",     id=7; 
-         "光纖傳輸模組 ４",     id=8; 
-         "ＲＦ傳輸模組 Ａ",     id=9; 
-         "ＲＦ傳輸模組 Ｂ",     id=10; 
-         "語音通信模組 Ａ",     id=11; 
-         "語音通信模組 Ｂ"      id=12
+	 array 0:mast, 1:sub1, 2:sub2, 3:ctr1, 4:ctr2, 5:drv1a, 6:drv1b, 7:drv2a, 8:drv2b
+	 *** slotId[3:0] ==>
+	 	 "none 				id=0;
+	 	 "ＩＰＣ控制模組",     	id=1;
+	 	 "ＦＰＧＡ控制模組",    id=2;
+	 	 "ＩＯ控制模組",       id=3;
+	 	 "邏輯分析模組",       id=4;
+	 	 "光纖傳輸模組",     	id=5;
+	 	 "ＲＦ傳輸模組	",     	id=6;
+	 	 "語音通信模組",   	id=7;
+	 	 "SSPA驅動模組",   	id=8;
+	  *** slotSerNo		7:4
+	  *** slotStatus	9:8 ==> 0:none, 1:ready, 2:error 3:warn up
+          *** slotTestStatus 11:10 ==> 0:none, 1:PreTest, 2:testing;
      */
-    //slotId[3:0]
-    //slotSerNo[7:4]
-    int[] slotIdA = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    // 0:none, 1:ready, 2:error 3:warn up
-    int[] slotStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    //0:none, 1:PreTest,2:testing;
-    int[] slotTestStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    //
-    
+    short[][] slotDataAA = new short[9][12];
+
     /*=================================================
      mast mainStatus[1:0] 		==> 0:none, 1:warn up, 2:ready, 3:error
      sub1 mainStatus[3:2] 		==> 0:none, 1:warn up, 2:ready, 3:error
@@ -840,16 +939,37 @@ class SyncData {
      drv1b mainStatus[13:12] 	==> 0:none, 1:warn up, 2:ready, 3:error
      drv2a mainStatus[15:14] 	==> 0:none, 1:warn up, 2:ready, 3:error
      drv2b mainStatus[17:16] 	==> 0:none, 1:warn up, 2:ready, 3:error
-     meter mainStatus[19:18] 	==> 0:none, 1:warn up, 2:ready, 3:error
-     rfPulse detect flag[21:20] ==> 0:unknow ,1: none  ,2:ok
-            電源啟動[22] 					==> 0:停止 1:啟動
-     SSPA致能[23] 				==> 0:停止 1:啟動
-            本地脈波啟動[24] 				==> 0:停止 1:啟動
-            緊急停止[25] 					==> 0:備便 1:停止
+     ctr1Meter mainStatus[19:18] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     ctr2Meter mainStatus[21:20] 	==> 0:none, 1:warn up, 2:ready, 3:error
+     //===
+     ctr1 rfPulse detect flag[22] ==> 0:none  1:OK
+     ctr1 電源啟動[23] 			==> 0:停止 1:啟動
+     ctr1 SSPA致能[24] 			==> 0:停止 1:啟動
+     ctr1 本地脈波啟動[25] 		==> 0:停止 1:啟動
+     ctr1 緊急停止[26] 			==> 0:備便 1:停止
+     //===
+     ctr2 rfPulse detect flag[27] ==> 0:none  1:OK
+     ctr2 電源啟動[28] 			==> 0:停止 1:啟動
+     ctr2 SSPA致能[29] 			==> 0:停止 1:啟動
+     ctr2 本地脈波啟動[30] 			==> 0:停止 1:啟動
+     ctr2 緊急停止[31] 			==> 0:備便 1:停止
      */
     int systemStatus0;
-   /* enviStatus every item is 2 bit
-     value 0:none, 1:ok, 2:error
+    /*=================================================
+    sub1 光纖連線狀態[0]	==> 0:未連線, 1:未連線
+    sub1 RF連線狀態[1]          ==> 0:未連線, 1:未連線
+    sub2 光纖連線狀態[2] 	==> 0:未連線, 1:未連線
+    sub2 RF連線狀態[3]          ==> 0:未連線, 1:未連線
+    ctr1 遠端遙控[4]      ==> 0:關閉, 1:開啟
+    ctr2 遠端遙控[5]      ==> 0:關閉, 1:開啟
+    mast spPulseExist[6]	==  0:none 1:exist
+
+    
+     */
+    int systemStatus1;
+
+    /* enviStatus every item is 1 bit
+     value 0:none, 1:error
      airFlow left
      airFlow middle
      airFlow right
@@ -861,34 +981,115 @@ class SyncData {
      waterFlow 6
      waterFlow temperature
      */
-    int[] enviStatusA=new int[]{0,0};    
-    
-    short[][] meterStatusAA=new short[2][6];
+    int[] enviStatusA = new int[]{0, 0};
+    /*
+     0:input rf power
+     1:
+     2:pre amp output rf power
+     3:driver amp output rf power
+     4:cw output rf power
+     5:ccw output rf power
+     */
+    short[][] meterStatusAA = new short[2][6];
     //=============================================
     //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50t, 7:v32v, 8:v32i, 9:v32t
-    byte[][] sspaPowerStatusAA=new byte[2][36];
-    short[][] sspaPowerV50vAA=new short[2][36];
-    short[][] sspaPowerV50iAA=new short[2][36];
-    short[][] sspaPowerV50tAA=new short[2][36];
-    short[][] sspaPowerV32vAA=new short[2][36];
-    short[][] sspaPowerV32iAA=new short[2][36];
-    short[][] sspaPowerV32tAA=new short[2][36];
+    byte[][] sspaPowerStatusAA = new byte[2][36];
+    short[][] sspaPowerV50vAA = new short[2][36];
+    short[][] sspaPowerV50iAA = new short[2][36];
+    short[][] sspaPowerV50tAA = new short[2][36];
+    short[][] sspaPowerV32vAA = new short[2][36];
+    short[][] sspaPowerV32iAA = new short[2][36];
+    short[][] sspaPowerV32tAA = new short[2][36];
     //=============================================
     /*
      0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 7:RF輸出, 8:溫度
      */
-    byte[][] sspaModuleStatusAA=new byte[2][36];
-    short[][] sspaModuleRfOutAA=new short[2][36];
-    short[][] sspaModuleTemprAA=new short[2][36];
+    byte[][] sspaModuleStatusAA = new byte[2][36];
+    short[][] sspaModuleRfOutAA = new short[2][36];
+    short[][] sspaModuleTemprAA = new short[2][36];
     //=============================================
-    byte[][] gpaDataAA=new byte[3][16];
-    short[] adjTimeOf1588A=new short[2];
-    short[] commPackageCntA=new short[2];
-    short[] commOkRateA=new short[2];
-    short[] rfRxPowerA=new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
-    
+    byte[][] gpaDataAA = new byte[3][16];
+    short[] adjTimeOf1588A = new short[2];
+    short[] commPackageCntA = new short[2];
+    short[] commOkRateA = new short[2];
+    short[] rfRxPowerA = new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
 
     SyncData() {
     }
+
+}
+
+class ByteLook {
+
+    byte[] bta;
+    int inx = 0;
+
+    ByteLook(byte[] arr) {
+        bta = arr;
+    }
+
+    int getByteInt(int ii) {
+        return bta[ii] & 255;
+    }
+
+    byte lookByte() {
+        return bta[inx++];
+    }
+
+    int lookByteInt() {
+        return bta[inx++] & 255;
+    }
+
+    short lookShort() {
+        int ibuf = (bta[inx++]) & 255;
+        ibuf += (bta[inx++] & 255) * 256;
+        return (short) ibuf;
+    }
+    int lookShortInt() {
+        int ibuf = (bta[inx++]) & 255;
+        ibuf += (bta[inx++] & 255) * 256;
+        return ibuf;
+    }
+
+    int lookInt() {
+        int ibuf = (bta[inx++]) & 255;
+        ibuf += (bta[inx++] & 255) * 256;
+        ibuf += (bta[inx++] & 255) * 65536;
+        ibuf += (bta[inx++] & 255) * 16777216;
+        return ibuf;
+    }
+
+}
+
+
+
+class ByteLoad {
+
+    byte[] bta;
+    int inx = 0;
+
+    ByteLoad(byte[] arr) {
+        bta = arr;
+    }
+
+    void wByteByte(byte data) {
+        bta[inx++] =data;
+    }
+    void wByteInt(int data) {
+        bta[inx++] =(byte)(data & 255);
+    }
+    void wShortInt(int data) {
+        bta[inx++] =(byte)(data & 255);
+        bta[inx++] =(byte)((data>>8) & 255);
+    }
+    void wIntInt(int data) {
+        bta[inx++] =(byte)(data & 255);
+        bta[inx++] =(byte)((data>>8) & 255);
+        bta[inx++] =(byte)((data>>16) & 255);
+        bta[inx++] =(byte)((data>>24) & 255);
+    }
+    
+    
+
 
 }
