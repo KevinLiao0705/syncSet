@@ -67,11 +67,6 @@ public class ConsoleMain {
             }
             if (act.equals("openAllSspaPower")) {
                 if (GB.emulate == 1) {
-                    for (int i = 0; i < 36; i++) {
-                        scla.syncData.ctr1SspaPowerStatusAA[i][0] = 1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][2] = 1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][3] = 1;
-                    }
                 }
                 outJson.put("status", "ok");
                 return outJson;
@@ -79,62 +74,35 @@ public class ConsoleMain {
 
             if (act.equals("closeAllSspaPower")) {
                 if (GB.emulate == 1) {
-                    for (int i = 0; i < 36; i++) {
-                        scla.syncData.ctr1SspaPowerStatusAA[i][0] = 1;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][2] = 0;
-                        scla.syncData.ctr1SspaPowerStatusAA[i][3] = 0;
-                    }
                 }
                 outJson.put("status", "ok");
                 return outJson;
             }
 
             if (act.equals("openAllSspaModule")) {
-                if (GB.emulate == 1) {
-                    for (int i = 0; i < 36; i++) {
-                        scla.syncData.ctr1SspaModuleStatusAA[i][1] = 1;
-                    }
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
 
             if (act.equals("closeAllSspaModule")) {
-                if (GB.emulate == 1) {
-                    for (int i = 0; i < 36; i++) {
-                        scla.syncData.ctr1SspaModuleStatusAA[i][1] = 0;
-                    }
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
 
             if (act.equals("localPulseOn")) {
-                if (GB.emulate == 1) {
-                    scla.syncData.ctr1SystemStatusA[8] = 1;
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
 
             if (act.equals("localPulseOff")) {
-                if (GB.emulate == 1) {
-                    scla.syncData.ctr1SystemStatusA[8] = 0;
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals("emergencyRelease")) {
-                if (GB.emulate == 1) {
-                    scla.syncData.ctr1SystemStatusA[9] = 0;
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals("emergencyStop")) {
-                if (GB.emulate == 1) {
-                    scla.syncData.ctr1SystemStatusA[9] = 1;
-                }
                 outJson.put("status", "ok");
                 return outJson;
             }
@@ -148,18 +116,25 @@ public class ConsoleMain {
 
     public void transSyncData(JSONObject outJson) {
         try {
-            if (appId == 3) {
+            if (appId == 3 || appId == 4) {
                 KvJson kj = new KvJson();
                 kj.jStart();
                 kj.jadd("slotIdA", syncData.slotIdA);
                 kj.jadd("slotStatusA", syncData.slotStatusA);
                 kj.jadd("slotTestStatusA", syncData.slotTestStatusA);
-                kj.jadd("ctr1SystemStatusA", syncData.ctr1SystemStatusA);
-                kj.jadd("ctr1EnvStatusA", syncData.ctr1EnvStatusA);
-                kj.jadd("ctr1MeterStatusA", syncData.ctr1MeterStatusA);
-                kj.jadd("ctr1RadarStatusA", syncData.ctr1MeterStatusA);
-                kj.jadd("ctr1SspaPowerStatusAA", syncData.ctr1SspaPowerStatusAA);
-                kj.jadd("ctr1SspaModuleStatusAA", syncData.ctr1SspaModuleStatusAA);
+                kj.jadd("systemStatus0", syncData.systemStatus0);
+                kj.jadd("envStatusA#"+(appId-3), syncData.enviStatusA[appId-3]);
+                kj.jadd("meterStatusA#"+(appId-3), syncData.meterStatusAA[appId-3]);
+                kj.jadd("sspaPowerStatusA#"+(appId-3), syncData.sspaPowerStatusAA[appId-3]);
+                kj.jadd("sspaPowerV50vA#"+(appId-3), syncData.sspaPowerV50vAA[appId-3]);
+                kj.jadd("sspaPowerV50iA#"+(appId-3), syncData.sspaPowerV50iAA[appId-3]);
+                kj.jadd("sspaPowerV50tA#"+(appId-3), syncData.sspaPowerV50tAA[appId-3]);
+                kj.jadd("sspaPowerV32vA#"+(appId-3), syncData.sspaPowerV32vAA[appId-3]);
+                kj.jadd("sspaPowerV32iA#"+(appId-3), syncData.sspaPowerV32iAA[appId-3]);
+                kj.jadd("sspaPowerV32tA#"+(appId-3), syncData.sspaPowerV32tAA[appId-3]);
+                kj.jadd("sspaModuleStatusA#"+(appId-3), syncData.sspaModuleStatusAA[appId-3]);
+                kj.jadd("sspaModuleRfOutA#"+(appId-3), syncData.sspaModuleRfOutAA[appId-3]);
+                kj.jadd("sspaModuleRfTemprA#"+(appId-3), syncData.sspaModuleTemprAA[appId-3]);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
@@ -352,45 +327,35 @@ public class ConsoleMain {
                         uart0.txPara2 = 0x0000;
                         uart0.txPara3 = 0x0000;
                         uart0.txBufferLen = 0;
-                        int systemFlag = 0;
-                        int ibuf;
+                        int systemFlag0 = 0;
                         preText = "";
-                        int[][] sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
-                        int[][] sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
-                        int[] systemStatusA = syncData.ctr1SystemStatusA;
                         if (para0 == 3 || para0 == 4) {//fpgaId
                             if (para0 == 3) {
-                                sspaPowerStatusAA = syncData.ctr1SspaPowerStatusAA;
-                                sspaModuleStatusAA = syncData.ctr1SspaPowerStatusAA;
-                                systemStatusA = syncData.ctr1SystemStatusA;;
                                 preText = "ctr1";
                             }
                             if (para0 == 4) {
-                                sspaPowerStatusAA = syncData.ctr2SspaPowerStatusAA;
-                                sspaModuleStatusAA = syncData.ctr2SspaPowerStatusAA;
-                                systemStatusA = syncData.ctr2SystemStatusA;
                                 preText = "ctr2";
                             }
                             //======
                             ibuf = (int) GB.paraSetMap.get(preText + "Remote");//遠端遙控 0:disable 1:enable
                             ibuf &= 1;
-                            systemFlag |= ibuf << 0;
+                            systemFlag0 |= ibuf << 0;
                             //=======
                             ibuf = (int) GB.paraSetMap.get(preText + "PulseSource");//脈波來源 0:同步脈波 1:本機脈波
                             ibuf &= 1;
-                            systemFlag |= ibuf << 1;
+                            systemFlag0 |= ibuf << 1;
                             //=======
                             ibuf = (int) GB.paraSetMap.get(preText + "BatShort");//戰備短路 0:關閉 1:開啟
                             ibuf &= 1;
-                            systemFlag |= ibuf << 2;
+                            systemFlag0 |= ibuf << 2;
                             //=======
                             ibuf = (int) GB.paraSetMap.get(preText + "TxLoad");//輸出裝置 0:假負載 1:天線
                             ibuf &= 1;
-                            systemFlag |= ibuf << 3;
+                            systemFlag0 |= ibuf << 3;
                             //=======
                             ibuf = (int) GB.paraSetMap.get("emulate");
                             ibuf &=3;
-                            systemFlag |= ibuf << 4;
+                            systemFlag0 |= ibuf << 4;
                             //=======
                             
                             
@@ -399,36 +364,32 @@ public class ConsoleMain {
                             int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
                             int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
                             //=============================================
-                            int sspaPowerEnable0 = 0;
-                            int sspaPowerEnable1 = 0;
-                            for (int i = 0; i < 32; i++) {
-                                if (sspaPowerStatusAA[i][10] == 1) {
-                                    sspaPowerEnable0 |= 1 << i;
-                                }
-                            }
-                            for (int i = 32; i < 36; i++) {
-                                if (sspaPowerStatusAA[i][10] == 1) {
-                                    sspaPowerEnable1 |= 1 << (i - 32);
-                                }
+                             JSONArray jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaPowerExistA");
+                            byte[] sspaPowerExistA= new byte[]{0,0,0,0,0};
+                            for (int i = 0; i < 36; i++) {
+                                ibuf=(int)jarr.get(i);
+                                if(ibuf==0)
+                                    continue;
+                                sspaPowerExistA[(int)(i/8)]|=1<<(i%8);
                             }
                             //=============================================
-                            int sspaModuleEnable0 = 0;
-                            int sspaModuleEnable1 = 0;
-                            for (int i = 0; i < 32; i++) {
-                                if (sspaModuleStatusAA[i][10] == 1) {
-                                    sspaModuleEnable0 |= 1 << i;
-                                }
+                             jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaModuleExistA");
+                            byte[] sspaModuleExistA= new byte[]{0,0,0,0,0};
+                            for (int i = 0; i < 36; i++) {
+                                ibuf=(int)jarr.get(i);
+                                if(ibuf==0)
+                                    continue;
+                                sspaModuleExistA[(int)(i/8)]|=1<<(i%8);
                             }
-                            for (int i = 32; i < 36; i++) {
-                                if (sspaModuleStatusAA[i][10] == 1) {
-                                    sspaModuleEnable1 |= 1 << (i - 32);
-                                }
-                            }
+                            
+                            
+                            
                             //=====================================
+                            int pulseGenCh = (int) GB.paraSetMap.get("pulseGenCh");//pulseGenCh   
                             if (uart0.txAltPackCnt >= 32) {
                                 uart0.txAltPackCnt = 0;
                             }
-                            JSONArray jarr = (JSONArray) GB.paraSetMap.get("localPulseGenParas");
+                            jarr = (JSONArray) GB.paraSetMap.get("localPulseGenParas");
                             String str;
                             try {
                                 str = (String) jarr.get(uart0.txAltPackCnt);
@@ -444,43 +405,50 @@ public class ConsoleMain {
                             int pulseWidth = Lib.str2int(strA[1], 10);//16 bit
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
                             int trigTimes = Lib.str2int(strA[1], 1);//8 bit
-                            int inx = 0;
+                            inx = 0;
                             //<<debug
-                            systemFlag=0x1234;
+    //===============================
+                            systemFlag0=0x12345678;
                             sspaPowerV32OnDly=0x56;
                             sspaPowerV32OffDly=0x78;
                             attenuator=0x9a;
-                            sspaPowerEnable0=0xcdef0123;
-                            sspaPowerEnable1=0x00000045;
-                            sspaModuleEnable0=0x6789abcd;
-                            sspaModuleEnable1=0x000000ef;
-                            syncData.pulseGenItem=255;
+                            
+                            sspaPowerExistA[0]=(byte)0x01;
+                            sspaPowerExistA[1]=(byte)0x23;
+                            sspaPowerExistA[2]=(byte)0x45;
+                            sspaPowerExistA[3]=(byte)0x67;
+                            sspaPowerExistA[4]=(byte)0x89;
+                            
+                            sspaModuleExistA[0]=(byte)0x01;
+                            sspaModuleExistA[1]=(byte)0x23;
+                            sspaModuleExistA[2]=(byte)0x45;
+                            sspaModuleExistA[3]=(byte)0x67;
+                            sspaModuleExistA[4]=(byte)0x89;
+                            
+                            pulseGenCh=255;
                             dutyReg=uart0.txAltPackCnt;
                             pulseWidth = uart0.txAltPackCnt*256+1;
                             freq = uart0.txAltPackCnt;
                             trigTimes = uart0.txAltPackCnt;
                             //============================================
                             
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((systemFlag >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag0) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 8) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 16) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((systemFlag0 >> 24) & 255);
                             uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OnDly) & 255);
                             uart0.txBuffer[inx++] = (byte) ((sspaPowerV32OffDly) & 255);
                             uart0.txBuffer[inx++] = (byte) ((attenuator) & 255);
                             //=========================================
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 8) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 16) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable0 >> 24) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaPowerEnable1) & 255);
+                            for(int i=0;i<5;i++){
+                                uart0.txBuffer[inx++] = (byte) ((sspaPowerExistA[i]) & 255);
+                            }
+                            for(int i=0;i<5;i++){
+                                uart0.txBuffer[inx++] = (byte) ((sspaModuleExistA[i]) & 255);
+                            }
                             //=========================================
-                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 8) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 16) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable0 >> 24) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((sspaModuleEnable1) & 255);
-
                             uart0.txBuffer[inx++] = (byte) ((0xab) & 255);
-                            uart0.txBuffer[inx++] = (byte) ((syncData.pulseGenItem) & 255);
+                            uart0.txBuffer[inx++] = (byte) ((pulseGenCh) & 255);
                             uart0.txBuffer[inx++] = (byte) ((uart0.txAltPackCnt) & 255);
                             uart0.txAltPackCnt++;
                             uart0.txBuffer[inx++] = (byte) ((dutyReg) & 255);
@@ -490,13 +458,6 @@ public class ConsoleMain {
                             uart0.txBuffer[inx++] = (byte) ((freq) & 255);
                             uart0.txBuffer[inx++] = (byte) ((trigTimes) & 255);
                             uart0.txBufferLen = inx;
-
-                            //String[] arr = (String[])GB.paraSetMap.get("localPulseGenParas");
-                            //String str=arr[uart0.txAltPackCnt];                        
-                            //String[] strA=str.split(" ");
-                            //ibuf =Lib.str2int(strA[0],0);
-                            //"enable pulseWidth duty freq  times"
-                            //=============================================
                         }
 
                         uart0.encSend();
@@ -916,31 +877,18 @@ class SyncData {
     /*
      0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 7:RF輸出, 8:溫度
      */
-    byte[][] sspaModuleStatusA=new byte[2][36];
-    short[][] sspaModuleRfOutA=new short[2][36];
-    short[][] sspaModuleTemprA=new short[2][36];
+    byte[][] sspaModuleStatusAA=new byte[2][36];
+    short[][] sspaModuleRfOutAA=new short[2][36];
+    short[][] sspaModuleTemprAA=new short[2][36];
     //=============================================
-    byte[][] gpaData=new byte[3][16];
+    byte[][] gpaDataAA=new byte[3][16];
+    short[] adjTimeOf1588A=new short[2];
+    short[] commPackageCntA=new short[2];
+    short[] commOkRateA=new short[2];
+    short[] rfRxPowerA=new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
     
-    
-    int[] ctr1RadarStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] ctr2RadarStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    //0 光纖連線狀態 0:未連線, 1:未連線 
-    //1 RF連線狀態 0:未連線, 1:未連線 
-    //2 1588修正時間  
-    //3 封包發送數  
-    //4 正確率
-    //5 主控RF接收能量
-    //6 副控RF接收能量
-    int[] sub1CommStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] sub2CommStatusA = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int pulseGenItem = 0;
 
     SyncData() {
-        for (int i = 0; i < ctr1SspaPowerStatusAA.length; i++) {
-            ctr1SspaPowerStatusAA[i] = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            ctr1SspaModuleStatusAA[i] = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        }
     }
 
 }

@@ -1625,6 +1625,27 @@ class KvJson {
         jstr +=ii;
         keyCnt++;
     }
+    
+    void jadd(String key, short ii) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr +=ii;
+        keyCnt++;
+    }
+
+    void jadd(String key, byte ii) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr +=ii;
+        keyCnt++;
+    }
+
+    
+    
     void jadd(String key, float ff) {
         if (keyCnt != 0) {
             jstr += ",";
@@ -1656,6 +1677,37 @@ class KvJson {
         jstr+="]";
         keyCnt++;
     }
+
+    void jadd(String key, short[] ia) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<ia.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr +=ia[i];
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+
+    void jadd(String key, byte[] ia) {
+        if (keyCnt != 0) {
+            jstr += ",";
+        }
+        jstr += "\""+key+"\":";
+        jstr+="[";
+        for(int i=0;i<ia.length;i++){
+            if(i!=0)
+                jstr+=",";
+            jstr +=ia[i];
+        }
+        jstr+="]";
+        keyCnt++;
+    }
+    
     
     void jadd(String key, float[] fa) {
         if (keyCnt != 0) {
