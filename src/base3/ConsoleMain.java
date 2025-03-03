@@ -489,7 +489,7 @@ public class ConsoleMain {
                             systemFlag0 |= ibuf << 17;
                             ibuf = (int) GB.paraSetMap.get("sub2ChCommSet");
                             ibuf &= 1;
-                            systemFlag0 |= ibuf << 17;
+                            systemFlag0 |= ibuf << 18;
                             //=======
                             ibuf = (int) GB.paraSetMap.get("sub1CommType");
                             ibuf &= 3;
@@ -511,6 +511,13 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("mastToSub2SpeechEnable");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 26;
+                            
+                            ibuf = (int) GB.paraSetMap.get("wgProtectFlag");
+                            ibuf &= 1;
+                            systemFlag0 |= ibuf << 27;
+                            
+                            
+                            
                             //=============================================
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
                             int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
@@ -571,7 +578,7 @@ public class ConsoleMain {
                             //=====================================
                             int pulseWidth = Lib.str2int(strA[1], 10);//16 bit
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
-                            int trigTimes = Lib.str2int(strA[1], 1);//8 bit
+                            int trigTimes = Lib.str2int(strA[4], 1);//8 bit
                             //<<debug
                             //===============================
                             /*
@@ -615,7 +622,7 @@ public class ConsoleMain {
                                 lb.wByteInt(sspaModuleExistA[i]);
                             }
                             //=========================================
-                            lb.wByteInt(preTrigTime);
+                            lb.wShortInt(preTrigTime);
                             lb.wByteInt(preRfOutTime);
                             lb.wByteInt(afterTrigTime);
                             //=========================================

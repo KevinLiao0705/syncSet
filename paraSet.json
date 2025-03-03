@@ -32,7 +32,7 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 3,
+    "uart0Port": 5,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
@@ -1021,7 +1021,7 @@
     "dsc~preTrigTime": {
         "getType": "nature",
         "unit":"0.1us",
-        "max": 255,
+        "max": 999,
         "title": "pre wg trig time"
     },
 
@@ -1042,6 +1042,15 @@
         "title": "after rf out time"
     },
 
+    "wgProtectFlag": 1,
+    "dsc~wgProtectFlag": {
+        "title": "SSPA 保護開關",
+        "getType": "buttonRadio",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
 
 
     "dsc~end": 0
