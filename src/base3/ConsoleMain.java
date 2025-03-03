@@ -33,7 +33,9 @@ public class ConsoleMain {
     Uart uart0 = new Uart();
     SyncData syncData = new SyncData();
     int appId = 0;
-
+    int easyCommand=0;
+    int easyParas=0;
+    int easyCommandTime=0;
     //===========================
     //dataToFpga
     /*
@@ -65,45 +67,65 @@ public class ConsoleMain {
                 scla.transSyncData(outJson);
                 return outJson;
             }
-            if (act.equals("openAllSspaPower")) {
+            Object obj = mesJson.get("paras");
+            JSONArray paras=null;
+            if (obj != null) {
+                paras = (JSONArray) obj;
+            }
+            String preText = "";
+            if (scla.appId == 3) {
+                preText = "ctr1";
+            }
+            if (scla.appId == 4) {
+                preText = "ctr2";
+            }
+
+            if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 1) {
                 }
+                scla.setEasyCommand(0x2000,paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-
-            if (act.equals("closeAllSspaPower")) {
+            if (act.equals(preText + "SspaPowerOff")) {
                 if (GB.emulate == 1) {
                 }
+                scla.setEasyCommand(0x2001,paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-
-            if (act.equals("openAllSspaModule")) {
+            if (act.equals(preText + "SspaModuleOn")) {
+                if (GB.emulate == 1) {
+                }
+                scla.setEasyCommand(0x2002,paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-
-            if (act.equals("closeAllSspaModule")) {
+            if (act.equals(preText + "SspaModuleOff")) {
+                if (GB.emulate == 1) {
+                }
+                scla.setEasyCommand(0x2003,paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-
-            if (act.equals("localPulseOn")) {
+            if (act.equals(preText+"LocalPulseOn")) {
+                scla.setEasyCommand(0x2004,null);
                 outJson.put("status", "ok");
                 return outJson;
             }
-
-            if (act.equals("localPulseOff")) {
+            if (act.equals(preText+"LocalPulseOff")) {
+                scla.setEasyCommand(0x2005,null);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals("emergencyRelease")) {
+            if (act.equals(preText+"EmergencyOn")) {
                 outJson.put("status", "ok");
+                scla.setEasyCommand(0x2006,null);
                 return outJson;
             }
-            if (act.equals("emergencyStop")) {
+            if (act.equals(preText+"EmergencyOff")) {
                 outJson.put("status", "ok");
+                scla.setEasyCommand(0x2007,null);
                 return outJson;
             }
 
@@ -114,26 +136,45 @@ public class ConsoleMain {
 
     }
 
+    public void setEasyCommand(int cmd,JSONArray paras){
+        
+        if(paras==null){
+            easyParas=0;
+            easyCommand=cmd;
+            easyCommandTime=0;
+        }
+        else{
+            try{
+                easyParas=(int)paras.get(0);        
+                easyCommand =cmd;
+                easyCommandTime=0;
+            }
+            catch(Exception ex){
+                return;
+            }
+        }
+        
+    } 
     public void transSyncData(JSONObject outJson) {
         try {
             if (appId == 3 || appId == 4) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
-                kj.jadd("envStatusA#" + (appId - 3), syncData.enviStatusA[appId - 3]);
-                kj.jadd("meterStatusA#" + (appId - 3), syncData.meterStatusAA[appId - 3]);
-                kj.jadd("sspaPowerStatusA#" + (appId - 3), syncData.sspaPowerStatusAA[appId - 3]);
-                kj.jadd("sspaPowerV50vA#" + (appId - 3), syncData.sspaPowerV50vAA[appId - 3]);
-                kj.jadd("sspaPowerV50iA#" + (appId - 3), syncData.sspaPowerV50iAA[appId - 3]);
-                kj.jadd("sspaPowerV50tA#" + (appId - 3), syncData.sspaPowerV50tAA[appId - 3]);
-                kj.jadd("sspaPowerV32vA#" + (appId - 3), syncData.sspaPowerV32vAA[appId - 3]);
-                kj.jadd("sspaPowerV32iA#" + (appId - 3), syncData.sspaPowerV32iAA[appId - 3]);
-                kj.jadd("sspaPowerV32tA#" + (appId - 3), syncData.sspaPowerV32tAA[appId - 3]);
-                kj.jadd("sspaModuleStatusA#" + (appId - 3), syncData.sspaModuleStatusAA[appId - 3]);
-                kj.jadd("sspaModuleRfOutA#" + (appId - 3), syncData.sspaModuleRfOutAA[appId - 3]);
-                kj.jadd("sspaModuleRfTemprA#" + (appId - 3), syncData.sspaModuleTemprAA[appId - 3]);
+                kj.jadd("enviStatusA#" + (appId - 3), syncData.enviStatusA[appId - 3]);
+                kj.jadd("meterStatusAA#" + (appId - 3), syncData.meterStatusAA[appId - 3]);
+                kj.jadd("sspaPowerStatusAA#" + (appId - 3), syncData.sspaPowerStatusAA[appId - 3]);
+                kj.jadd("sspaPowerV50vAA#" + (appId - 3), syncData.sspaPowerV50vAA[appId - 3]);
+                kj.jadd("sspaPowerV50iAA#" + (appId - 3), syncData.sspaPowerV50iAA[appId - 3]);
+                kj.jadd("sspaPowerV50tAA#" + (appId - 3), syncData.sspaPowerV50tAA[appId - 3]);
+                kj.jadd("sspaPowerV32vAA#" + (appId - 3), syncData.sspaPowerV32vAA[appId - 3]);
+                kj.jadd("sspaPowerV32iAA#" + (appId - 3), syncData.sspaPowerV32iAA[appId - 3]);
+                kj.jadd("sspaPowerV32tAA#" + (appId - 3), syncData.sspaPowerV32tAA[appId - 3]);
+                kj.jadd("sspaModuleStatusAA#" + (appId - 3), syncData.sspaModuleStatusAA[appId - 3]);
+                kj.jadd("sspaModuleRfOutAA#" + (appId - 3), syncData.sspaModuleRfOutAA[appId - 3]);
+                kj.jadd("sspaModuleTemprAA#" + (appId - 3), syncData.sspaModuleTemprAA[appId - 3]);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
@@ -299,7 +340,7 @@ public class ConsoleMain {
                         ibuf0 = bk.lookInt();
                         ibuf1 = bk.lookInt();
                         if (para0 == 3) {
-                            syncData.systemStatus0 &= 0x07cc3cc0;
+                            syncData.systemStatus0 &= 0x07cc3cc0 ^ 0xffffffff;
                             ibuf0 &= 0x07cc3cc0;
                             syncData.systemStatus0 |= ibuf0;
                             syncData.systemStatus1 &= 0x00000000;
@@ -307,7 +348,7 @@ public class ConsoleMain {
                             syncData.systemStatus1 |= ibuf1;
                         }
                         if (para0 == 4) {
-                            syncData.systemStatus0 &= 0xf803c300;
+                            syncData.systemStatus0 &= 0xf803c300 ^ 0xffffffff;;
                             ibuf0 &= 0xf803c300;
                             syncData.systemStatus0 |= ibuf0;
                             syncData.systemStatus1 &= 0x00000000;
@@ -362,6 +403,7 @@ public class ConsoleMain {
                 }
                 //===============================================================
                 String preText;
+                String preText1;
 
                 try {
                     if (cmd == 0x1000) {//tick
@@ -371,18 +413,26 @@ public class ConsoleMain {
                         uart0.txCmd = cmd;
                         uart0.txPara0 = para0;  //fpgaId
                         uart0.txPara1 = para1;  //serialCnt
-                        uart0.txPara2 = 0x0000;
-                        uart0.txPara3 = 0x0000;
+                        uart0.txPara2 = easyCommand; //easy command 
+                        uart0.txPara3 = easyParas; //eaay command paras
                         uart0.txBufferLen = 0;
+                        //================================================
+                        if(easyCommand !=0){
+                            easyCommand=0;
+                        }
+                        
                         int systemFlag0 = 0;
                         int systemFlag1 = 0;
                         preText = "";
+                        preText1 = "";
                         if (para0 == 3 || para0 == 4) {//fpgaId
                             if (para0 == 3) {
                                 preText = "ctr1";
+                                preText1="sub1";
                             }
                             if (para0 == 4) {
                                 preText = "ctr2";
+                                preText1="sub2";
                             }
                             //======
                             ibuf = (int) GB.paraSetMap.get("emulate");
@@ -486,6 +536,22 @@ public class ConsoleMain {
                                 sspaModuleExistA[(int) (i / 8)] |= 1 << (i % 8);
                             }
                             //=====================================
+                            int preTrigTime = (int) GB.paraSetMap.get("preTrigTime");
+                            int preRfOutTime = (int) GB.paraSetMap.get("preRfOutTime");
+                            int afterTrigTime = (int) GB.paraSetMap.get("preRfOutTime");
+                            //=====================================
+                            int commTestPacks = (int) GB.paraSetMap.get("commTestPacks");
+                            int vgTimeDelay = (int) GB.paraSetMap.get("vgTimeDelay");
+                            int chTimeFineTune = (int) GB.paraSetMap.get(preText1+"ChTimeFineTune");
+                            int chFiberDelay = (int) GB.paraSetMap.get(preText1+"ChFiberDelay");
+                            int chRfDelay = (int) GB.paraSetMap.get(preText1+"ChRfDelay");
+                            int sub1ChRfTxCh = (int) GB.paraSetMap.get("sub1"+"ChRfTxCh");
+                            int sub2ChRfTxCh = (int) GB.paraSetMap.get("sub2"+"ChRfTxCh");
+                            int sub1ChRfRxCh = (int) GB.paraSetMap.get("sub1"+"ChRfRxCh");
+                            int sub2ChRfRxCh = (int) GB.paraSetMap.get("sub2"+"ChRfRxCh");
+                            
+                            
+                            //=====================================
                             int pulseGenCh = (int) GB.paraSetMap.get("localPulseGenCh");//pulseGenCh   
                             if (uart0.txAltPackCnt >= 32) {
                                 uart0.txAltPackCnt = 0;
@@ -506,9 +572,9 @@ public class ConsoleMain {
                             int pulseWidth = Lib.str2int(strA[1], 10);//16 bit
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
                             int trigTimes = Lib.str2int(strA[1], 1);//8 bit
-                            inx = 0;
                             //<<debug
                             //===============================
+                            /*
                             systemFlag0 = 0x12345678;
                             systemFlag1 = 0x12345678;
                             sspaPowerV32OnDly = 0x56;
@@ -528,12 +594,14 @@ public class ConsoleMain {
                             sspaModuleExistA[4] = (byte) 0x89;
 
                             pulseGenCh = 255;
+                            
                             dutyReg = uart0.txAltPackCnt;
                             pulseWidth = uart0.txAltPackCnt * 256 + 1;
                             freq = uart0.txAltPackCnt;
                             trigTimes = uart0.txAltPackCnt;
+                            */
                             //============================================
-                            ByteLoad lb=new ByteLoad(uart0.txBuffer);
+                            ByteLoad lb = new ByteLoad(uart0.txBuffer);
                             lb.wIntInt(systemFlag0);
                             lb.wIntInt(systemFlag1);
                             lb.wByteInt(sspaPowerV32OnDly);
@@ -547,10 +615,25 @@ public class ConsoleMain {
                                 lb.wByteInt(sspaModuleExistA[i]);
                             }
                             //=========================================
+                            lb.wByteInt(preTrigTime);
+                            lb.wByteInt(preRfOutTime);
+                            lb.wByteInt(afterTrigTime);
+                            //=========================================
+                            lb.wShortInt(commTestPacks);
+                            lb.wShortInt(vgTimeDelay);
+                            lb.wShortInt(chTimeFineTune);
+                            lb.wShortInt(chFiberDelay);
+                            lb.wShortInt(chRfDelay);
+                            lb.wByteInt(sub1ChRfTxCh);
+                            lb.wByteInt(sub2ChRfTxCh);
+                            lb.wByteInt(sub1ChRfRxCh);
+                            lb.wByteInt(sub2ChRfRxCh);
+                            //=========================================
                             lb.wByteInt(pulseGenCh);
                             lb.wByteInt(0xab);
-                            if(uart0.txAltPackCnt>=32)
-                                uart0.txAltPackCnt=0;
+                            if (uart0.txAltPackCnt >= 32) {
+                                uart0.txAltPackCnt = 0;
+                            }
                             lb.wByteInt(uart0.txAltPackCnt);
                             uart0.txAltPackCnt++;
                             lb.wShortInt(dutyReg);
@@ -796,6 +879,13 @@ class ConsoleMainTm1 extends TimerTask {
     @Override
     public void run() {
         try {
+            //===============================
+            cla.easyCommandTime++;
+            if(cla.easyCommandTime==50){
+                cla.easyCommand=0;
+            }
+            
+            //===============================
             Path file = Paths.get(GB.paraSetPath);
             BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
             String nowParaSetTime = attr.lastModifiedTime().toString();
@@ -1002,12 +1092,13 @@ class SyncData {
     short[][] sspaPowerV32tAA = new short[2][36];
     //=============================================
     /*
-     0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 7:RF輸出, 8:溫度
+     0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 
      */
     byte[][] sspaModuleStatusAA = new byte[2][36];
     short[][] sspaModuleRfOutAA = new short[2][36];
     short[][] sspaModuleTemprAA = new short[2][36];
     //=============================================
+    
     byte[][] gpaDataAA = new byte[3][16];
     short[] adjTimeOf1588A = new short[2];
     short[] commPackageCntA = new short[2];
@@ -1045,6 +1136,7 @@ class ByteLook {
         ibuf += (bta[inx++] & 255) * 256;
         return (short) ibuf;
     }
+
     int lookShortInt() {
         int ibuf = (bta[inx++]) & 255;
         ibuf += (bta[inx++] & 255) * 256;
@@ -1061,8 +1153,6 @@ class ByteLook {
 
 }
 
-
-
 class ByteLoad {
 
     byte[] bta;
@@ -1073,23 +1163,23 @@ class ByteLoad {
     }
 
     void wByteByte(byte data) {
-        bta[inx++] =data;
+        bta[inx++] = data;
     }
-    void wByteInt(int data) {
-        bta[inx++] =(byte)(data & 255);
-    }
-    void wShortInt(int data) {
-        bta[inx++] =(byte)(data & 255);
-        bta[inx++] =(byte)((data>>8) & 255);
-    }
-    void wIntInt(int data) {
-        bta[inx++] =(byte)(data & 255);
-        bta[inx++] =(byte)((data>>8) & 255);
-        bta[inx++] =(byte)((data>>16) & 255);
-        bta[inx++] =(byte)((data>>24) & 255);
-    }
-    
-    
 
+    void wByteInt(int data) {
+        bta[inx++] = (byte) (data & 255);
+    }
+
+    void wShortInt(int data) {
+        bta[inx++] = (byte) (data & 255);
+        bta[inx++] = (byte) ((data >> 8) & 255);
+    }
+
+    void wIntInt(int data) {
+        bta[inx++] = (byte) (data & 255);
+        bta[inx++] = (byte) ((data >> 8) & 255);
+        bta[inx++] = (byte) ((data >> 16) & 255);
+        bta[inx++] = (byte) ((data >> 24) & 255);
+    }
 
 }

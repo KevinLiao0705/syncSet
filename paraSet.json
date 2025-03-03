@@ -32,7 +32,7 @@
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 4,
+    "uart0Port": 3,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
@@ -189,7 +189,7 @@
         "title": "副控1姿態設定"
     },
     "dsc~line21": "===================",
-    "ctr1Remote": 1,
+    "ctr1Remote": 0,
     "dsc~ctr1Remote": {
         "getType": "buttonRadio",
         "title": "中控1 遠端遙控",
@@ -207,7 +207,7 @@
             "本機脈波"
         ]
     },
-    "ctr1BatShort": 1,
+    "ctr1BatShort": 0,
     "dsc~ctr1BatShort": {
         "getType": "buttonRadio",
         "title": "中控1 戰備短路",
@@ -216,7 +216,7 @@
             "開啟"
         ]
     },
-    "ctr1TxLoad": 1,
+    "ctr1TxLoad": 0,
     "dsc~ctr1TxLoad": {
         "getType": "buttonRadio",
         "title": "中控1 輸出裝置",
@@ -778,7 +778,8 @@
         "getType": "nature",
         "title": "VG時間延時",
         "unitWidth": 50,
-        "unit": "5ns"
+        "max": 1000,
+        "unit": "0.1us"
     },
     "sub1ChTimeFineTune": 10,
     "dsc~sub1ChTimeFineTune": {
@@ -786,8 +787,8 @@
         "unit": "5ns",
         "unitWidth": 50,
         "getType": "int",
-        "min": 1,
-        "max": 99
+        "min": -999,
+        "max": 999
     },
     "sub2ChTimeFineTune": 10,
     "dsc~sub2ChTimeFineTune": {
@@ -795,8 +796,8 @@
         "unit": "5ns",
         "unitWidth": 50,
         "getType": "int",
-        "min": -2000,
-        "max": 2000
+        "min": -999,
+        "max": 999
     },
     "sub1ChSyncType": 1,
     "dsc~sub1ChSyncType": {
@@ -839,14 +840,14 @@
         "title": "副控1通道光纖固定延時",
         "unit": "5ns",
         "unitWidth": 50,
-        "getType": "int"
+        "getType": "nature"
     },
     "sub2ChFiberDelay": 0,
     "dsc~sub2ChFiberDelay": {
         "title": "副控2通道光纖固定延時",
         "unit": "5ns",
         "unitWidth": 50,
-        "getType": "int"
+        "getType": "nature"
     },
     "sub1ChRfDelay": 5,
     "dsc~sub1ChRfDelay": {
@@ -860,7 +861,7 @@
         "title": "副控2通道RF固定延時",
         "unit": "5ns",
         "unitWidth": 50,
-        "getType": "int"
+        "getType": "nature"
     },
     "sub1ChRfTxCh": 0,
     "dsc~sub1ChRfTxCh": {
@@ -1000,7 +1001,7 @@
         "unitWidth": 50,
         "title": "雷達掃描停止角度"
     },
-    "radarScanRpm": "30",
+    "radarScanRpm": 30,
     "dsc~radarScanRpm": {
         "getType": "float",
         "min": 1,
@@ -1008,12 +1009,44 @@
         "unit": "轉",
         "title": "雷達掃描RPM"
     },
-    "radarFadeTime": "3",
+    "radarFadeTime": 3,
     "dsc~radarFadeTime": {
         "getType": "nature",
         "min": 1,
         "max": 99,
         "title": "雷達暫態時間"
     },
+    "dsc~line6": "===============================================================================",
+    "preTrigTime": 20,
+    "dsc~preTrigTime": {
+        "getType": "nature",
+        "unit":"0.1us",
+        "max": 255,
+        "title": "pre wg trig time"
+    },
+
+    "preRfOutTime": 10,
+    "dsc~preRfOutTime": {
+        "getType": "nature",
+        "unit":"0.1us",
+        "max": 255,
+        "title": "pre rfout time"
+    },
+
+
+    "afterRfOutTime": 10,
+    "dsc~afterRfOutTime": {
+        "getType": "nature",
+        "unit":"0.1us",
+        "max": 255,
+        "title": "after rf out time"
+    },
+
+
+
     "dsc~end": 0
+
+
+
+
 }
