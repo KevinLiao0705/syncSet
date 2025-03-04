@@ -33,9 +33,10 @@ public class ConsoleMain {
     Uart uart0 = new Uart();
     SyncData syncData = new SyncData();
     int appId = 0;
-    int easyCommand=0;
-    int easyParas=0;
-    int easyCommandTime=0;
+    int easyCommand = 0;
+    int easyParas = 0;
+    int easyCommandTime = 0;
+
     //===========================
     //dataToFpga
     /*
@@ -67,8 +68,13 @@ public class ConsoleMain {
                 scla.transSyncData(outJson);
                 return outJson;
             }
-            Object obj = mesJson.get("paras");
-            JSONArray paras=null;
+            Object obj = null;
+            try {
+                obj = mesJson.get("paras");
+            } catch (Exception ex) {
+
+            }
+            JSONArray paras = null;
             if (obj != null) {
                 paras = (JSONArray) obj;
             }
@@ -83,49 +89,49 @@ public class ConsoleMain {
             if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 1) {
                 }
-                scla.setEasyCommand(0x2000,paras);
+                scla.setEasyCommand(0x2000, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals(preText + "SspaPowerOff")) {
                 if (GB.emulate == 1) {
                 }
-                scla.setEasyCommand(0x2001,paras);
+                scla.setEasyCommand(0x2001, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals(preText + "SspaModuleOn")) {
                 if (GB.emulate == 1) {
                 }
-                scla.setEasyCommand(0x2002,paras);
+                scla.setEasyCommand(0x2002, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals(preText + "SspaModuleOff")) {
                 if (GB.emulate == 1) {
                 }
-                scla.setEasyCommand(0x2003,paras);
+                scla.setEasyCommand(0x2003, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText+"LocalPulseOn")) {
-                scla.setEasyCommand(0x2004,null);
+            if (act.equals(preText + "LocalPulseOn")) {
+                scla.setEasyCommand(0x2004, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText+"LocalPulseOff")) {
-                scla.setEasyCommand(0x2005,null);
+            if (act.equals(preText + "LocalPulseOff")) {
+                scla.setEasyCommand(0x2005, null);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText+"EmergencyOn")) {
+            if (act.equals(preText + "EmergencyOn")) {
                 outJson.put("status", "ok");
-                scla.setEasyCommand(0x2006,null);
+                scla.setEasyCommand(0x2006, null);
                 return outJson;
             }
-            if (act.equals(preText+"EmergencyOff")) {
+            if (act.equals(preText + "EmergencyOff")) {
                 outJson.put("status", "ok");
-                scla.setEasyCommand(0x2007,null);
+                scla.setEasyCommand(0x2007, null);
                 return outJson;
             }
 
@@ -136,25 +142,24 @@ public class ConsoleMain {
 
     }
 
-    public void setEasyCommand(int cmd,JSONArray paras){
-        
-        if(paras==null){
-            easyParas=0;
-            easyCommand=cmd;
-            easyCommandTime=0;
-        }
-        else{
-            try{
-                easyParas=(int)paras.get(0);        
-                easyCommand =cmd;
-                easyCommandTime=0;
-            }
-            catch(Exception ex){
+    public void setEasyCommand(int cmd, JSONArray paras) {
+
+        if (paras == null) {
+            easyParas = 0;
+            easyCommand = cmd;
+            easyCommandTime = 0;
+        } else {
+            try {
+                easyParas = (int) paras.get(0);
+                easyCommand = cmd;
+                easyCommandTime = 0;
+            } catch (Exception ex) {
                 return;
             }
         }
-        
-    } 
+
+    }
+
     public void transSyncData(JSONObject outJson) {
         try {
             if (appId == 3 || appId == 4) {
@@ -417,10 +422,10 @@ public class ConsoleMain {
                         uart0.txPara3 = easyParas; //eaay command paras
                         uart0.txBufferLen = 0;
                         //================================================
-                        if(easyCommand !=0){
-                            easyCommand=0;
+                        if (easyCommand != 0) {
+                            easyCommand = 0;
                         }
-                        
+
                         int systemFlag0 = 0;
                         int systemFlag1 = 0;
                         preText = "";
@@ -428,11 +433,11 @@ public class ConsoleMain {
                         if (para0 == 3 || para0 == 4) {//fpgaId
                             if (para0 == 3) {
                                 preText = "ctr1";
-                                preText1="sub1";
+                                preText1 = "sub1";
                             }
                             if (para0 == 4) {
                                 preText = "ctr2";
-                                preText1="sub2";
+                                preText1 = "sub2";
                             }
                             //======
                             ibuf = (int) GB.paraSetMap.get("emulate");
@@ -511,13 +516,11 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("mastToSub2SpeechEnable");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 26;
-                            
+
                             ibuf = (int) GB.paraSetMap.get("wgProtectFlag");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 27;
-                            
-                            
-                            
+
                             //=============================================
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
                             int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
@@ -549,15 +552,14 @@ public class ConsoleMain {
                             //=====================================
                             int commTestPacks = (int) GB.paraSetMap.get("commTestPacks");
                             int vgTimeDelay = (int) GB.paraSetMap.get("vgTimeDelay");
-                            int chTimeFineTune = (int) GB.paraSetMap.get(preText1+"ChTimeFineTune");
-                            int chFiberDelay = (int) GB.paraSetMap.get(preText1+"ChFiberDelay");
-                            int chRfDelay = (int) GB.paraSetMap.get(preText1+"ChRfDelay");
-                            int sub1ChRfTxCh = (int) GB.paraSetMap.get("sub1"+"ChRfTxCh");
-                            int sub2ChRfTxCh = (int) GB.paraSetMap.get("sub2"+"ChRfTxCh");
-                            int sub1ChRfRxCh = (int) GB.paraSetMap.get("sub1"+"ChRfRxCh");
-                            int sub2ChRfRxCh = (int) GB.paraSetMap.get("sub2"+"ChRfRxCh");
-                            
-                            
+                            int chTimeFineTune = (int) GB.paraSetMap.get(preText1 + "ChTimeFineTune");
+                            int chFiberDelay = (int) GB.paraSetMap.get(preText1 + "ChFiberDelay");
+                            int chRfDelay = (int) GB.paraSetMap.get(preText1 + "ChRfDelay");
+                            int sub1ChRfTxCh = (int) GB.paraSetMap.get("sub1" + "ChRfTxCh");
+                            int sub2ChRfTxCh = (int) GB.paraSetMap.get("sub2" + "ChRfTxCh");
+                            int sub1ChRfRxCh = (int) GB.paraSetMap.get("sub1" + "ChRfRxCh");
+                            int sub2ChRfRxCh = (int) GB.paraSetMap.get("sub2" + "ChRfRxCh");
+
                             //=====================================
                             int pulseGenCh = (int) GB.paraSetMap.get("localPulseGenCh");//pulseGenCh   
                             if (uart0.txAltPackCnt >= 32) {
@@ -606,7 +608,7 @@ public class ConsoleMain {
                             pulseWidth = uart0.txAltPackCnt * 256 + 1;
                             freq = uart0.txAltPackCnt;
                             trigTimes = uart0.txAltPackCnt;
-                            */
+                             */
                             //============================================
                             ByteLoad lb = new ByteLoad(uart0.txBuffer);
                             lb.wIntInt(systemFlag0);
@@ -888,10 +890,10 @@ class ConsoleMainTm1 extends TimerTask {
         try {
             //===============================
             cla.easyCommandTime++;
-            if(cla.easyCommandTime==50){
-                cla.easyCommand=0;
+            if (cla.easyCommandTime == 50) {
+                cla.easyCommand = 0;
             }
-            
+
             //===============================
             Path file = Paths.get(GB.paraSetPath);
             BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
@@ -1105,7 +1107,7 @@ class SyncData {
     short[][] sspaModuleRfOutAA = new short[2][36];
     short[][] sspaModuleTemprAA = new short[2][36];
     //=============================================
-    
+
     byte[][] gpaDataAA = new byte[3][16];
     short[] adjTimeOf1588A = new short[2];
     short[] commPackageCntA = new short[2];
