@@ -127,10 +127,10 @@ public class KvWebSocketServer extends WebSocketServer {
         URI uri;
         try {
             uri = new URI("ws://127.0.0.1:" + GB.webSocketPort);
-            KvWebSocketClient client = new KvWebSocketClient(uri);
-            client.connectBlocking();
-            client.send("Web Socket Test");
-            client.close();
+            //KvWebSocketClient client = new KvWebSocketClient(uri);
+            //client.connectBlocking();
+            //client.send("Web Socket Test");
+            //client.close();
         } catch (Exception ex) {
             Logger.getLogger(KvWebSocketServer.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -59,6 +59,8 @@ public class Base3 {
         x = new Action(this);
         
     //==========================================================
+    
+        
         String fileName = GB.logSetPath+"/log4j.properties";
         String wstr="";
         wstr+="\nlog4j.rootLogger=DEBUG, consoleout, fileout";

@@ -365,27 +365,40 @@ public class ConsoleMain {
                         for (int i = 0; i < 6; i++) {
                             syncData.meterStatusAA[para0 - 3][i] = bk.lookShort();
                         }
-                        ibuf = bk.lookByteInt();
-                        if (ibuf != 0xab) {
-                            return null;
-                        }
-                        ibuf = bk.lookByteInt();
-                        if (ibuf >= 36) {
-                            return null;
-                        }
-                        syncData.sspaPowerStatusAA[para0 - 3][ibuf] = bk.lookByte();
-                        syncData.sspaPowerV50vAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaPowerV50iAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaPowerV50tAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaPowerV32vAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaPowerV32iAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaPowerV32tAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaModuleStatusAA[para0 - 3][ibuf] = bk.lookByte();
-                        syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
-                        syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
-                        int chkEnd = bk.lookByteInt();
-                        if (chkEnd != 0xcd) {
-                            return null;
+                        for (;;) {
+                            ibuf = bk.lookByteInt();
+                            if (ibuf == 0xcd) {
+                                break;
+                            }
+                            if (ibuf == 0xab) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 36) {
+                                    return null;
+                                }
+                                syncData.sspaPowerStatusAA[para0 - 3][ibuf] = bk.lookByte();
+                                syncData.sspaPowerV50vAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerV50iAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerV50tAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32vAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32iAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32tAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaModuleStatusAA[para0 - 3][ibuf] = bk.lookByte();
+                                syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
+                                continue;
+                            }
+                            if (ibuf == 0xac) {
+                                int[] ibufA=new int[16];
+                                for(int i=0;i<16;i++){
+                                    ibufA[i]=bk.lookInt();
+                                }        
+                                for(int i=0;i<8;i++){
+                                    
+                                    
+                                }
+                                
+                                
+                            }
                         }
 
                     }
@@ -1113,6 +1126,9 @@ class SyncData {
     short[] commPackageCntA = new short[2];
     short[] commOkRateA = new short[2];
     short[] rfRxPowerA = new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
+    
+    int[] pulseWaveA=new int[256];
+    int pulseWaveInx=0;
 
     SyncData() {
     }

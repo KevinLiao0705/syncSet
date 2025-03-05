@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 
 public class GB {
 
-    //0: window ConsoleMain
-    static int prgMode = 0;
+    //0: window ConsoleMain 1:linux
+    static int prgMode = 1;
     static String version = "1.2";
-    static int emulate=1;
+    static int emulate = 1;
 
     static int ctrUiPort = 1237;
     static int slotUiPort = 1236;
@@ -21,12 +21,13 @@ public class GB {
     public static String webRootPath = "./";
     public static final int MAX_PARA_LEN = 8192;
     static int lang = 1;//0:english 1:chinese 
-    public static String logSetPath=".";
-    public static String logPath="./log";
-    public static String appName="pbxSet";
-    public static int webSocketPort=8899;
-    public static String paraSetPath="e:/kevin/myCode/syncSet/paraSet.json";
-    
+    public static String logSetPath = ".";
+    public static String logPath = "./log";
+    public static String appName = "syncSet";
+    public static int webSocketPort = 8899;
+    public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
+    //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
+
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
     static int os_inx = 0;     //0:windows 1://linux    
@@ -156,9 +157,6 @@ public class GB {
     public static String ntp_adj_time = "160";
 
     //0: win.ui, 1: win.sip, 2: pi.ui, 3: pi.sip  
-    
-
-
     static void initGB() {
         if (GB.prgMode == 0) {
             GB.process_inx = 0; //0:consoleMain, 
@@ -166,7 +164,10 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "./interfaces";
-            GB.asteriskConfPath = "./asteriskConfPath";
+            GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
+            GB.logSetPath = ".";
+            GB.logPath = "./log";
+
         }
         if (GB.prgMode == 1) {
             GB.process_inx = 0; //0:consoleMain
@@ -174,7 +175,10 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "/etc/network/interfaces";
-            GB.asteriskConfPath = "./asteriskConfPath";
+            GB.paraSetPath = "/home/admintx/syncSetExe/paraSet.json";
+            GB.logSetPath = "/home/admintx/syncSetExe";
+            GB.logPath = "/home/admintx/syncSetExe/log";
+
         }
         //=============================================================
     }
