@@ -36,6 +36,7 @@ public class ConsoleMain {
     int easyCommand = 0;
     int easyParas = 0;
     int easyCommandTime = 0;
+    int testUartTime = 0;
 
     //===========================
     //dataToFpga
@@ -309,6 +310,11 @@ public class ConsoleMain {
             return null;
         }
         uart0.portName = "COM" + (int) GB.paraSetMap.get("uart0Port");
+        if(GB.prgMode ==1){
+            uart0.portName = "ttyUSB0";
+        }
+        System.out.println(uart0.portName);
+        
         uart0.boudrate = (int) GB.paraSetMap.get("uart0Boudrate");
         uart0.parity = "None";
         uart0.stopBit = 1;
@@ -384,7 +390,7 @@ public class ConsoleMain {
                                 syncData.sspaPowerV32tAA[para0 - 3][ibuf] = bk.lookShort();
                                 syncData.sspaModuleStatusAA[para0 - 3][ibuf] = bk.lookByte();
                                 syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaModuleTemprAA[para0 - 3][ibuf] = bk.lookShort();
                                 continue;
                             }
                             if (ibuf == 0xac) {
@@ -536,7 +542,7 @@ public class ConsoleMain {
 
                             //=============================================
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
-                            int sspaPowerV32OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
+                            int sspaPowerV50OffDly = (int) GB.paraSetMap.get(preText + "SspaPowerV50OffDly");//32V 延遲關閉時間 unit 0.1s 8bit
                             int attenuator = (int) GB.paraSetMap.get(preText + "Attenuator");//衰減器   
                             //=============================================
                             JSONArray jarr = (JSONArray) GB.paraSetMap.get(preText + "SspaPowerExistA");
@@ -591,8 +597,8 @@ public class ConsoleMain {
                             ibuf &= 1;
                             dutyReg += ibuf << 12;
                             //=====================================
-                            int pulseWidth = Lib.str2int(strA[1], 10);//16 bit
-                            int freq = Math.round((Lib.str2float(strA[3], 3) * 10));//8bit
+                            int pulseWidth = Math.round((Lib.str2float(strA[1], 1) * 10));//16bit
+                            int freq = Math.round((Lib.str2float(strA[3], 3) * 100))-290;//8bit
                             int trigTimes = Lib.str2int(strA[4], 1);//8 bit
                             //<<debug
                             //===============================
@@ -600,7 +606,7 @@ public class ConsoleMain {
                             systemFlag0 = 0x12345678;
                             systemFlag1 = 0x12345678;
                             sspaPowerV32OnDly = 0x56;
-                            sspaPowerV32OffDly = 0x78;
+                            sspaPowerV50OffDly = 0x78;
                             attenuator = 0x9a;
 
                             sspaPowerExistA[0] = (byte) 0x01;
@@ -627,7 +633,7 @@ public class ConsoleMain {
                             lb.wIntInt(systemFlag0);
                             lb.wIntInt(systemFlag1);
                             lb.wByteInt(sspaPowerV32OnDly);
-                            lb.wByteInt(sspaPowerV32OffDly);
+                            lb.wByteInt(sspaPowerV50OffDly);
                             lb.wByteInt(attenuator);
                             //=========================================
                             for (int i = 0; i < 5; i++) {
@@ -905,6 +911,15 @@ class ConsoleMainTm1 extends TimerTask {
             cla.easyCommandTime++;
             if (cla.easyCommandTime == 50) {
                 cla.easyCommand = 0;
+                
+            }
+            cla.testUartTime++;
+            if(cla.testUartTime>=5){
+                cla.testUartTime=0;
+                //cla.uart0.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
+                //System.out.println("txTest");
+                
+                
             }
 
             //===============================

@@ -119,10 +119,11 @@ public class KvWebSocketServer extends WebSocketServer {
     @Override
     public void onStart() {
         System.out.println("Server: websocket start ...");
+        System.out.println(GB.webSocketAddr+":"+GB.webSocketPort);
     }
 
     public static void serverStart() {
-        KvWebSocketServer server = new KvWebSocketServer("127.0.0.1", GB.webSocketPort);
+        KvWebSocketServer server = new KvWebSocketServer(GB.webSocketAddr, GB.webSocketPort);
         server.start();
         URI uri;
         try {

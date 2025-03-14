@@ -1,0 +1,1051 @@
+{
+    "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA",
+    "version": "1.0",
+    "dsc~version": {
+        "title": "版本",
+        "readOnly_f": 1,
+        "getType": "floatStr"
+    },
+    "appId": 3,
+    "dsc~appId": {
+        "title": "軟體名稱",
+        "enum": [
+            "主控 同步控制器",
+            "副控1 同步控制器",
+            "副控2 同步控制器",
+            "副控1 中央控制器",
+            "副控2 中央控制器"
+        ],
+        "getType": "incEnum"
+    },
+    "emulate": 0,
+    "dsc~emulate": {
+        "title": "系統模擬",
+        "enum": [
+            "關閉",
+            "開啟"
+        ],
+        "getType": "buttonRadio"
+    },
+    "paraSetPassword": "1234",
+    "dsc~paraSetPassword": {
+        "title": "參數設定密碼",
+        "getType": "natureStr"
+    },
+    "uart0Port": 4,
+    "dsc~uart0Port": {
+        "title": "串列通道1位址",
+        "getType": "nature",
+        "min": 1,
+        "max": 99
+    },
+    "uart0Boudrate": 460800,
+    "dsc~uart0Boudrate": {
+        "title": "串列通道1速率",
+        "getType": "intEnum",
+        "enum": [
+            4000000,
+            2000000,
+            921600,
+            460800,
+            115200,
+            57600,
+            38400,
+            19200,
+            9600
+        ]
+    },
+    "locationFromSource": 0,
+    "dsc~locationFromSource": {
+        "getType": "buttonRadio",
+        "title": "雷達位置來源",
+        "enum": [
+            "手動輸入",
+            "GPS天線"
+        ]
+    },
+    "dsc~line1": "===============================================================================",
+    "mastPulseSource": 1,
+    "dsc~mastPulseSource": {
+        "getType": "buttonRadio",
+        "title": "主控脈波來源",
+        "enum": [
+            "SP同步",
+            "本機脈波"
+        ]
+    },
+    "mastToSub1CommType": 2,
+    "dsc~mastToSub1CommType": {
+        "getType": "buttonRadio",
+        "title": "主控與副控1連線方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "mastToSub2CommType": 2,
+    "dsc~mastToSub2CommType": {
+        "getType": "buttonRadio",
+        "title": "主控與副控2連線方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "mastToSub1SpeechEnable": 1,
+    "dsc~mastToSub1SpeechEnable": {
+        "getType": "buttonRadio",
+        "title": "主控與副控1語音通道",
+        "enum": [
+            "開啟",
+            "關閉"
+        ]
+    },
+    "mastToSub2SpeechEnable": 1,
+    "dsc~mastToSub2SpeechEnable": {
+        "getType": "buttonRadio",
+        "title": "主控與副控2語音通道",
+        "enum": [
+            "開啟",
+            "關閉"
+        ]
+    },
+    "mastLatitude": [
+        25,
+        3,
+        40,
+        94
+    ],
+    "dsc~mastLatitude": {
+        "getType": "natureA",
+        "title": "主控緯度設定"
+    },
+    "mastLongitude": [
+        121,
+        27,
+        2,
+        97
+    ],
+    "dsc~mastLongitude": {
+        "getType": "natureA",
+        "title": "主控經度設定"
+    },
+    "mastAttitude": [
+        478,
+        36
+    ],
+    "dsc~mastAttitude": {
+        "getType": "natureA",
+        "title": "主控姿態設定"
+    },
+    "dsc~line2": "===============================================================================",
+    "sub1PulseSource": 0,
+    "dsc~sub1PulseSource": {
+        "getType": "buttonRadio",
+        "title": "副控1脈波來源",
+        "enum": [
+            "同步脈波",
+            "本機脈波"
+        ]
+    },
+    "sub1CommType": 2,
+    "dsc~sub1CommType": {
+        "getType": "buttonRadio",
+        "title": "副控1連線方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "sub1Latitude": [
+        25,
+        3,
+        40,
+        94
+    ],
+    "dsc~sub1Latitude": {
+        "getType": "natureA",
+        "title": "副控1緯度設定"
+    },
+    "sub1Longitude": [
+        121,
+        27,
+        3,
+        97
+    ],
+    "dsc~sub1Longitude": {
+        "getType": "natureA",
+        "title": "副控1經度設定"
+    },
+    "sub1Attitude": [
+        478,
+        5
+    ],
+    "dsc~sub1Attitude": {
+        "getType": "natureA",
+        "title": "副控1姿態設定"
+    },
+    "dsc~line21": "===================",
+    "ctr1Remote": 0,
+    "dsc~ctr1Remote": {
+        "getType": "buttonRadio",
+        "title": "中控1 遠端遙控",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "ctr1PulseSource": 0,
+    "dsc~ctr1PulseSource": {
+        "getType": "buttonRadio",
+        "title": "中控1 脈波來源",
+        "enum": [
+            "同步脈波",
+            "本機脈波"
+        ]
+    },
+    "ctr1BatShort": 0,
+    "dsc~ctr1BatShort": {
+        "getType": "buttonRadio",
+        "title": "中控1 戰備短路",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "ctr1TxLoad": 0,
+    "dsc~ctr1TxLoad": {
+        "getType": "buttonRadio",
+        "title": "中控1 輸出裝置",
+        "enum": [
+            "假負載",
+            "天線"
+        ]
+    },
+    "dsc~line22": "===================",
+    "ctr1SspaPowerV50vOffs": 0,
+    "dsc~ctr1SspaPowerV50vOffs": {
+        "getType": "nature",
+        "title": "50V 電壓偏移"
+    },
+    "ctr1SspaPowerV50vGain": 0.1,
+    "dsc~ctr1SspaPowerV50vGain": {
+        "getType": "float",
+        "title": "50V 電壓放大"
+    },
+    "ctr1SspaPowerV50vZero": 1,
+    "dsc~ctr1SspaPowerV50vZero": {
+        "getType": "nature",
+        "title": "50V 電壓零點"
+    },
+    "ctr1SspaPowerV50vLimD": 45,
+    "dsc~ctr1SspaPowerV50vLimD": {
+        "getType": "nature",
+        "title": "50V 電壓下限"
+    },
+    "ctr1SspaPowerV50vLimU": 55,
+    "dsc~ctr1SspaPowerV50vLimU": {
+        "getType": "nature",
+        "title": "50V 電壓上限"
+    },
+    "dsc~line23": "===================",
+    "ctr1SspaPowerV50iOffs": 0,
+    "dsc~ctr1SspaPowerV50iOffs": {
+        "getType": "nature",
+        "title": "50V 電流偏移"
+    },
+    "ctr1SspaPowerV50iGain": 0.1,
+    "dsc~ctr1SspaPowerV50iGain": {
+        "getType": "float",
+        "title": "50V 電流放大"
+    },
+    "ctr1SspaPowerV50iZero": 1,
+    "dsc~ctr1SspaPowerV50iZero": {
+        "getType": "nature",
+        "title": "50V 電流零點"
+    },
+    "ctr1SspaPowerV50iLimD": 0.1,
+    "dsc~ctr1SspaPowerV50iLimD": {
+        "getType": "float",
+        "title": "50V 電流下限"
+    },
+    "ctr1SspaPowerV50iLimU": 20,
+    "dsc~ctr1SspaPowerV50iLimU": {
+        "getType": "nature",
+        "title": "50V 電流上限"
+    },
+    "dsc~line24": "===================",
+    "ctr1SspaPowerV50tOffs": 0,
+    "dsc~ctr1SspaPowerV50tOffs": {
+        "getType": "nature",
+        "title": "50V 溫度偏移"
+    },
+    "ctr1SspaPowerV50tGain": 1,
+    "dsc~ctr1SspaPowerV50tGain": {
+        "getType": "float",
+        "title": "50V 溫度放大"
+    },
+    "ctr1SspaPowerV50tZero": 1,
+    "dsc~ctr1SspaPowerV50tZero": {
+        "getType": "nature",
+        "title": "50V 溫度零點"
+    },
+    "ctr1SspaPowerV50tLimD": 0,
+    "dsc~ctr1SspaPowerV50tLimD": {
+        "getType": "nature",
+        "title": "50V 溫度下限"
+    },
+    "ctr1SspaPowerV50tLimU": 100,
+    "dsc~ctr1SspaPowerV50tLimU": {
+        "getType": "nature",
+        "title": "50V 溫度上限"
+    },
+    "dsc~line25": "===================",
+    "ctr1SspaPowerV32vOffs": 0,
+    "dsc~ctr1SspaPowerV32vOffs": {
+        "getType": "nature",
+        "title": "32V 電壓偏移"
+    },
+    "ctr1SspaPowerV32vGain": 0.1,
+    "dsc~ctr1SspaPowerV32vGain": {
+        "getType": "float",
+        "title": "32V 電壓放大"
+    },
+    "ctr1SspaPowerV32vZero": 1,
+    "dsc~ctr1SspaPowerV32vZero": {
+        "getType": "nature",
+        "title": "32V 電壓零點"
+    },
+    "ctr1SspaPowerV32vLimD": 27,
+    "dsc~ctr1SspaPowerV32vLimD": {
+        "getType": "nature",
+        "title": "32V 電壓下限"
+    },
+    "ctr1SspaPowerV32vLimU": 37,
+    "dsc~ctr1SspaPowerV32vLimU": {
+        "getType": "nature",
+        "title": "32V 電壓上限"
+    },
+    "dsc~line26": "===================",
+    "ctr1SspaPowerV32iOffs": 0,
+    "dsc~ctr1SspaPowerV32iOffs": {
+        "getType": "nature",
+        "title": "32V 電流偏移"
+    },
+    "ctr1SspaPowerV32iGain": 0.1,
+    "dsc~ctr1SspaPowerV32iGain": {
+        "getType": "float",
+        "title": "32V 電流放大"
+    },
+    "ctr1SspaPowerV32iZero": 1,
+    "dsc~ctr1SspaPowerV32iZero": {
+        "getType": "nature",
+        "title": "32V 電流零點"
+    },
+    "ctr1SspaPowerV32iLimD": 0.1,
+    "dsc~ctr1SspaPowerV32iLimD": {
+        "getType": "float",
+        "title": "32V 電流下限"
+    },
+    "ctr1SspaPowerV32iLimU": 20,
+    "dsc~ctr1SspaPowerV32iLimU": {
+        "getType": "nature",
+        "title": "32V 電流上限"
+    },
+    "ctr1SspaPowerAllV32iLimU": 500,
+    "dsc~ctr1SspaPowerAllV32iLimU": {
+        "getType": "nature",
+        "title": "32V 總電流上限"
+    },
+    "dsc~line27": "===================",
+    "ctr1SspaPowerV32tOffs": 0,
+    "dsc~ctr1SspaPowerV32tOffs": {
+        "getType": "nature",
+        "title": "32V 溫度偏移"
+    },
+    "ctr1SspaPowerV32tGain": 1,
+    "dsc~ctr1SspaPowerV32tGain": {
+        "getType": "nature",
+        "title": "32V 溫度放大"
+    },
+    "ctr1SspaPowerV32tZero": 1,
+    "dsc~ctr1SspaPowerV32tZero": {
+        "getType": "nature",
+        "title": "32V 溫度零點"
+    },
+    "ctr1SspaPowerV32tLimD": 0,
+    "dsc~ctr1SspaPowerV32tLimD": {
+        "getType": "nature",
+        "title": "32V 溫度下限"
+    },
+    "ctr1SspaPowerV32tLimU": 100,
+    "dsc~ctr1SspaPowerV32tLimU": {
+        "getType": "nature",
+        "title": "32V 溫度上限"
+    },
+    "dsc~line28": "===================",
+    "ctr1SspaPowerExistA": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    ],
+    "dsc~ctr1SspaPowerExistA": {
+        "getType": "natureA",
+        "title": "電源模組致能"
+    },
+    "ctr1SspaPowerV32OnDly": 10,
+    "dsc~ctr1SspaPowerV32OnDly": {
+        "getType": "nature",
+        "unit": "0.1S",
+        "title": "32V 延遲啟動時間"
+    },
+    "ctr1SspaPowerV50OffDly": 10,
+    "dsc~ctr1SspaPowerV50OffDly": {
+        "getType": "nature",
+        "unit": "0.1S",
+        "title": "50V 延遲關閉時間"
+    },
+    "dsc~line29": "===========================================",
+    "ctr1SspaModuleRfOutOffs": 0,
+    "dsc~ctr1SspaModuleRfOutOffs": {
+        "getType": "nature",
+        "title": "SSPA RF輸出偏移"
+    },
+    "ctr1SspaModuleRfOutGain": 0.1,
+    "dsc~ctr1SspaModuleRfOutGain": {
+        "getType": "float",
+        "title": "SSPA RF輸出放大"
+    },
+    "ctr1SspaModuleRfOutZero": 1,
+    "dsc~ctr1SspaModuleRfOutZero": {
+        "getType": "nature",
+        "title": "SSPA RF輸出零點"
+    },
+    "ctr1SspaModuleRfOutLimD": 30,
+    "dsc~ctr1SspaModuleRfOutLimD": {
+        "getType": "nature",
+        "title": "SSPA RF輸出下限"
+    },
+    "ctr1SspaModuleRfOutLimU": 40,
+    "dsc~ctr1SspaModuleRfOutLimU": {
+        "getType": "nature",
+        "title": "SSPA RF輸出上限"
+    },
+    "dsc~line2a": "===========================================",
+    "ctr1SspaModuleTemprOffs": 0,
+    "dsc~ctr1SspaModuleTemprOffs": {
+        "getType": "nature",
+        "title": "SSPA 溫度偏移"
+    },
+    "ctr1SspaModuleTemprGain": 1,
+    "dsc~ctr1SspaModuleTemprGain": {
+        "getType": "float",
+        "title": "SSPA 溫度放大"
+    },
+    "ctr1SspaModuleTemprZero": 1,
+    "dsc~ctr1SspaModuleTemprZero": {
+        "getType": "nature",
+        "title": "SSPA 溫度零點"
+    },
+    "ctr1SspaModuleTemprLimD": 0,
+    "dsc~ctr1SspaModuleTemprLimD": {
+        "getType": "nature",
+        "title": "SSPA 溫度下限"
+    },
+    "ctr1SspaModuleTemprLimU": 100,
+    "dsc~ctr1SspaModuleTemprLimU": {
+        "getType": "nature",
+        "title": "SSPA 溫度上限"
+    },
+    "dsc~line2b": "===========================================",
+    "ctr1SspaModuleExistA": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    ],
+    "dsc~ctr1SspaModuleExistA": {
+        "getType": "natureA",
+        "title": "SSPA模組致能"
+    },
+    "dsc~line2c": "===========================================",
+    "ctr1InRfpowOffs": 0,
+    "dsc~ctr1InRfpowOffs": {
+        "getType": "int",
+        "title": "RF輸入功率偏移"
+    },
+    "ctr1InRfpowGain": 0.1,
+    "dsc~ctr1InRfpowGain": {
+        "getType": "float",
+        "title": "RF輸入功率放大"
+    },
+    "ctr1InRfpowZero": 1,
+    "dsc~ctr1InRfpowZero": {
+        "getType": "nature",
+        "title": "RF輸入功率零點"
+    },
+    "ctr1InRfpowLimD": 10,
+    "dsc~ctr1InRfpowLimD": {
+        "getType": "int",
+        "title": "RF輸入功率下限"
+    },
+    "ctr1InRfpowLimU": 20,
+    "dsc~ctr1InRfpowLimU": {
+        "getType": "nature",
+        "title": "RF輸入功率上限"
+    },
+    "dsc~line2d": "===========================================",
+    "ctr1PreAmpOutRfpowOffs": 0,
+    "dsc~ctr1PreAmpOutRfpowOffs": {
+        "getType": "int",
+        "title": "前置RF輸出功率偏移"
+    },
+    "ctr1PreAmpOutRfpowGain": 0.1,
+    "dsc~ctr1PreAmpOutRfpowGain": {
+        "getType": "float",
+        "title": "前置RF輸出功率放大"
+    },
+    "ctr1PreAmpOutRfpowZero": 1,
+    "dsc~ctr1PreAmpOutRfpowZero": {
+        "getType": "nature",
+        "title": "前置RF輸出功率零點"
+    },
+    "ctr1PreAmpOutRfpowLimD": 20,
+    "dsc~ctr1PreAmpOutRfpowLimD": {
+        "getType": "int",
+        "title": "前置RF輸出功率下限"
+    },
+    "ctr1PreAmpOutRfpowLimU": 30,
+    "dsc~ctr1PreAmpOutRfpowLimU": {
+        "getType": "nature",
+        "title": "前置RF輸出功率上限"
+    },
+    "dsc~line2f": "===========================================",
+    "ctr1DriverAmpOutRfpowOffs": 0,
+    "dsc~ctr1DriverAmpOutRfpowOffs": {
+        "getType": "int",
+        "title": "驅動RF輸出功率偏移"
+    },
+    "ctr1DriverAmpOutRfpowGain": 0.1,
+    "dsc~ctr1DriverAmpOutRfpowGain": {
+        "getType": "float",
+        "title": "驅動RF輸出功率放大"
+    },
+    "ctr1DriverAmpOutRfpowZero": 1,
+    "dsc~ctr1DriverAmpOutRfpowZero": {
+        "getType": "nature",
+        "title": "驅動RF輸出功率零點"
+    },
+    "ctr1DriverAmpOutRfpowLimD": 30,
+    "dsc~ctr1DriverAmpOutRfpowLimD": {
+        "getType": "int",
+        "title": "驅動RF輸出功率下限"
+    },
+    "ctr1DriverAmpOutRfpowLimU": 40,
+    "dsc~ctr1DriverAmpOutRfpowLimU": {
+        "getType": "nature",
+        "title": "驅動RF輸出功率上限"
+    },
+    "dsc~line2g": "===========================================",
+    "ctr1CwAmpOutRfpowOffs": 0,
+    "dsc~ctr1CwAmpOutRfpowOffs": {
+        "getType": "int",
+        "title": "順向RF輸出功率偏移"
+    },
+    "ctr1CwAmpOutRfpowGain": 0.1,
+    "dsc~ctr1CwAmpOutRfpowGain": {
+        "getType": "float",
+        "title": "順向RF輸出功率放大"
+    },
+    "ctr1CwAmpOutRfpowZero": 1,
+    "dsc~ctr1CwAmpOutRfpowZero": {
+        "getType": "nature",
+        "title": "順向RF輸出功率零點"
+    },
+    "ctr1CwAmpOutRfpowLimD": 40,
+    "dsc~ctr1CwAmpOutRfpowLimD": {
+        "getType": "int",
+        "title": "順向RF輸出功率下限"
+    },
+    "ctr1CwAmpOutRfpowLimU": 50,
+    "dsc~ctr1CwAmpOutRfpowLimU": {
+        "getType": "nature",
+        "title": "順向RF輸出功率上限"
+    },
+    "dsc~line2h": "===========================================",
+    "ctr1CcwAmpOutRfpowOffs": 0,
+    "dsc~ctr1CcwAmpOutRfpowOffs": {
+        "getType": "int",
+        "title": "反向RF輸出功率偏移"
+    },
+    "ctr1CcwAmpOutRfpowGain": 0.1,
+    "dsc~ctr1CcwAmpOutRfpowGain": {
+        "getType": "float",
+        "title": "反向RF輸出功率放大"
+    },
+    "ctr1CcwAmpOutRfpowZero": 1,
+    "dsc~ctr1CcwAmpOutRfpowZero": {
+        "getType": "nature",
+        "title": "反向RF輸出功率零點"
+    },
+    "ctr1CcwAmpOutRfpowLimD": 1,
+    "dsc~ctr1CcwAmpOutRfpowLimD": {
+        "getType": "int",
+        "title": "反向RF輸出功率下限"
+    },
+    "ctr1CcwAmpOutRfpowLimU": 40,
+    "dsc~ctr1CcwAmpOutRfpowLimU": {
+        "getType": "nature",
+        "title": "反向RF輸出功率上限"
+    },
+    "ctr1Attenuator": 0,
+    "dsc~ctr1Attenuator": {
+        "getType": "nature",
+        "max": 63,
+        "title": "衰減器"
+    },
+    "dsc~line3": "===============================================================================",
+    "ctr2Remote": 0,
+    "dsc~ctr2Remote": {
+        "getType": "buttonRadio",
+        "title": "副控2遠端遙控",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "ctr2BatShort": 0,
+    "dsc~ctr2BatShort": {
+        "getType": "buttonRadio",
+        "title": "副控2戰備短路",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "sub2PulseSource": 0,
+    "dsc~sub2PulseSource": {
+        "getType": "buttonRadio",
+        "title": "副控2脈波來源",
+        "enum": [
+            "同步脈波",
+            "本機脈波"
+        ]
+    },
+    "ctr2PulseSource": 0,
+    "dsc~ctr2PulseSource": {
+        "getType": "buttonRadio",
+        "title": "中控2 脈波來源",
+        "enum": [
+            "同步脈波",
+            "本機脈波"
+        ]
+    },
+    "ctr2TxLoad": 0,
+    "dsc~ctr2TxLoad": {
+        "getType": "buttonRadio",
+        "title": " 副控2輸出裝置",
+        "enum": [
+            "假負載",
+            "天線"
+        ]
+    },
+    "sub2CommType": 0,
+    "dsc~sub2CommType": {
+        "getType": "buttonRadio",
+        "title": "副控2連線方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "sub2Latitude": [
+        25,
+        3,
+        35,
+        94
+    ],
+    "dsc~sub2Latitude": {
+        "getType": "natureA",
+        "title": "副控2緯度設定"
+    },
+    "sub2Longitude": [
+        121,
+        27,
+        22,
+        97
+    ],
+    "dsc~sub2Longitude": {
+        "getType": "natureA",
+        "title": "副控2經度設定"
+    },
+    "sub2Attitude": "478,270",
+    "dsc~sub2Attitude": {
+        "getType": "natureAStr",
+        "title": "副控2姿態設定"
+    },
+    "dsc~line4": "===============================================================================",
+    "commTestPacks": 1024,
+    "dsc~commTestPacks": {
+        "getType": "intEnum",
+        "title": "檢測封包數",
+        "enum": [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            256,
+            512,
+            1024,
+            2048
+        ]
+    },
+    "vgTimeDelay": 40,
+    "dsc~vgTimeDelay": {
+        "getType": "nature",
+        "title": "VG時間延時",
+        "unitWidth": 50,
+        "max": 1000,
+        "unit": "0.1us"
+    },
+    "sub1ChTimeFineTune": 10,
+    "dsc~sub1ChTimeFineTune": {
+        "title": "副控1通道時間微調",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "int",
+        "min": -999,
+        "max": 999
+    },
+    "sub2ChTimeFineTune": 10,
+    "dsc~sub2ChTimeFineTune": {
+        "title": "副控2通道時間微調",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "int",
+        "min": -999,
+        "max": 999
+    },
+    "sub1ChSyncType": 1,
+    "dsc~sub1ChSyncType": {
+        "title": "主控與副控1同步模式",
+        "getType": "buttonRadio",
+        "enum": [
+            "固定時間延時",
+            "1588同步追蹤"
+        ]
+    },
+    "sub2ChSyncType": 1,
+    "dsc~sub2ChSyncType": {
+        "title": "主控與副控2同步模式",
+        "getType": "buttonRadio",
+        "enum": [
+            "固定時間延時",
+            "1588同步追蹤"
+        ]
+    },
+    "sub1ChCommSet": 0,
+    "dsc~sub1ChCommSet": {
+        "title": "副控1通道",
+        "getType": "buttonRadio",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "sub2ChCommSet": 1,
+    "dsc~sub2ChCommSet": {
+        "title": "副控2通道",
+        "getType": "buttonRadio",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "sub1ChFiberDelay": 36,
+    "dsc~sub1ChFiberDelay": {
+        "title": "副控1通道光纖固定延時",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "nature"
+    },
+    "sub2ChFiberDelay": 0,
+    "dsc~sub2ChFiberDelay": {
+        "title": "副控2通道光纖固定延時",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "nature"
+    },
+    "sub1ChRfDelay": 5,
+    "dsc~sub1ChRfDelay": {
+        "title": "副控1通道RF固定延時",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "int"
+    },
+    "sub2ChRfDelay": 0,
+    "dsc~sub2ChRfDelay": {
+        "title": "副控2通道RF固定延時",
+        "unit": "5ns",
+        "unitWidth": 50,
+        "getType": "nature"
+    },
+    "sub1ChRfTxCh": 0,
+    "dsc~sub1ChRfTxCh": {
+        "title": "副控1RF發射頻道",
+        "max": 255,
+        "getType": "nature"
+    },
+    "sub2ChRfTxCh": 0,
+    "dsc~sub2ChRfTxCh": {
+        "title": "副控2RF發射頻道",
+        "max": 255,
+        "getType": "nature"
+    },
+    "sub1ChRfRxCh": 0,
+    "dsc~sub1ChRfRxCh": {
+        "title": "副控1RF接收頻道",
+        "max": 255,
+        "getType": "nature"
+    },
+    "sub2ChRfRxCh": 0,
+    "dsc~sub2ChRfRxCh": {
+        "title": "副控2RF接收頻道",
+        "max": 255,
+        "getType": "nature"
+    },
+    "dsc~line5": "===============================================================================",
+    "test": [
+        25,
+        3,
+        40,
+        94,
+        666
+    ],
+    "dsc~test": {
+        "getType": "natureA",
+        "title": "Test"
+    },
+    "localPulseGenCh": 255,
+    "dsc~localPulseGenCh": {
+        "getType": "nature",
+        "title": "本地脈波頻道"
+    },
+    "localPulseGenParas": [
+        "1 60 2.3 3.2 1",
+        "0 30 2.3 3.2 3",
+        "1 50 2.3 3.2 1",
+        "0 30 2.3 3.2 3",
+        "1 40 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3",
+        "1 30 2.3 3.2 3",
+        "0 30 2.3 3.2 3"
+    ],
+    "dsc~localPulseGenParas": {
+        "getType": "floatAStrA",
+        "memo": "enable pulseWidth duty freq  times",
+        "title": "本地脈波參數"
+    },
+    "pulseWidthMin": 10,
+    "dsc~pulseWidthMin": {
+        "getType": "float",
+        "unit": "us",
+        "unitWidth": 50,
+        "title": "脈波寬度最小值"
+    },
+    "pulseWidthMax": 2000,
+    "dsc~pulseWidthMax": {
+        "getType": "float",
+        "unit": "us",
+        "unitWidth": 50,
+        "title": "脈波寬度最大值"
+    },
+    "pulseDutyMin": 1,
+    "dsc~pulseDutyMin": {
+        "getType": "float",
+        "unit": "%",
+        "unitWidth": 50,
+        "title": "脈波工作比最小值"
+    },
+    "pulseDutyMax": 20,
+    "dsc~pulseDutyMax": {
+        "getType": "float",
+        "unit": "%",
+        "unitWidth": 50,
+        "title": "脈波工作比最大值"
+    },
+    "pulseFreqMin": 2.9,
+    "dsc~pulseFreqMin": {
+        "getType": "float",
+        "unit": "GHz",
+        "unitWidth": 50,
+        "title": "脈波頻率最小值"
+    },
+    "pulseFreqMax": 3.5,
+    "dsc~pulseFreqMax": {
+        "getType": "float",
+        "unit": "GHz",
+        "unitWidth": 50,
+        "title": "脈波頻率最大值"
+    },
+    "radarStartAngle": "0",
+    "dsc~radarStartAngle": {
+        "getType": "nature",
+        "max": 360,
+        "unit": "度",
+        "unitWidth": 50,
+        "title": "雷達掃描起始角度"
+    },
+    "radarEndAngle": 360,
+    "dsc~radarEndAngle": {
+        "getType": "nature",
+        "max": 360,
+        "unit": "度",
+        "unitWidth": 50,
+        "title": "雷達掃描停止角度"
+    },
+    "radarScanRpm": 30,
+    "dsc~radarScanRpm": {
+        "getType": "float",
+        "min": 1,
+        "max": 99,
+        "unit": "轉",
+        "title": "雷達掃描RPM"
+    },
+    "radarFadeTime": 3,
+    "dsc~radarFadeTime": {
+        "getType": "nature",
+        "min": 1,
+        "max": 99,
+        "title": "雷達暫態時間"
+    },
+    "dsc~line6": "===============================================================================",
+    "preTrigTime": 20,
+    "dsc~preTrigTime": {
+        "getType": "nature",
+        "unit": "0.1us",
+        "max": 999,
+        "title": "pre wg trig time"
+    },
+    "preRfOutTime": 10,
+    "dsc~preRfOutTime": {
+        "getType": "nature",
+        "unit": "0.1us",
+        "max": 255,
+        "title": "pre rfout time"
+    },
+    "afterRfOutTime": 10,
+    "dsc~afterRfOutTime": {
+        "getType": "nature",
+        "unit": "0.1us",
+        "max": 255,
+        "title": "after rf out time"
+    },
+    "wgProtectFlag": 1,
+    "dsc~wgProtectFlag": {
+        "title": "SSPA 保護開關",
+        "getType": "buttonRadio",
+        "enum": [
+            "關閉",
+            "開啟"
+        ]
+    },
+    "dsc~end": 0
+}

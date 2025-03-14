@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 public class GB {
 
     //0: window ConsoleMain 1:linux
-    static int prgMode = 1;
+    static int prgMode = 0;
     static String version = "1.2";
-    static int emulate = 1;
+    static int emulate = 0;
 
     static int ctrUiPort = 1237;
     static int slotUiPort = 1236;
@@ -24,6 +24,8 @@ public class GB {
     public static String logSetPath = ".";
     public static String logPath = "./log";
     public static String appName = "syncSet";
+    public static String webSocketAddr = "127.0.0.1";
+    //public static String webSocketAddr = "192.168.121.10";
     public static int webSocketPort = 8899;
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
