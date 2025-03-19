@@ -80,17 +80,62 @@ public class ConsoleMain {
                 paras = (JSONArray) obj;
             }
             String preText = "";
+            int preInx = 0;
+            int status0 = 0;
+            int shift = 0;
+            byte[] powerStatusA = null;
+            byte[] moduleStatusA = null;
             if (scla.appId == 3) {
                 preText = "ctr1";
+                preInx = 0;
+                shift = 22;
+                status0 = scla.syncData.systemStatus0 >> 22;
+                powerStatusA = scla.syncData.sspaPowerStatusAA[0];
+                moduleStatusA = scla.syncData.sspaModuleStatusAA[0];
             }
             if (scla.appId == 4) {
                 preText = "ctr2";
+                preInx = 1;
+                shift = 27;
+                status0 = scla.syncData.systemStatus0 >> 27;
+                powerStatusA = scla.syncData.sspaPowerStatusAA[1];
+                moduleStatusA = scla.syncData.sspaModuleStatusAA[1];
+
             }
+            int powerOn_f;
+            int moduleOn_f;
+            for (int i = 0; i < 36; i++) {
+                if (((powerStatusA[i] >> 4) & 1) == 1) {
+                    powerOn_f = 1;
+                }
+                if (((moduleStatusA[i] >> 1) & 1) == 1) {
+                    moduleOn_f = 1;
+                }
+
+            }
+            int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
+            int ready_f = (scla.syncData.systemStatus0 >> (scla.appId * 2)) & 3;
 
             if (act.equals(preText + "SspaPowerOn")) {
-                if (GB.emulate == 1) {
+                if (GB.emulate == 2) {
+                    outJson.put("status", "ok");
+                    if ((ready_f != 2) || (emergency != 0)) {
+                        return outJson;
+                    }
+                    obj = paras.get(0);
+                    int index = (int) obj;
+                    if (index >= 0) {
+                        powerStatusA[index] |= 0x1d;
+                        return outJson;
+                    }
+                    for (int i = 0; i < 36; i++) {
+                        powerStatusA[i] |= 0x1d;
+                    }
+                    return outJson;
                 }
-                scla.setEasyCommand(0x2000, paras);
+                if (GB.emulate == 0) {
+                    scla.setEasyCommand(0x2000, paras);
+                }
                 outJson.put("status", "ok");
                 return outJson;
             }
@@ -310,11 +355,11 @@ public class ConsoleMain {
             return null;
         }
         uart0.portName = "COM" + (int) GB.paraSetMap.get("uart0Port");
-        if(GB.prgMode ==1){
+        if (GB.prgMode == 1) {
             uart0.portName = "ttyUSB0";
         }
         System.out.println(uart0.portName);
-        
+
         uart0.boudrate = (int) GB.paraSetMap.get("uart0Boudrate");
         uart0.parity = "None";
         uart0.stopBit = 1;
@@ -359,7 +404,7 @@ public class ConsoleMain {
                             syncData.systemStatus1 |= ibuf1;
                         }
                         if (para0 == 4) {
-                            syncData.systemStatus0 &= 0xf803c300 ^ 0xffffffff;;
+                            syncData.systemStatus0 &= 0xf803c300 ^ 0xffffffff;
                             ibuf0 &= 0xf803c300;
                             syncData.systemStatus0 |= ibuf0;
                             syncData.systemStatus1 &= 0x00000000;
@@ -394,16 +439,14 @@ public class ConsoleMain {
                                 continue;
                             }
                             if (ibuf == 0xac) {
-                                int[] ibufA=new int[16];
-                                for(int i=0;i<16;i++){
-                                    ibufA[i]=bk.lookInt();
-                                }        
-                                for(int i=0;i<8;i++){
-                                    
-                                    
+                                int[] ibufA = new int[16];
+                                for (int i = 0; i < 16; i++) {
+                                    ibufA[i] = bk.lookInt();
                                 }
-                                
-                                
+                                for (int i = 0; i < 8; i++) {
+
+                                }
+
                             }
                         }
 
@@ -598,7 +641,7 @@ public class ConsoleMain {
                             dutyReg += ibuf << 12;
                             //=====================================
                             int pulseWidth = Math.round((Lib.str2float(strA[1], 1) * 10));//16bit
-                            int freq = Math.round((Lib.str2float(strA[3], 3) * 100))-290;//8bit
+                            int freq = Math.round((Lib.str2float(strA[3], 3) * 100)) - 290;//8bit
                             int trigTimes = Lib.str2int(strA[4], 1);//8 bit
                             //<<debug
                             //===============================
@@ -908,18 +951,29 @@ class ConsoleMainTm1 extends TimerTask {
     public void run() {
         try {
             //===============================
+
+            if (GB.emulate == 2) {
+                if (cla.appId == 3) {
+                    cla.syncData.systemStatus0 &= 0xffffff3f;
+                    cla.syncData.systemStatus0 |= 0x00000080;
+                }
+                if (cla.appId == 4) {
+                    cla.syncData.systemStatus0 &= 0xfffffcff;
+                    cla.syncData.systemStatus0 |= 0x00000200;
+                }
+            }
+
             cla.easyCommandTime++;
             if (cla.easyCommandTime == 50) {
                 cla.easyCommand = 0;
-                
+
             }
             cla.testUartTime++;
-            if(cla.testUartTime>=5){
-                cla.testUartTime=0;
+            if (cla.testUartTime >= 5) {
+                cla.testUartTime = 0;
                 //cla.uart0.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
                 //System.out.println("txTest");
-                
-                
+
             }
 
             //===============================
@@ -938,6 +992,7 @@ class ConsoleMainTm1 extends TimerTask {
                     GB.paraSetMap.put(key, jsPara.get(key));
                 }
                 cla.appId = (int) GB.paraSetMap.get("appId");
+                GB.emulate = (int) GB.paraSetMap.get("emulate");
 
             }
 
@@ -1141,9 +1196,9 @@ class SyncData {
     short[] commPackageCntA = new short[2];
     short[] commOkRateA = new short[2];
     short[] rfRxPowerA = new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
-    
-    int[] pulseWaveA=new int[256];
-    int pulseWaveInx=0;
+
+    int[] pulseWaveA = new int[256];
+    int pulseWaveInx = 0;
 
     SyncData() {
     }
