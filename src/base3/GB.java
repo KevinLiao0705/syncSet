@@ -24,7 +24,8 @@ public class GB {
     public static String logSetPath = ".";
     public static String logPath = "./log";
     public static String appName = "syncSet";
-    public static String webSocketAddr = "127.0.0.1";
+    //public static String webSocketAddr = "127.0.0.1";
+    public static String webSocketAddr = null;
     //public static String webSocketAddr = "192.168.121.10";
     public static int webSocketPort = 8899;
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";

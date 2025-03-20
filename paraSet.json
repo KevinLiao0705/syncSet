@@ -1,11 +1,20 @@
 {
-    "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA",
+    "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA,ipStr",
+
     "version": "1.0",
     "dsc~version": {
         "title": "版本",
         "readOnly_f": 1,
         "getType": "floatStr"
     },
+
+"webSocketAddr": "192.168.0.28",
+    "dsc~webSocketAddr": {
+        "title": "webSocketAddr",
+        "getType": "ipStr"
+    },
+
+
     "appId": 3,
     "dsc~appId": {
         "title": "軟體名稱",

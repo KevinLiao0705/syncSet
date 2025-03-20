@@ -116,9 +116,9 @@ public class ConsoleMain {
             int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
             int ready_f = (scla.syncData.systemStatus0 >> (scla.appId * 2)) & 3;
 
+            outJson.put("status", "ok");
             if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 2) {
-                    outJson.put("status", "ok");
                     if ((ready_f != 2) || (emergency != 0)) {
                         return outJson;
                     }
@@ -136,13 +136,24 @@ public class ConsoleMain {
                 if (GB.emulate == 0) {
                     scla.setEasyCommand(0x2000, paras);
                 }
-                outJson.put("status", "ok");
                 return outJson;
             }
             if (act.equals(preText + "SspaPowerOff")) {
-                if (GB.emulate == 1) {
+                if (GB.emulate == 2) {
+                    obj = paras.get(0);
+                    int index = (int) obj;
+                    if (index >= 0) {
+                        powerStatusA[index] &= 0xffffffe2;
+                        return outJson;
+                    }
+                    for (int i = 0; i < 36; i++) {
+                        powerStatusA[i] &= 0xffffffe2;
+                    }
                 }
-                scla.setEasyCommand(0x2001, paras);
+                
+                if (GB.emulate == 0) {
+                    scla.setEasyCommand(0x2001, paras);
+                }
                 outJson.put("status", "ok");
                 return outJson;
             }
@@ -290,7 +301,7 @@ public class ConsoleMain {
         }
 
         final ConsoleMain cla = this;
-        KvWebSocketServer.serverStart();
+        //KvWebSocketServer.serverStart();
         //=======================================================
         rxMap = new HashMap<String, ChkRxA>();
         taskMap = new HashMap<String, CmdTask>();
@@ -993,6 +1004,10 @@ class ConsoleMainTm1 extends TimerTask {
                 }
                 cla.appId = (int) GB.paraSetMap.get("appId");
                 GB.emulate = (int) GB.paraSetMap.get("emulate");
+                if(GB.webSocketAddr==null){
+                   GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
+                   KvWebSocketServer.serverStart();
+                }
 
             }
 

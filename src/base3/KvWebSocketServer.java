@@ -112,7 +112,7 @@ public class KvWebSocketServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-        System.out.println("Server: communicate error " + webSocket.getRemoteSocketAddress().getHostName() + ":" + webSocket.getRemoteSocketAddress().getPort() + " 通信发生异常");
+        e.printStackTrace();
 
     }
 
