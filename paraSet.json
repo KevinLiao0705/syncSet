@@ -27,7 +27,7 @@
         ],
         "getType": "incEnum"
     },
-    "emulate": 2,
+    "emulate": 1,
     "dsc~emulate": {
         "title": "系統模擬",
         "enum": [
