@@ -450,14 +450,13 @@ public class ConsoleMain {
                                 continue;
                             }
                             if (ibuf == 0xac) {
-                                int[] ibufA = new int[16];
-                                for (int i = 0; i < 16; i++) {
-                                    ibufA[i] = bk.lookInt();
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 32) {
+                                    return null;
                                 }
-                                for (int i = 0; i < 8; i++) {
-
+                                for(int i=0;i<8;i++){
+                                    syncData.viewDatas[ibuf*8+i]=bk.lookInt();
                                 }
-
                             }
                         }
 
@@ -646,15 +645,15 @@ public class ConsoleMain {
                                 str = "0 10 1.0 3.0 1";
                             }
                             String[] strA = str.split(" ");
-                            int dutyReg = Math.round((Lib.str2float(strA[2], 1) * 10));//16bit
-                            ibuf = Lib.str2int(strA[0], 0);
-                            ibuf &= 1;
-                            dutyReg += ibuf << 12;
                             //=====================================
                             int pulseWidth = Math.round((Lib.str2float(strA[1], 1) * 10));//16bit
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 100)) - 290;//8bit
                             int trigTimes = Lib.str2int(strA[4], 1);//8 bit
-                            //<<debug
+                            int dutyReg = Math.round((Lib.str2float(strA[2], 1) * 10));//16bit
+                            int pri=Math.round(pulseWidth*1000/dutyReg);
+                            pri&=0x00ffffff;
+                            ibuf = Lib.str2int(strA[0], 0)&1;//enable_f
+                            pri|=ibuf<<24;
                             //===============================
                             /*
                             systemFlag0 = 0x12345678;
@@ -718,10 +717,10 @@ public class ConsoleMain {
                             }
                             lb.wByteInt(uart0.txAltPackCnt);
                             uart0.txAltPackCnt++;
-                            lb.wShortInt(dutyReg);
-                            lb.wShortInt(pulseWidth);
-                            lb.wByteInt(freq);
-                            lb.wByteInt(trigTimes);
+                            lb.wIntInt(pri);
+                            lb.wShortInt(pulseWidth);   //unit 0.1us
+                            lb.wByteInt(freq);      
+                            lb.wByteInt(trigTimes);     //
                             lb.wByteInt(0xcd);
                             uart0.txBufferLen = lb.inx;
                         }
@@ -1214,6 +1213,9 @@ class SyncData {
 
     int[] pulseWaveA = new int[256];
     int pulseWaveInx = 0;
+    
+    int[] viewDatas = new int[256];
+
 
     SyncData() {
     }
