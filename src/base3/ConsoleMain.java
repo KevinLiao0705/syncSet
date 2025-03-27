@@ -1110,7 +1110,7 @@ class SyncData {
     /*
 	 array 0:mast, 1:sub1, 2:sub2, 3:ctr1, 4:ctr2, 5:drv1a, 6:drv1b, 7:drv2a, 8:drv2b
 	 *** slotId[3:0] ==>
-	 	 "none 				id=0;
+	 	 "none 			id=0;
 	 	 "ＩＰＣ控制模組",     	id=1;
 	 	 "ＦＰＧＡ控制模組",    id=2;
 	 	 "ＩＯ控制模組",       id=3;
@@ -1138,7 +1138,7 @@ class SyncData {
      ctr1Meter mainStatus[19:18] 	==> 0:none, 1:warn up, 2:ready, 3:error
      ctr2Meter mainStatus[21:20] 	==> 0:none, 1:warn up, 2:ready, 3:error
      //===
-     ctr1 rfPulse detect flag[22] ==> 0:none  1:OK
+     ctr1 rfPulse detect flag[22]       ==> 0:none  1:OK
      ctr1 電源啟動[23] 			==> 0:停止 1:啟動
      ctr1 SSPA致能[24] 			==> 0:停止 1:啟動
      ctr1 本地脈波啟動[25] 		==> 0:停止 1:啟動
@@ -1147,7 +1147,7 @@ class SyncData {
      ctr2 rfPulse detect flag[27] ==> 0:none  1:OK
      ctr2 電源啟動[28] 			==> 0:停止 1:啟動
      ctr2 SSPA致能[29] 			==> 0:停止 1:啟動
-     ctr2 本地脈波啟動[30] 			==> 0:停止 1:啟動
+     ctr2 本地脈波啟動[30] 		==> 0:停止 1:啟動
      ctr2 緊急停止[31] 			==> 0:備便 1:停止
      */
     int systemStatus0;
