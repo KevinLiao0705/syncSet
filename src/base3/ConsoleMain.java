@@ -237,6 +237,7 @@ public class ConsoleMain {
                 kj.jadd("sspaModuleStatusAA#" + (appId - 3), syncData.sspaModuleStatusAA[appId - 3]);
                 kj.jadd("sspaModuleRfOutAA#" + (appId - 3), syncData.sspaModuleRfOutAA[appId - 3]);
                 kj.jadd("sspaModuleTemprAA#" + (appId - 3), syncData.sspaModuleTemprAA[appId - 3]);
+                kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);

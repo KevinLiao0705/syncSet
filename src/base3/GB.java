@@ -7,48 +7,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GB {
-
     //0: window ConsoleMain 1:linux
     static int prgMode = 0;
     static String version = "1.2";
     static int emulate = 0;
-
-    static int ctrUiPort = 1237;
-    static int slotUiPort = 1236;
-    static int ctrIoPort = 1437;
-    static int slotIoPort = 1436;
-    //static int slotIoPort=1434;
     public static String webRootPath = "./";
     public static final int MAX_PARA_LEN = 8192;
     static int lang = 1;//0:english 1:chinese 
     public static String logSetPath = ".";
     public static String logPath = "./log";
     public static String appName = "syncSet";
-    //public static String webSocketAddr = "127.0.0.1";
     public static String webSocketAddr = null;
+    //public static String webSocketAddr = "127.0.0.1";
     //public static String webSocketAddr = "192.168.121.10";
     public static int webSocketPort = 8899;
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
-
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
     static int os_inx = 0;     //0:windows 1://linux    
     static String asteriskConfPath = "./asteridkConfPath";
 
     //===============================
-    static int ngrep_on_f = 1;
-    static int linphone_twinkle_f = 1;
-    static int ictcon_on_f = 1;
     static int cursorOff_f = 0;
     //================================================
     static int fullScr_f = 0;
     static int frameOn_f = 0;
     static int syssec_f = 1;
-    static int phSyssec_f = 0;
     static int syssec_xor = 0;
     static String macStr;
-    static int syssec_gen_f = 0;
     //================================================
     static int winFrame_bm = 30;
     static int winFrame_wm = 8;
@@ -59,13 +46,6 @@ public class GB {
     //================================================
     //sipmd ui use
     //================================================
-    //
-    static String mainpbx_ip = "192.168.191.191";
-    //static String mainpbx_ip = "127.0.0.1";
-    static String mainpbx_user = "none";
-    static String mainpbx_password = "";
-    static String mainpbx_hostName = "";
-    static String mainpbx_homePrompt = "";
 
     static String netName = "eth0";
     static String maskStr = "255.255.0.0";
@@ -84,82 +64,30 @@ public class GB {
     static String sipmd_ui_ip = "192.168.0.45";
     static int sipmd_ui_port = 1236;
 
-    //================================================
-    public static String sipui_iptype = "0";
-    static String sipui_ip_str = "192.168.0.76";
-    static String sipui_ipmask_str = "255.255.0.0";
-    static String sipui_gateway_str = "192.168.0.1";
-    static String sipmd_ip_str = "192.168.0.188";
-    static String sipmd_ipmask_str = "255.255.0.0";
-    static String sipmd_gateway_str = "192.168.0.1";
-    static String switch_ip_str = "192.168.1.10";
-    static String switch_ipmask_str = "255.255.0.0";
-    static String switch_gateway_str = "192.168.0.1";
-    //==============================================================================
-    static int sipmd_port = 1236;   //sipui tx "command data" to sipmd(this port) over socket
-
     //==============================================================================
     //windows debug use===================================================================
     static String setdata_xml = "./setdata.xml";
     static String setdata_db = "./setdata.db";
     static String interfaces_path = "./interfaces";
-    static String twinkleCfg_path = "./twinkle.cfg";
-    static String ntp_path = "./timesyncd.conf";
     //==============================================================================
-    //nkv6in1_ui linux use
-    //static String setdata_xml = "./setdata.xml";
-    //static String setdata_db = "./setdata.db";
-    //static String interfaces_path="/etc/network/interfaces";
-    //static String twinkleCfg_path = "./twinkle.cfg";
-    //static String ntp_path = "/etc/systemd/timesyncd.conf";
-    //===============================================================================
-    //sipphone_ui linux use
-    //static String setdata_xml="/var/lib/tomcat9/webapps/ROOT/setdata.xml";
-    //static String setdata_db="/var/lib/tomcat9/webapps/ROOT/setdata.db";
-    //static String interfaces_path="/etc/network/interfaces";
-    //static String twinkleCfg_path = "/home/pi/.twinkle/twinkle.cfg";
-    //static String ntp_path = "/etc/systemd/timesyncd.conf";
-    //===============================================================================
-
     static String real_ip_str = "";
     static String set_ip_str = "";
     static String set_ipmask_str = "";
     static String set_gateway_str = "";
-
     static byte[] realIp = new byte[]{0, 0, 0, 0};
-
     static String[] paraName = new String[MAX_PARA_LEN];
     static String[] paraValue = new String[MAX_PARA_LEN];
-
-    static String[] ictPhnos = new String[256];
-    static int ictPhnos_amt = 0;
-
     //================================================
     static int paraLen = 0;
     static String ret_str;
-
     static int action_inx = 0;
     static int action_step = 0;
     static int action_tim = 0;
-    //web use=========================================
-    public static String sipmd_iptype = "0";
-    //public static String sip_ip = "192.168.0.152";
-    //public static String sipmd_ipmask_str = "255.255.0.0";
-    //public static String sipmd_gateway_str = "192.168.0.1";
-    public static String phone_name = "Kevin";
-    public static String phone_no = "303";
-    public static String sip_server_ip = "192.168.0.3";
-    public static String sip_server_pin = "123456789";
-
     //==================================================================
     public static Map<String, Object> paraSetMap = new HashMap();
     public static HashMap<String, ConnectCla> connectMap = new HashMap();
 
     //=================================================================
-    public static String ntp_dns = "192.168.0.22";
-    public static String ntp_adj_time = "160";
-
-    //0: win.ui, 1: win.sip, 2: pi.ui, 3: pi.sip  
     static void initGB() {
         if (GB.prgMode == 0) {
             GB.process_inx = 0; //0:consoleMain, 
@@ -169,7 +97,8 @@ public class GB {
             GB.interfaces_path = "./interfaces";
             GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
-            GB.logPath = "./log";
+            GB.logPath ="E:/kevin/myCode/webServletBase/web/log";
+            //GB.logPath = "./log";
 
         }
         if (GB.prgMode == 1) {

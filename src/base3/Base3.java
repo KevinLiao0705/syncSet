@@ -87,6 +87,8 @@ public class Base3 {
         PropertyConfigurator.configure(fileName);
         //===============================================
         log.info(GB.appName+" process start ...");        
+        log.warn("test warnning");
+        log.error("test error");
         
         
     }
@@ -113,9 +115,6 @@ public class Base3 {
         if (cla.debug_f != 1) {
             //Lib.exe("./io.sh");
             if (GB.process_inx == 0) {
-                GB.sipmd_ip_str = GB.real_ip_str;
-                GB.sipmd_ipmask_str = GB.set_ipmask_str;
-                GB.sipmd_gateway_str = GB.set_gateway_str;
                 ConsoleMain cm1 = new ConsoleMain();
                 cm1.create();
             }
