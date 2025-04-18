@@ -191,6 +191,23 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x2007, null);
                 return outJson;
             }
+            if (act.equals("selfTestStartAll")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2008, null);
+                return outJson;
+            }
+            if (act.equals("selfTestStopAll")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2009, null);
+                return outJson;
+            }
+            if (act.equals("selfTestSlot")) {
+                scla.setEasyCommand(0x200a, paras);
+                outJson.put("status", "ok");
+                return outJson;
+            }
+            
+            
 
         } catch (Exception ex) {
 
@@ -459,6 +476,27 @@ public class ConsoleMain {
                                     syncData.viewDatas[ibuf*8+i]=bk.lookInt();
                                 }
                             }
+                            
+                            if (ibuf == 0xac) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 32) {
+                                    return null;
+                                }
+                                for(int i=0;i<8;i++){
+                                    syncData.viewDatas[ibuf*8+i]=bk.lookInt();
+                                }
+                            }
+                            
+                            if (ibuf == 0xad) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 64) {
+                                    return null;
+                                }
+                                for(int i=0;i<ibuf;i++){
+                                    syncData.gpaDatas[i]=bk.lookByte();
+                                }
+                            }
+                            
                         }
 
                     }
@@ -1207,6 +1245,9 @@ class SyncData {
     //=============================================
 
     byte[][] gpaDataAA = new byte[3][16];
+    byte[]gpaDatas = new byte[64];
+    
+    
     short[] adjTimeOf1588A = new short[2];
     short[] commPackageCntA = new short[2];
     short[] commOkRateA = new short[2];
