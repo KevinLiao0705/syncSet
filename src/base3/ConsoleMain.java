@@ -79,6 +79,22 @@ public class ConsoleMain {
             if (obj != null) {
                 paras = (JSONArray) obj;
             }
+
+            outJson.put("status", "ok");
+            if (scla.appId == 0) {
+                if (act.equals("mastPulseEnable")) {
+                    scla.setEasyCommand(0x200b, paras);
+                    outJson.put("status", "ok");
+                    return outJson;
+                }
+                if (act.equals("mastPulseDisable")) {
+                    scla.setEasyCommand(0x200c, paras);
+                    outJson.put("status", "ok");
+                    return outJson;
+                }
+
+            }
+
             String preText = "";
             int preInx = 0;
             int status0 = 0;
@@ -116,7 +132,6 @@ public class ConsoleMain {
             int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
             int ready_f = (scla.syncData.systemStatus0 >> (scla.appId * 2)) & 3;
 
-            outJson.put("status", "ok");
             if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 2) {
                     if ((ready_f != 2) || (emergency != 0)) {
@@ -150,7 +165,7 @@ public class ConsoleMain {
                         powerStatusA[i] &= 0xffffffe2;
                     }
                 }
-                
+
                 if (GB.emulate == 0) {
                     scla.setEasyCommand(0x2001, paras);
                 }
@@ -206,8 +221,6 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            
-            
 
         } catch (Exception ex) {
 
@@ -236,6 +249,39 @@ public class ConsoleMain {
 
     public void transSyncData(JSONObject outJson) {
         try {
+            if (appId == 0) {
+                KvJson kj = new KvJson();
+                kj.jStart();
+                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("systemStatus0", syncData.systemStatus0);
+                kj.jadd("systemStatus1", syncData.systemStatus1);
+                kj.jadd("gngga0", syncData.gngga0);
+                kj.jadd("gngga1", syncData.gngga1);
+                kj.jadd("gngga2", syncData.gngga2);
+                kj.jadd("viewDatas", syncData.viewDatas);
+                kj.jEnd();
+                JSONObject syncJson = new JSONObject(kj.jstr);
+                outJson.put("syncData", syncJson);
+            }
+
+            if (appId == 1 || appId == 2) {
+                KvJson kj = new KvJson();
+                kj.jStart();
+                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("systemStatus0", syncData.systemStatus0);
+                kj.jadd("systemStatus1", syncData.systemStatus1);
+                if (appId == 1) {
+                    kj.jadd("gngga1", syncData.gngga1);
+                }
+                if (appId == 2) {
+                    kj.jadd("gngga2", syncData.gngga2);
+                }
+                kj.jadd("viewDatas", syncData.viewDatas);
+                kj.jEnd();
+                JSONObject syncJson = new JSONObject(kj.jstr);
+                outJson.put("syncData", syncJson);
+            }
+
             if (appId == 3 || appId == 4) {
                 KvJson kj = new KvJson();
                 kj.jStart();
@@ -416,7 +462,8 @@ public class ConsoleMain {
                 int ibuf = 0;
                 int ibuf0, ibuf1, ibuf2, ibuf3;
                 if (cmd == 0x1000) {
-                    if (para0 == 3 || para0 == 4)//fpgaId
+                    //if (para0 == 3 || para0 == 4)//fpgaId
+                    if (true)//fpgaId
                     {
                         for (int i = 0; i < 12; i++) {
                             syncData.slotDataAA[para0][i] = bk.lookShort();
@@ -424,6 +471,16 @@ public class ConsoleMain {
 
                         ibuf0 = bk.lookInt();
                         ibuf1 = bk.lookInt();
+                        if (para0 == 0) {//fpgaId
+                            syncData.systemStatus0 = ibuf0;
+                            syncData.systemStatus1 = ibuf1;
+                        }
+                        if (para0 == 1) {//fpgaId
+                            syncData.systemStatus0 = ibuf0;
+                            syncData.systemStatus1 = ibuf1;
+                        }
+                        
+                        
                         if (para0 == 3) {
                             syncData.systemStatus0 &= 0x07cc3cc0 ^ 0xffffffff;
                             ibuf0 &= 0x07cc3cc0;
@@ -440,16 +497,20 @@ public class ConsoleMain {
                             ibuf1 &= 0x00000000;
                             syncData.systemStatus1 |= ibuf1;
                         }
-
-                        syncData.enviStatusA[para0 - 3] = bk.lookInt();
-                        for (int i = 0; i < 6; i++) {
-                            syncData.meterStatusAA[para0 - 3][i] = bk.lookShort();
-                        }
                         for (;;) {
                             ibuf = bk.lookByteInt();
                             if (ibuf == 0xcd) {
                                 break;
                             }
+                            if ((ibuf == 0xaa)) {
+                                ibuf = bk.lookByteInt();
+                                syncData.enviStatusA[para0 - 3] = bk.lookInt();
+                                for (int i = 0; i < 6; i++) {
+                                    syncData.meterStatusAA[para0 - 3][i] = bk.lookShort();
+                                }
+
+                            }
+
                             if (ibuf == 0xab) {
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 36) {
@@ -472,31 +533,41 @@ public class ConsoleMain {
                                 if (ibuf >= 32) {
                                     return null;
                                 }
-                                for(int i=0;i<8;i++){
-                                    syncData.viewDatas[ibuf*8+i]=bk.lookInt();
+                                for (int i = 0; i < 8; i++) {
+                                    syncData.viewDatas[ibuf * 8 + i] = bk.lookInt();
                                 }
                             }
-                            
+
                             if (ibuf == 0xac) {
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 32) {
                                     return null;
                                 }
-                                for(int i=0;i<8;i++){
-                                    syncData.viewDatas[ibuf*8+i]=bk.lookInt();
+                                for (int i = 0; i < 8; i++) {
+                                    syncData.viewDatas[ibuf * 8 + i] = bk.lookInt();
                                 }
                             }
-                            
-                            if (ibuf == 0xad) {
+
+                            if (ibuf == 0xad || ibuf == 0xae || ibuf == 0xaf) {
+                                byte[] byteA = null;
+                                if (ibuf == 0xad) {
+                                    byteA = syncData.gngga0;
+                                }
+                                if (ibuf == 0xae) {
+                                    byteA = syncData.gngga1;
+                                }
+                                if (ibuf == 0xaf) {
+                                    byteA = syncData.gngga2;
+                                }
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 64) {
                                     return null;
                                 }
-                                for(int i=0;i<ibuf;i++){
-                                    syncData.gpaDatas[i]=bk.lookByte();
+                                for (int i = 0; i < ibuf; i++) {
+                                    byteA[i] = bk.lookByte();
                                 }
                             }
-                            
+
                         }
 
                     }
@@ -534,6 +605,7 @@ public class ConsoleMain {
                         uart0.txBufferLen = 0;
                         //================================================
                         if (easyCommand != 0) {
+                            int xibuf=easyCommand;
                             easyCommand = 0;
                         }
 
@@ -689,10 +761,10 @@ public class ConsoleMain {
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 100)) - 290;//8bit
                             int trigTimes = Lib.str2int(strA[4], 1);//8 bit
                             int dutyReg = Math.round((Lib.str2float(strA[2], 1) * 10));//16bit
-                            int pri=Math.round(pulseWidth*1000/dutyReg);
-                            pri&=0x00ffffff;
-                            ibuf = Lib.str2int(strA[0], 0)&1;//enable_f
-                            pri|=ibuf<<24;
+                            int pri = Math.round(pulseWidth * 1000 / dutyReg);
+                            pri &= 0x00ffffff;
+                            ibuf = Lib.str2int(strA[0], 0) & 1;//enable_f
+                            pri |= ibuf << 24;
                             //===============================
                             /*
                             systemFlag0 = 0x12345678;
@@ -758,7 +830,7 @@ public class ConsoleMain {
                             uart0.txAltPackCnt++;
                             lb.wIntInt(pri);
                             lb.wShortInt(pulseWidth);   //unit 0.1us
-                            lb.wByteInt(freq);      
+                            lb.wByteInt(freq);
                             lb.wByteInt(trigTimes);     //
                             lb.wByteInt(0xcd);
                             uart0.txBufferLen = lb.inx;
@@ -1042,9 +1114,9 @@ class ConsoleMainTm1 extends TimerTask {
                 }
                 cla.appId = (int) GB.paraSetMap.get("appId");
                 GB.emulate = (int) GB.paraSetMap.get("emulate");
-                if(GB.webSocketAddr==null){
-                   GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
-                   KvWebSocketServer.serverStart();
+                if (GB.webSocketAddr == null) {
+                    GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
+                    KvWebSocketServer.serverStart();
                 }
 
             }
@@ -1244,10 +1316,11 @@ class SyncData {
     short[][] sspaModuleTemprAA = new short[2][36];
     //=============================================
 
-    byte[][] gpaDataAA = new byte[3][16];
-    byte[]gpaDatas = new byte[64];
-    
-    
+    byte[][] gpsDataAA = new byte[3][16];
+    byte[] gngga0 = new byte[64];
+    byte[] gngga1 = new byte[64];
+    byte[] gngga2 = new byte[64];
+
     short[] adjTimeOf1588A = new short[2];
     short[] commPackageCntA = new short[2];
     short[] commOkRateA = new short[2];
@@ -1255,9 +1328,8 @@ class SyncData {
 
     int[] pulseWaveA = new int[256];
     int pulseWaveInx = 0;
-    
-    int[] viewDatas = new int[256];
 
+    int[] viewDatas = new int[256];
 
     SyncData() {
     }
