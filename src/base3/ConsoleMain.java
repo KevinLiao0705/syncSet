@@ -101,6 +101,23 @@ public class ConsoleMain {
             int shift = 0;
             byte[] powerStatusA = null;
             byte[] moduleStatusA = null;
+            if (scla.appId == 1) {
+                preText = "sub1";
+                preInx = 0;
+                shift = 22;
+                status0 = scla.syncData.systemStatus0 >> 22;
+                powerStatusA = scla.syncData.sspaPowerStatusAA[0];
+                moduleStatusA = scla.syncData.sspaModuleStatusAA[0];
+            }
+            if (scla.appId == 2) {
+                preText = "sub2";
+                preInx = 1;
+                shift = 27;
+                status0 = scla.syncData.systemStatus0 >> 27;
+                powerStatusA = scla.syncData.sspaPowerStatusAA[1];
+                moduleStatusA = scla.syncData.sspaModuleStatusAA[1];
+
+            }
             if (scla.appId == 3) {
                 preText = "ctr1";
                 preInx = 0;
@@ -186,12 +203,12 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "LocalPulseOn")) {
+            if (act.equals(preText + "RadiationOn")) {
                 scla.setEasyCommand(0x2004, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "LocalPulseOff")) {
+            if (act.equals(preText + "RadiationOff")) {
                 scla.setEasyCommand(0x2005, null);
                 outJson.put("status", "ok");
                 return outJson;
@@ -219,6 +236,21 @@ public class ConsoleMain {
             if (act.equals("selfTestSlot")) {
                 scla.setEasyCommand(0x200a, paras);
                 outJson.put("status", "ok");
+                return outJson;
+            }
+            if (act.equals(preText + "PulseSource")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x200d, paras);
+                return outJson;
+            }
+            if (act.equals(preText + "TxLoad")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x200e, paras);
+                return outJson;
+            }
+            if (act.equals(preText + "BatShort")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x200f, paras);
                 return outJson;
             }
 
