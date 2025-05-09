@@ -253,6 +253,9 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x200f, paras);
                 return outJson;
             }
+            
+            
+            
 
         } catch (Exception ex) {
 
@@ -774,6 +777,7 @@ public class ConsoleMain {
                             int sub2ChRfTxCh = (int) GB.paraSetMap.get("sub2" + "ChRfTxCh");
                             int sub1ChRfRxCh = (int) GB.paraSetMap.get("sub1" + "ChRfRxCh");
                             int sub2ChRfRxCh = (int) GB.paraSetMap.get("sub2" + "ChRfRxCh");
+                            int laGroupCh = (int) GB.paraSetMap.get("laGroupCh");
 
                             //=====================================
                             int pulseGenCh = (int) GB.paraSetMap.get("localPulseGenCh");//pulseGenCh   
@@ -785,11 +789,19 @@ public class ConsoleMain {
                             try {
                                 str = (String) jarr.get(uart0.txAltPackCnt);
                             } catch (Exception ex) {
-                                str = "0 10 1.0 3.0 1";
+                                str = "0 0 1.0 3.0 1";
                             }
                             String[] strA = str.split(" ");
+                            int widthCh=Lib.str2int(strA[1], 0);
                             //=====================================
-                            int pulseWidth = Math.round((Lib.str2float(strA[1], 1) * 10));//16bit
+                            jarr = (JSONArray) GB.paraSetMap.get("localPulseWidthParas");
+                            String strw="10";
+                            try {
+                                strw = (String) jarr.get(widthCh);
+                            } catch (Exception ex) {
+                            }
+                            int pulseWidth = Math.round((Lib.str2float(strw, 10) * 10));//16bit
+                            //=====================================
                             int freq = Math.round((Lib.str2float(strA[3], 3) * 100)) - 290;//8bit
                             int trigTimes = Lib.str2int(strA[4], 1);//8 bit
                             int dutyReg = Math.round((Lib.str2float(strA[2], 1) * 10));//16bit
@@ -852,6 +864,9 @@ public class ConsoleMain {
                             lb.wByteInt(sub2ChRfTxCh);
                             lb.wByteInt(sub1ChRfRxCh);
                             lb.wByteInt(sub2ChRfRxCh);
+                            //==========================================
+                            lb.wByteInt(laGroupCh);
+                            
                             //=========================================
                             lb.wByteInt(pulseGenCh);
                             lb.wByteInt(0xab);
@@ -864,6 +879,8 @@ public class ConsoleMain {
                             lb.wShortInt(pulseWidth);   //unit 0.1us
                             lb.wByteInt(freq);
                             lb.wByteInt(trigTimes);     //
+                            
+                            
                             lb.wByteInt(0xcd);
                             uart0.txBufferLen = lb.inx;
                         }
