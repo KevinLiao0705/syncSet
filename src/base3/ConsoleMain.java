@@ -287,7 +287,7 @@ public class ConsoleMain {
             if (appId == 0) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 kj.jadd("gngga0", syncData.gngga0);
@@ -302,7 +302,7 @@ public class ConsoleMain {
             if (appId == 1 || appId == 2) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 if (appId == 1) {
@@ -320,7 +320,7 @@ public class ConsoleMain {
             if (appId == 3 || appId == 4) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA[appId]);
+                kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 kj.jadd("enviStatusA#" + (appId - 3), syncData.enviStatusA[appId - 3]);
@@ -501,7 +501,7 @@ public class ConsoleMain {
                     if (true)//fpgaId
                     {
                         for (int i = 0; i < 12; i++) {
-                            syncData.slotDataAA[para0][i] = bk.lookShort();
+                            syncData.slotDataAA[i] = bk.lookShort();
                         }
 
                         ibuf0 = bk.lookInt();
@@ -1283,7 +1283,7 @@ class SyncData {
 	  *** slotStatus	9:8 ==> 0:none, 1:ready, 2:error 3:warn up
           *** slotTestStatus 11:10 ==> 0:none, 1:PreTest, 2:testing;
      */
-    short[][] slotDataAA = new short[9][12];
+    short[] slotDataAA = new short[12];
 
     /*=================================================
      mast mainStatus[1:0] 		==> 0:none, 1:warn up, 2:ready, 3:error
