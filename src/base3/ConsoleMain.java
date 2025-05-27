@@ -37,6 +37,7 @@ public class ConsoleMain {
     int easyParas = 0;
     int easyCommandTime = 0;
     int testUartTime = 0;
+    int connectFpgaCnt=0;
 
     //===========================
     //dataToFpga
@@ -106,16 +107,16 @@ public class ConsoleMain {
                 preInx = 0;
                 shift = 22;
                 status0 = scla.syncData.systemStatus0 >> 22;
-                powerStatusA = scla.syncData.sspaPowerStatusAA[0];
-                moduleStatusA = scla.syncData.sspaModuleStatusAA[0];
+                powerStatusA = scla.syncData.sspaPowerStatusAA;
+                moduleStatusA = scla.syncData.sspaModuleStatusAA;
             }
             if (scla.appId == 2) {
                 preText = "sub2";
                 preInx = 1;
                 shift = 27;
                 status0 = scla.syncData.systemStatus0 >> 27;
-                powerStatusA = scla.syncData.sspaPowerStatusAA[1];
-                moduleStatusA = scla.syncData.sspaModuleStatusAA[1];
+                powerStatusA = scla.syncData.sspaPowerStatusAA;
+                moduleStatusA = scla.syncData.sspaModuleStatusAA;
 
             }
             if (scla.appId == 3) {
@@ -123,16 +124,16 @@ public class ConsoleMain {
                 preInx = 0;
                 shift = 22;
                 status0 = scla.syncData.systemStatus0 >> 22;
-                powerStatusA = scla.syncData.sspaPowerStatusAA[0];
-                moduleStatusA = scla.syncData.sspaModuleStatusAA[0];
+                powerStatusA = scla.syncData.sspaPowerStatusAA;
+                moduleStatusA = scla.syncData.sspaModuleStatusAA;
             }
             if (scla.appId == 4) {
                 preText = "ctr2";
                 preInx = 1;
                 shift = 27;
                 status0 = scla.syncData.systemStatus0 >> 27;
-                powerStatusA = scla.syncData.sspaPowerStatusAA[1];
-                moduleStatusA = scla.syncData.sspaModuleStatusAA[1];
+                powerStatusA = scla.syncData.sspaPowerStatusAA;
+                moduleStatusA = scla.syncData.sspaModuleStatusAA;
 
             }
             int powerOn_f;
@@ -147,7 +148,7 @@ public class ConsoleMain {
 
             }
             int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
-            int ready_f = (scla.syncData.systemStatus0 >> (scla.appId * 2)) & 3;
+            int ready_f = scla.syncData.systemStatus0  & 3;
 
             if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 2) {
@@ -323,18 +324,18 @@ public class ConsoleMain {
                 kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
-                kj.jadd("enviStatusA#" + (appId - 3), syncData.enviStatusA[appId - 3]);
-                kj.jadd("meterStatusAA#" + (appId - 3), syncData.meterStatusAA[appId - 3]);
-                kj.jadd("sspaPowerStatusAA#" + (appId - 3), syncData.sspaPowerStatusAA[appId - 3]);
-                kj.jadd("sspaPowerV50vAA#" + (appId - 3), syncData.sspaPowerV50vAA[appId - 3]);
-                kj.jadd("sspaPowerV50iAA#" + (appId - 3), syncData.sspaPowerV50iAA[appId - 3]);
-                kj.jadd("sspaPowerV50tAA#" + (appId - 3), syncData.sspaPowerV50tAA[appId - 3]);
-                kj.jadd("sspaPowerV32vAA#" + (appId - 3), syncData.sspaPowerV32vAA[appId - 3]);
-                kj.jadd("sspaPowerV32iAA#" + (appId - 3), syncData.sspaPowerV32iAA[appId - 3]);
-                kj.jadd("sspaPowerV32tAA#" + (appId - 3), syncData.sspaPowerV32tAA[appId - 3]);
-                kj.jadd("sspaModuleStatusAA#" + (appId - 3), syncData.sspaModuleStatusAA[appId - 3]);
-                kj.jadd("sspaModuleRfOutAA#" + (appId - 3), syncData.sspaModuleRfOutAA[appId - 3]);
-                kj.jadd("sspaModuleTemprAA#" + (appId - 3), syncData.sspaModuleTemprAA[appId - 3]);
+                kj.jadd("enviStatusA" , syncData.enviStatusA);
+                kj.jadd("meterStatusAA", syncData.meterStatusAA);
+                kj.jadd("sspaPowerStatusAA", syncData.sspaPowerStatusAA);
+                kj.jadd("sspaPowerV50vAA", syncData.sspaPowerV50vAA);
+                kj.jadd("sspaPowerV50iAA", syncData.sspaPowerV50iAA);
+                kj.jadd("sspaPowerV50tAA", syncData.sspaPowerV50tAA);
+                kj.jadd("sspaPowerV32vAA", syncData.sspaPowerV32vAA);
+                kj.jadd("sspaPowerV32iAA", syncData.sspaPowerV32iAA);
+                kj.jadd("sspaPowerV32tAA", syncData.sspaPowerV32tAA);
+                kj.jadd("sspaModuleStatusAA", syncData.sspaModuleStatusAA);
+                kj.jadd("sspaModuleRfOutAA", syncData.sspaModuleRfOutAA);
+                kj.jadd("sspaModuleTemprAA", syncData.sspaModuleTemprAA);
                 kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
@@ -500,38 +501,14 @@ public class ConsoleMain {
                     //if (para0 == 3 || para0 == 4)//fpgaId
                     if (true)//fpgaId
                     {
+                        connectFpgaCnt=0;
                         for (int i = 0; i < 12; i++) {
                             syncData.slotDataAA[i] = bk.lookShort();
                         }
 
-                        ibuf0 = bk.lookInt();
-                        ibuf1 = bk.lookInt();
-                        if (para0 == 0) {//fpgaId
-                            syncData.systemStatus0 = ibuf0;
-                            syncData.systemStatus1 = ibuf1;
-                        }
-                        if (para0 == 1) {//fpgaId
-                            syncData.systemStatus0 = ibuf0;
-                            syncData.systemStatus1 = ibuf1;
-                        }
+                        syncData.systemStatus0 = bk.lookInt();
+                        syncData.systemStatus1 = bk.lookInt();
                         
-                        
-                        if (para0 == 3) {
-                            syncData.systemStatus0 &= 0x07cc3cc0 ^ 0xffffffff;
-                            ibuf0 &= 0x07cc3cc0;
-                            syncData.systemStatus0 |= ibuf0;
-                            syncData.systemStatus1 &= 0x00000000;
-                            ibuf1 &= 0x00000000;
-                            syncData.systemStatus1 |= ibuf1;
-                        }
-                        if (para0 == 4) {
-                            syncData.systemStatus0 &= 0xf803c300 ^ 0xffffffff;
-                            ibuf0 &= 0xf803c300;
-                            syncData.systemStatus0 |= ibuf0;
-                            syncData.systemStatus1 &= 0x00000000;
-                            ibuf1 &= 0x00000000;
-                            syncData.systemStatus1 |= ibuf1;
-                        }
                         for (;;) {
                             ibuf = bk.lookByteInt();
                             if (ibuf == 0xcd) {
@@ -539,9 +516,9 @@ public class ConsoleMain {
                             }
                             if ((ibuf == 0xaa)) {
                                 ibuf = bk.lookByteInt();
-                                syncData.enviStatusA[para0 - 3] = bk.lookInt();
+                                syncData.enviStatusA[0] = bk.lookInt();
                                 for (int i = 0; i < 6; i++) {
-                                    syncData.meterStatusAA[para0 - 3][i] = bk.lookShort();
+                                    syncData.meterStatusAA[i] = bk.lookShort();
                                 }
 
                             }
@@ -551,16 +528,16 @@ public class ConsoleMain {
                                 if (ibuf >= 36) {
                                     return null;
                                 }
-                                syncData.sspaPowerStatusAA[para0 - 3][ibuf] = bk.lookByte();
-                                syncData.sspaPowerV50vAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaPowerV50iAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaPowerV50tAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32vAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32iAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32tAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaModuleStatusAA[para0 - 3][ibuf] = bk.lookByte();
-                                syncData.sspaModuleRfOutAA[para0 - 3][ibuf] = bk.lookShort();
-                                syncData.sspaModuleTemprAA[para0 - 3][ibuf] = bk.lookShort();
+                                syncData.sspaPowerStatusAA[ibuf] = bk.lookByte();
+                                syncData.sspaPowerV50vAA[ibuf] = bk.lookShort();
+                                syncData.sspaPowerV50iAA[ibuf] = bk.lookShort();
+                                syncData.sspaPowerV50tAA[ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32vAA[ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32iAA[ibuf] = bk.lookShort();
+                                syncData.sspaPowerV32tAA[ibuf] = bk.lookShort();
+                                syncData.sspaModuleStatusAA[ibuf] = bk.lookByte();
+                                syncData.sspaModuleRfOutAA[ibuf] = bk.lookShort();
+                                syncData.sspaModuleTemprAA[ibuf] = bk.lookShort();
                                 continue;
                             }
                             if (ibuf == 0xac) {
@@ -648,15 +625,9 @@ public class ConsoleMain {
                         int systemFlag1 = 0;
                         preText = "";
                         preText1 = "";
-                        if (para0 == 3 || para0 == 4) {//fpgaId
-                            if (para0 == 3) {
-                                preText = "ctr1";
-                                preText1 = "sub1";
-                            }
-                            if (para0 == 4) {
-                                preText = "ctr2";
-                                preText1 = "sub2";
-                            }
+                        if (para0 == 2) {//fpgaId
+                            preText = "ctr1";
+                            preText1 = "sub1";
                             //======
                             ibuf = (int) GB.paraSetMap.get("emulate");
                             ibuf &= 1;
@@ -778,6 +749,10 @@ public class ConsoleMain {
                             int sub1ChRfRxCh = (int) GB.paraSetMap.get("sub1" + "ChRfRxCh");
                             int sub2ChRfRxCh = (int) GB.paraSetMap.get("sub2" + "ChRfRxCh");
                             int laGroupCh = (int) GB.paraSetMap.get("laGroupCh");
+                            int subChDelay = (int) GB.paraSetMap.get("subChDelay");
+                            int ctrChDelay = (int) GB.paraSetMap.get("ctrChDelay");
+                            int drvChDelay = (int) GB.paraSetMap.get("drvChDelay");
+                            int meterChDelay = (int) GB.paraSetMap.get("meterChDelay");
 
                             //=====================================
                             int pulseGenCh = (int) GB.paraSetMap.get("localPulseGenCh");//pulseGenCh   
@@ -866,9 +841,11 @@ public class ConsoleMain {
                             lb.wByteInt(sub2ChRfRxCh);
                             //==========================================
                             lb.wByteInt(laGroupCh);
-                            
+                            lb.wByteInt(ctrChDelay);
+                            lb.wByteInt(subChDelay);
+                            lb.wByteInt(drvChDelay);
+                            lb.wByteInt(meterChDelay);
                             //=========================================
-                            lb.wByteInt(pulseGenCh);
                             lb.wByteInt(0xab);
                             if (uart0.txAltPackCnt >= 32) {
                                 uart0.txAltPackCnt = 0;
@@ -1123,14 +1100,8 @@ class ConsoleMainTm1 extends TimerTask {
             //===============================
 
             if (GB.emulate == 2) {
-                if (cla.appId == 3) {
-                    cla.syncData.systemStatus0 &= 0xffffff3f;
-                    cla.syncData.systemStatus0 |= 0x00000080;
-                }
-                if (cla.appId == 4) {
-                    cla.syncData.systemStatus0 &= 0xfffffcff;
-                    cla.syncData.systemStatus0 |= 0x00000200;
-                }
+                cla.syncData.systemStatus0 &= 0xfffffffc;
+                cla.syncData.systemStatus0 |= 0x00000002;
             }
 
             cla.easyCommandTime++;
@@ -1145,6 +1116,9 @@ class ConsoleMainTm1 extends TimerTask {
                 //System.out.println("txTest");
 
             }
+            cla.connectFpgaCnt++;
+            if(cla.connectFpgaCnt>100)
+                cla.syncData.systemStatus0&=0xfffffffc;
 
             //===============================
             Path file = Paths.get(GB.paraSetPath);
@@ -1346,23 +1320,23 @@ class SyncData {
      4:cw output rf power
      5:ccw output rf power
      */
-    short[][] meterStatusAA = new short[2][6];
+    short[]meterStatusAA = new short[6];
     //=============================================
     //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50t, 7:v32v, 8:v32i, 9:v32t
-    byte[][] sspaPowerStatusAA = new byte[2][36];
-    short[][] sspaPowerV50vAA = new short[2][36];
-    short[][] sspaPowerV50iAA = new short[2][36];
-    short[][] sspaPowerV50tAA = new short[2][36];
-    short[][] sspaPowerV32vAA = new short[2][36];
-    short[][] sspaPowerV32iAA = new short[2][36];
-    short[][] sspaPowerV32tAA = new short[2][36];
+    byte[]sspaPowerStatusAA = new byte[36];
+    short[]sspaPowerV50vAA = new short[36];
+    short[]sspaPowerV50iAA = new short[36];
+    short[]sspaPowerV50tAA = new short[36];
+    short[]sspaPowerV32vAA = new short[36];
+    short[]sspaPowerV32iAA = new short[36];
+    short[]sspaPowerV32tAA = new short[36];
     //=============================================
     /*
      0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 
      */
-    byte[][] sspaModuleStatusAA = new byte[2][36];
-    short[][] sspaModuleRfOutAA = new short[2][36];
-    short[][] sspaModuleTemprAA = new short[2][36];
+    byte[]sspaModuleStatusAA = new byte[36];
+    short[]sspaModuleRfOutAA = new short[36];
+    short[]sspaModuleTemprAA = new short[36];
     //=============================================
 
     byte[][] gpsDataAA = new byte[3][16];
