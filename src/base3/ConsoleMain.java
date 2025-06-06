@@ -647,29 +647,21 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("sub1PulseSource");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 5;
-                            ibuf = (int) GB.paraSetMap.get("sub1PulseSource");
-                            ibuf &= 1;
-                            systemFlag0 |= ibuf << 6;
                             ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
                             ibuf &= 1;
-                            systemFlag0 |= ibuf << 7;
-                            ibuf = (int) GB.paraSetMap.get("ctr2PulseSource");
-                            ibuf &= 1;
-                            systemFlag0 |= ibuf << 8;
+                            systemFlag0 |= ibuf << 6;
                             //=======
                             ibuf = (int) GB.paraSetMap.get("ctr1BatShort");//戰備短路 0:關閉 1:開啟
                             ibuf &= 1;
-                            systemFlag0 |= ibuf << 9;
-                            ibuf = (int) GB.paraSetMap.get("ctr2BatShort");//戰備短路 0:關閉 1:開啟
-                            ibuf &= 1;
-                            systemFlag0 |= ibuf << 10;
+                            systemFlag0 |= ibuf << 7;
                             //=======
                             ibuf = (int) GB.paraSetMap.get("ctr1TxLoad");//輸出裝置 0:假負載 1:天線
                             ibuf &= 1;
-                            systemFlag0 |= ibuf << 11;
-                            ibuf = (int) GB.paraSetMap.get("ctr2TxLoad");//輸出裝置 0:假負載 1:天線
-                            ibuf &= 1;
-                            systemFlag0 |= ibuf << 12;
+                            systemFlag0 |= ibuf << 8;
+                            
+                            ibuf = (int) GB.paraSetMap.get("sp4tCnt");//輸出裝置 0:假負載 1:天線
+                            ibuf &= 7;
+                            systemFlag0 |= ibuf << 9;
                             //=======
                             ibuf = (int) GB.paraSetMap.get("mastToSub1CommType");
                             ibuf &= 3;
