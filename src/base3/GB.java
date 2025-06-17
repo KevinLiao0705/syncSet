@@ -95,9 +95,9 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "./interfaces";
-            GB.paraSetPath = "d:/kevin/myCode/syncSet/paraSet.json";
+            GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
-            GB.logPath ="d:/kevin/myCode/webServletBase/web/log";
+            GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
             //GB.logPath = "./log";
 
         }
