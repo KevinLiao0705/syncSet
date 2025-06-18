@@ -25,7 +25,7 @@ public class GB {
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
-    static int os_inx = 0;     //0:windows 1://linux    
+    static int os_inx = 1;     //0:windows 1://linux    
     static String asteriskConfPath = "./asteridkConfPath";
 
     //===============================
@@ -95,9 +95,9 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "./interfaces";
-            GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
+            GB.paraSetPath = "d:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
-            GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
+            GB.logPath ="d:/kevin/myCode/webServletBase/web/log";
             //GB.logPath = "./log";
 
         }
