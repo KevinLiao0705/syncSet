@@ -4,13 +4,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.java_websocket.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -37,8 +40,9 @@ public class ConsoleMain {
     int easyParas = 0;
     int easyCommandTime = 0;
     int testUartTime = 0;
-    int connectFpgaCnt=0;
+    int connectFpgaCnt = 0;
     int[] drvDataClrBuf = new int[36];
+    int addBufDebugCnt = 0;
 
     //===========================
     //dataToFpga
@@ -149,7 +153,7 @@ public class ConsoleMain {
 
             }
             int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
-            int ready_f = scla.syncData.systemStatus0  & 3;
+            int ready_f = scla.syncData.systemStatus0 & 3;
 
             if (act.equals(preText + "SspaPowerOn")) {
                 if (GB.emulate == 2) {
@@ -255,9 +259,6 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x200f, paras);
                 return outJson;
             }
-            
-            
-            
 
         } catch (Exception ex) {
 
@@ -325,7 +326,7 @@ public class ConsoleMain {
                 kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
-                kj.jadd("enviStatusA" , syncData.enviStatusA);
+                kj.jadd("enviStatusA", syncData.enviStatusA);
                 kj.jadd("meterStatusAA", syncData.meterStatusAA);
                 kj.jadd("sspaPowerStatusAA", syncData.sspaPowerStatusAA);
                 kj.jadd("sspaPowerV50vAA", syncData.sspaPowerV50vAA);
@@ -338,8 +339,45 @@ public class ConsoleMain {
                 kj.jadd("sspaModuleRfOutAA", syncData.sspaModuleRfOutAA);
                 kj.jadd("sspaModuleTemprAA", syncData.sspaModuleTemprAA);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                //=================================
+                /*
+                syncData.pulseFormAddBufA0Len=6;
+                syncData.pulseFormAddBufA0[0]=100000*2+1;
+                syncData.pulseFormAddBufA0[1]=900000*2+0;
+                syncData.pulseFormAddBufA0[2]=123000*2+1;
+                syncData.pulseFormAddBufA0[3]=456000*2+0;
+                syncData.pulseFormAddBufA0[4]=323000*2+1;
+                syncData.pulseFormAddBufA0[5]=956000*2+0;
+                */
+                int[] intA=new int[256];
+                int pinx=0;
+                for(;;){
+                    int chgInx=(syncData.pulseFormAddBufA0Inx0^syncData.pulseFormAddBufA0Inx1)&255;
+                    if(chgInx==0)
+                        break;
+                    intA[pinx++]=syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx1&255];
+                    syncData.pulseFormAddBufA0Inx1++;
+                    if(pinx>=256);
+                        break;
+                }
+                int[] intB;
+                if(pinx==0)
+                    intB=null;
+                else{
+                    intB=new int[pinx];
+                    for(int i=0;i<pinx;i++){
+                        int ib=(intA[i]>>1)*2;
+                        ib=ib*1000/160+(intA[i]&1);
+                        intB[i]=ib;
+                    }
+                }
+                //intB=new int[2];
+                //intB[0]=100*1000*2+1;
+                //intB[1]=200*1000*2+0;
+                kj.jadd("pulseFormAddBufA0", intB);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
+                syncData.pulseFormAddBufA0Len=0;
                 outJson.put("syncData", syncJson);
             }
         } catch (Exception ex) {
@@ -502,14 +540,14 @@ public class ConsoleMain {
                     //if (para0 == 3 || para0 == 4)//fpgaId
                     if (true)//fpgaId
                     {
-                        connectFpgaCnt=0;
+                        connectFpgaCnt = 0;
                         for (int i = 0; i < 12; i++) {
                             syncData.slotDataAA[i] = bk.lookShort();
                         }
 
                         syncData.systemStatus0 = bk.lookInt();
                         syncData.systemStatus1 = bk.lookInt();
-                        
+
                         for (;;) {
                             ibuf = bk.lookByteInt();
                             if (ibuf == 0xcd) {
@@ -521,7 +559,7 @@ public class ConsoleMain {
                                 for (int i = 0; i < 6; i++) {
                                     syncData.meterStatusAA[i] = bk.lookShort();
                                 }
-
+                                continue;
                             }
 
                             if (ibuf == 0xab) {
@@ -539,7 +577,7 @@ public class ConsoleMain {
                                 syncData.sspaModuleStatusAA[ibuf] = bk.lookByte();
                                 syncData.sspaModuleRfOutAA[ibuf] = bk.lookShort();
                                 syncData.sspaModuleTemprAA[ibuf] = bk.lookShort();
-                                drvDataClrBuf[ibuf]=0;
+                                drvDataClrBuf[ibuf] = 0;
                                 continue;
                             }
                             if (ibuf == 0xac) {
@@ -550,17 +588,9 @@ public class ConsoleMain {
                                 for (int i = 0; i < 8; i++) {
                                     syncData.viewDatas[ibuf * 8 + i] = bk.lookInt();
                                 }
+                                continue;
                             }
 
-                            if (ibuf == 0xac) {
-                                ibuf = bk.lookByteInt();
-                                if (ibuf >= 32) {
-                                    return null;
-                                }
-                                for (int i = 0; i < 8; i++) {
-                                    syncData.viewDatas[ibuf * 8 + i] = bk.lookInt();
-                                }
-                            }
 
                             if (ibuf == 0xad || ibuf == 0xae || ibuf == 0xaf) {
                                 byte[] byteA = null;
@@ -580,7 +610,21 @@ public class ConsoleMain {
                                 for (int i = 0; i < ibuf; i++) {
                                     byteA[i] = bk.lookByte();
                                 }
+                                continue;
                             }
+                            
+                            if (ibuf == 0xb0) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 16) {
+                                    break;
+                                }
+                                for (int i = 0; i < ibuf; i++) {
+                                    syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx0&255]=bk.lookInt();
+                                    syncData.pulseFormAddBufA0Inx0++;
+                                }
+                                continue;
+                            }
+                            break;
 
                         }
 
@@ -619,7 +663,7 @@ public class ConsoleMain {
                         uart0.txBufferLen = 0;
                         //================================================
                         if (easyCommand != 0) {
-                            int xibuf=easyCommand;
+                            int xibuf = easyCommand;
                             easyCommand = 0;
                         }
 
@@ -660,7 +704,7 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("ctr1TxLoad");//輸出裝置 0:假負載 1:天線
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 8;
-                            
+
                             ibuf = (int) GB.paraSetMap.get("sp4tCnt");//輸出裝置 0:假負載 1:天線
                             ibuf &= 7;
                             systemFlag0 |= ibuf << 9;
@@ -761,10 +805,10 @@ public class ConsoleMain {
                                 str = "0 0 1.0 3.0 1";
                             }
                             String[] strA = str.split(" ");
-                            int widthCh=Lib.str2int(strA[1], 0);
+                            int widthCh = Lib.str2int(strA[1], 0);
                             //=====================================
                             jarr = (JSONArray) GB.paraSetMap.get("localPulseWidthParas");
-                            String strw="10";
+                            String strw = "10";
                             try {
                                 strw = (String) jarr.get(widthCh);
                             } catch (Exception ex) {
@@ -850,8 +894,7 @@ public class ConsoleMain {
                             lb.wShortInt(pulseWidth);   //unit 0.1us
                             lb.wByteInt(freq);
                             lb.wByteInt(trigTimes);     //
-                            
-                            
+
                             lb.wByteInt(0xcd);
                             uart0.txBufferLen = lb.inx;
                         }
@@ -1103,14 +1146,14 @@ class ConsoleMainTm1 extends TimerTask {
                 cla.easyCommand = 0;
 
             }
-            
-            for(int i=0;i<36;i++){
+
+            for (int i = 0; i < 36; i++) {
                 cla.drvDataClrBuf[i]++;
-                if(cla.drvDataClrBuf[i]>50){
-                    cla.syncData.sspaPowerStatusAA[i]&=0xfe;
+                if (cla.drvDataClrBuf[i] > 50) {
+                    cla.syncData.sspaPowerStatusAA[i] &= 0xfe;
                 }
             }
-            
+
             cla.testUartTime++;
             if (cla.testUartTime >= 5) {
                 cla.testUartTime = 0;
@@ -1119,8 +1162,9 @@ class ConsoleMainTm1 extends TimerTask {
 
             }
             cla.connectFpgaCnt++;
-            if(cla.connectFpgaCnt>100)
-                cla.syncData.systemStatus0&=0xfffffffc;
+            if (cla.connectFpgaCnt > 100) {
+                cla.syncData.systemStatus0 &= 0xfffffffc;
+            }
 
             //===============================
             Path file = Paths.get(GB.paraSetPath);
@@ -1322,23 +1366,23 @@ class SyncData {
      4:cw output rf power
      5:ccw output rf power
      */
-    short[]meterStatusAA = new short[6];
+    short[] meterStatusAA = new short[6];
     //=============================================
     //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50t, 7:v32v, 8:v32i, 9:v32t
-    byte[]sspaPowerStatusAA = new byte[36];
-    short[]sspaPowerV50vAA = new short[36];
-    short[]sspaPowerV50iAA = new short[36];
-    short[]sspaPowerV50tAA = new short[36];
-    short[]sspaPowerV32vAA = new short[36];
-    short[]sspaPowerV32iAA = new short[36];
-    short[]sspaPowerV32tAA = new short[36];
+    byte[] sspaPowerStatusAA = new byte[36];
+    short[] sspaPowerV50vAA = new short[36];
+    short[] sspaPowerV50iAA = new short[36];
+    short[] sspaPowerV50tAA = new short[36];
+    short[] sspaPowerV32vAA = new short[36];
+    short[] sspaPowerV32iAA = new short[36];
+    short[] sspaPowerV32tAA = new short[36];
     //=============================================
     /*
      0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 
      */
-    byte[]sspaModuleStatusAA = new byte[36];
-    short[]sspaModuleRfOutAA = new short[36];
-    short[]sspaModuleTemprAA = new short[36];
+    byte[] sspaModuleStatusAA = new byte[36];
+    short[] sspaModuleRfOutAA = new short[36];
+    short[] sspaModuleTemprAA = new short[36];
     //=============================================
 
     byte[][] gpsDataAA = new byte[3][16];
@@ -1355,7 +1399,15 @@ class SyncData {
     int pulseWaveInx = 0;
 
     int[] viewDatas = new int[256];
+    //ArrayList<int> list = new ArrayList<int>();
+    int pulseFormAddBufA0Len = 0;
+    int pulseFormAddBufA0Inx0 = 0;
+    int pulseFormAddBufA0Inx1 = 0;
+    int[] pulseFormAddBufA0 = new int[256];
 
+    
+    
+    
     SyncData() {
     }
 

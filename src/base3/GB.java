@@ -21,7 +21,7 @@ public class GB {
     //public static String webSocketAddr = "127.0.0.1";
     //public static String webSocketAddr = "192.168.121.10";
     public static int webSocketPort = 8899;
-    public static String paraSetPath = "d:/kevin/myCode/syncSet/paraSet.json";
+    public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
@@ -95,9 +95,9 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "./interfaces";
-            GB.paraSetPath = "d:/kevin/myCode/syncSet/paraSet.json";
+            GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
-            GB.logPath ="d:/kevin/myCode/webServletBase/web/log";
+            GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
             //GB.logPath = "./log";
 
         }

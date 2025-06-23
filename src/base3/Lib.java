@@ -1611,6 +1611,7 @@ class KvJson {
         keyCnt = 0;
         jstr = "{";
     }
+
     String jEnd() {
         keyCnt = 0;
         jstr += "}";
@@ -1621,17 +1622,17 @@ class KvJson {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr +=ii;
+        jstr += "\"" + key + "\":";
+        jstr += ii;
         keyCnt++;
     }
-    
+
     void jadd(String key, short ii) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr +=ii;
+        jstr += "\"" + key + "\":";
+        jstr += ii;
         keyCnt++;
     }
 
@@ -1639,27 +1640,26 @@ class KvJson {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr +=ii;
+        jstr += "\"" + key + "\":";
+        jstr += ii;
         keyCnt++;
     }
 
-    
-    
     void jadd(String key, float ff) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr +=ff;
+        jstr += "\"" + key + "\":";
+        jstr += ff;
         keyCnt++;
     }
+
     void jadd(String key, String ss) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr +=ss;
+        jstr += "\"" + key + "\":";
+        jstr += ss;
         keyCnt++;
     }
 
@@ -1667,14 +1667,17 @@ class KvJson {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<ia.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr +=ia[i];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        if (ia != null) {
+            for (int i = 0; i < ia.length; i++) {
+                if (i != 0) {
+                    jstr += ",";
+                }
+                jstr += ia[i];
+            }
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
 
@@ -1682,14 +1685,15 @@ class KvJson {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<ia.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr +=ia[i];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        for (int i = 0; i < ia.length; i++) {
+            if (i != 0) {
+                jstr += ",";
+            }
+            jstr += ia[i];
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
 
@@ -1697,71 +1701,73 @@ class KvJson {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<ia.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr +=ia[i];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        for (int i = 0; i < ia.length; i++) {
+            if (i != 0) {
+                jstr += ",";
+            }
+            jstr += ia[i];
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
-    
-    
+
     void jadd(String key, float[] fa) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<fa.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr +=fa[i];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        for (int i = 0; i < fa.length; i++) {
+            if (i != 0) {
+                jstr += ",";
+            }
+            jstr += fa[i];
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
-    
+
     void jadd(String key, String[] sa) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<sa.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr +=sa[i];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        for (int i = 0; i < sa.length; i++) {
+            if (i != 0) {
+                jstr += ",";
+            }
+            jstr += sa[i];
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
-    
+
     void jadd(String key, int[][] iaa) {
         if (keyCnt != 0) {
             jstr += ",";
         }
-        jstr += "\""+key+"\":";
-        jstr+="[";
-        for(int i=0;i<iaa.length;i++){
-            if(i!=0)
-                jstr+=",";
-            jstr+="[";
-            for(int j=0;j<iaa[i].length;j++){
-                if(j!=0)
-                    jstr+=",";
-                jstr+=iaa[i][j];
+        jstr += "\"" + key + "\":";
+        jstr += "[";
+        for (int i = 0; i < iaa.length; i++) {
+            if (i != 0) {
+                jstr += ",";
             }
-            jstr+="]";
+            jstr += "[";
+            for (int j = 0; j < iaa[i].length; j++) {
+                if (j != 0) {
+                    jstr += ",";
+                }
+                jstr += iaa[i][j];
+            }
+            jstr += "]";
         }
-        jstr+="]";
+        jstr += "]";
         keyCnt++;
     }
 
-
-    
     static String objToJson(Object inst) {
         String ss;
         byte bb;
