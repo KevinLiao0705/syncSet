@@ -348,36 +348,28 @@ public class ConsoleMain {
                 syncData.pulseFormAddBufA0[3]=456000*2+0;
                 syncData.pulseFormAddBufA0[4]=323000*2+1;
                 syncData.pulseFormAddBufA0[5]=956000*2+0;
-                */
-                int[] intA=new int[256];
-                int pinx=0;
-                for(;;){
-                    int chgInx=(syncData.pulseFormAddBufA0Inx0^syncData.pulseFormAddBufA0Inx1)&255;
-                    if(chgInx==0)
+                 */
+                int[] intA = new int[256];
+                int pinx = 0;
+                for (;;) {
+                    int chgInx = (syncData.pulseFormAddBufA0Inx0 ^ syncData.pulseFormAddBufA0Inx1) & 255;
+                    if (chgInx == 0) {
                         break;
-                    intA[pinx++]=syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx1&255];
-                    syncData.pulseFormAddBufA0Inx1++;
-                    if(pinx>=256);
-                        break;
-                }
-                int[] intB;
-                if(pinx==0)
-                    intB=null;
-                else{
-                    intB=new int[pinx];
-                    for(int i=0;i<pinx;i++){
-                        int ib=(intA[i]>>1)*2;
-                        ib=ib*1000/160+(intA[i]&1);
-                        intB[i]=ib;
                     }
+                    intA[pinx++] = syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx1 & 255];
+                    syncData.pulseFormAddBufA0Inx1++;
+                    if (pinx >= 256);
+                    break;
                 }
-                //intB=new int[2];
-                //intB[0]=100*1000*2+1;
-                //intB[1]=200*1000*2+0;
-                kj.jadd("pulseFormAddBufA0", intB);
+                kj.jadd("pulseFormAddBufA0", intA, pinx);
+                intA[0]=syncData.pulseFormLowPeriod;
+                intA[1]=syncData.pulseFormHighPeriod;
+                intA[2]=syncData.pulseFormFreq;
+                kj.jadd("pulseFormInf", intA,3);
+
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
-                syncData.pulseFormAddBufA0Len=0;
+                syncData.pulseFormAddBufA0Len = 0;
                 outJson.put("syncData", syncJson);
             }
         } catch (Exception ex) {
@@ -591,7 +583,6 @@ public class ConsoleMain {
                                 continue;
                             }
 
-
                             if (ibuf == 0xad || ibuf == 0xae || ibuf == 0xaf) {
                                 byte[] byteA = null;
                                 if (ibuf == 0xad) {
@@ -612,16 +603,27 @@ public class ConsoleMain {
                                 }
                                 continue;
                             }
-                            
+
                             if (ibuf == 0xb0) {
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 16) {
                                     break;
                                 }
                                 for (int i = 0; i < ibuf; i++) {
-                                    syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx0&255]=bk.lookInt();
+                                    syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx0 & 255] = bk.lookInt();
                                     syncData.pulseFormAddBufA0Inx0++;
                                 }
+                                continue;
+                            }
+                            
+                            if (ibuf == 0xb1) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 9) {
+                                    break;
+                                }
+                                syncData.pulseFormLowPeriod = bk.lookInt();
+                                syncData.pulseFormHighPeriod = bk.lookInt();
+                                syncData.pulseFormFreq = bk.lookByte();
                                 continue;
                             }
                             break;
@@ -1164,6 +1166,11 @@ class ConsoleMainTm1 extends TimerTask {
             cla.connectFpgaCnt++;
             if (cla.connectFpgaCnt > 100) {
                 cla.syncData.systemStatus0 &= 0xfffffffc;
+                cla.syncData.pulseFormHighPeriod=0;
+                cla.syncData.pulseFormLowPeriod=0;
+                cla.syncData.pulseFormAddBufA0[cla.syncData.pulseFormAddBufA0Inx1 & 255]=20*1000*160*2;                
+                cla.syncData.pulseFormAddBufA0Inx1++;
+                
             }
 
             //===============================
@@ -1404,10 +1411,11 @@ class SyncData {
     int pulseFormAddBufA0Inx0 = 0;
     int pulseFormAddBufA0Inx1 = 0;
     int[] pulseFormAddBufA0 = new int[256];
+    int pulseFormLowPeriod=0;
+    int pulseFormHighPeriod=0;
+    byte pulseFormFreq=0;
 
-    
-    
-    
+
     SyncData() {
     }
 
