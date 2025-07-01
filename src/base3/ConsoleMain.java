@@ -1,5 +1,9 @@
 package base3;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,6 +79,9 @@ public class ConsoleMain {
                 scla.transSyncData(outJson);
                 return outJson;
             }
+            
+            
+            
             Object obj = null;
             try {
                 obj = mesJson.get("paras");
@@ -101,6 +108,13 @@ public class ConsoleMain {
 
             }
 
+            if (act.equals("closeUi")) {
+                scla.cmdFunc("simulateKeyExit");                
+                return outJson;
+                
+            }
+            
+            
             String preText = "";
             int preInx = 0;
             int status0 = 0;
@@ -362,10 +376,10 @@ public class ConsoleMain {
                     break;
                 }
                 kj.jadd("pulseFormAddBufA0", intA, pinx);
-                intA[0]=syncData.pulseFormLowPeriod;
-                intA[1]=syncData.pulseFormHighPeriod;
-                intA[2]=syncData.pulseFormFreq;
-                kj.jadd("pulseFormInf", intA,3);
+                intA[0] = syncData.pulseFormLowPeriod;
+                intA[1] = syncData.pulseFormHighPeriod;
+                intA[2] = syncData.pulseFormFreq;
+                kj.jadd("pulseFormInf", intA, 3);
 
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
@@ -615,7 +629,7 @@ public class ConsoleMain {
                                 }
                                 continue;
                             }
-                            
+
                             if (ibuf == 0xb1) {
                                 ibuf = bk.lookByteInt();
                                 if (ibuf != 9) {
@@ -917,6 +931,20 @@ public class ConsoleMain {
         return errStr;
     }
 
+    public void txUartTest() {
+        uart0.txDeviceId = 0x1234;
+        uart0.txSerialId = 0x5678;
+        uart0.txGroupId = 0xac00;
+        uart0.txCmd = 0xabcd;
+        uart0.txPara0 = 0x0001;  //fpgaId
+        uart0.txPara1 = 0x0002;  //serialCnt
+        uart0.txPara2 = 0x0003; //easy command 
+        uart0.txPara3 = 0x0004; //eaay command paras
+        uart0.txBufferLen = 0;
+        uart0.encSend();
+
+    }
+
     public void socketServerReturn() {
         byte[] sockUartData_buf = new byte[22];
         int inx = 0;
@@ -1001,6 +1029,7 @@ public class ConsoleMain {
         }
         String[] strCmdA = cmdstr.split(" ");
 
+
         if (strCmdA[0].equals("changeIp")) {
 
             //String winCmds="netsh interface ip set address name=乙太網路 source=static addr="+ipStr;
@@ -1049,6 +1078,20 @@ public class ConsoleMain {
             System.exit(0);
             return errStr;
         }
+        
+        if (cmdstr.equals("simulateKeyExit")) {
+            try {
+                Robot robot = new Robot();
+                robot.keyPress(KeyEvent.VK_CONTROL);
+                robot.keyPress(KeyEvent.VK_F4);
+                robot.keyRelease(KeyEvent.VK_F4);
+                robot.keyRelease(KeyEvent.VK_CONTROL);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+
+        }
+        
 
         if (cmdstr.equals("listComPort")) {
             String[] list = Uart.listComPort();
@@ -1166,11 +1209,11 @@ class ConsoleMainTm1 extends TimerTask {
             cla.connectFpgaCnt++;
             if (cla.connectFpgaCnt > 100) {
                 cla.syncData.systemStatus0 &= 0xfffffffc;
-                cla.syncData.pulseFormHighPeriod=0;
-                cla.syncData.pulseFormLowPeriod=0;
-                cla.syncData.pulseFormAddBufA0[cla.syncData.pulseFormAddBufA0Inx1 & 255]=20*1000*160*2;                
+                cla.syncData.pulseFormHighPeriod = 0;
+                cla.syncData.pulseFormLowPeriod = 0;
+                cla.syncData.pulseFormAddBufA0[cla.syncData.pulseFormAddBufA0Inx1 & 255] = 20 * 1000 * 160 * 2;
                 cla.syncData.pulseFormAddBufA0Inx1++;
-                
+
             }
 
             //===============================
@@ -1411,10 +1454,9 @@ class SyncData {
     int pulseFormAddBufA0Inx0 = 0;
     int pulseFormAddBufA0Inx1 = 0;
     int[] pulseFormAddBufA0 = new int[256];
-    int pulseFormLowPeriod=0;
-    int pulseFormHighPeriod=0;
-    byte pulseFormFreq=0;
-
+    int pulseFormLowPeriod = 0;
+    int pulseFormHighPeriod = 0;
+    byte pulseFormFreq = 0;
 
     SyncData() {
     }
