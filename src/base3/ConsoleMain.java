@@ -155,6 +155,28 @@ public class ConsoleMain {
                 moduleStatusA = scla.syncData.sspaModuleStatusAA;
 
             }
+            
+            if (act.equals("selfTestStartAll")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2008, null);
+                return outJson;
+            }
+            if (act.equals("selfTestStopAll")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2009, null);
+                return outJson;
+            }
+            if (act.equals("selfTestSlot")) {
+                scla.setEasyCommand(0x200a, paras);
+                outJson.put("status", "ok");
+                return outJson;
+            }
+            
+            if (scla.appId == 0) {
+                return outJson;
+            }
+            
+            
             int powerOn_f;
             int moduleOn_f;
             for (int i = 0; i < 36; i++) {
@@ -243,21 +265,6 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x2007, null);
                 return outJson;
             }
-            if (act.equals("selfTestStartAll")) {
-                outJson.put("status", "ok");
-                scla.setEasyCommand(0x2008, null);
-                return outJson;
-            }
-            if (act.equals("selfTestStopAll")) {
-                outJson.put("status", "ok");
-                scla.setEasyCommand(0x2009, null);
-                return outJson;
-            }
-            if (act.equals("selfTestSlot")) {
-                scla.setEasyCommand(0x200a, paras);
-                outJson.put("status", "ok");
-                return outJson;
-            }
             if (act.equals(preText + "PulseSource")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x200d, paras);
@@ -304,7 +311,7 @@ public class ConsoleMain {
             if (appId == 0) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA);
+                kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 kj.jadd("gngga0", syncData.gngga0);
@@ -319,7 +326,7 @@ public class ConsoleMain {
             if (appId == 1 || appId == 2) {
                 KvJson kj = new KvJson();
                 kj.jStart();
-                kj.jadd("slotDataAA#" + (appId), syncData.slotDataAA);
+                kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 if (appId == 1) {

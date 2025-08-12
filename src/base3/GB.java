@@ -8,7 +8,8 @@ import java.util.logging.Logger;
 
 public class GB {
     //0: window ConsoleMain 1:linux
-    static int prgMode = 1;
+    static int prgMode = 0;
+    static int debug_f=1;
     static String version = "1.2";
     static int emulate = 0;
     public static String webRootPath = "./";
