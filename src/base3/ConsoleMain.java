@@ -4,6 +4,9 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,11 +20,19 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.java_websocket.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 //asterisk sound location: usr/share/asterisk/sounds/en/
+//admintx 123456789 192.168.0.219
 public class ConsoleMain {
 
     static ConsoleMain scla;
@@ -38,6 +49,7 @@ public class ConsoleMain {
     String preCmdStr = "";
     KvComm ioComm;
     Uart uart0 = new Uart();
+    Uart uart1 = new Uart();
     SyncData syncData = new SyncData();
     int appId = 0;
     int easyCommand = 0;
@@ -47,6 +59,8 @@ public class ConsoleMain {
     int connectFpgaCnt = 0;
     int[] drvDataClrBuf = new int[36];
     int addBufDebugCnt = 0;
+    int sysFlag0 = 0;
+    int sysFlag1 = 0;
 
     //===========================
     //dataToFpga
@@ -79,9 +93,7 @@ public class ConsoleMain {
                 scla.transSyncData(outJson);
                 return outJson;
             }
-            
-            
-            
+
             Object obj = null;
             try {
                 obj = mesJson.get("paras");
@@ -109,12 +121,11 @@ public class ConsoleMain {
             }
 
             if (act.equals("closeUi")) {
-                scla.cmdFunc("simulateKeyExit");                
+                scla.cmdFunc("simulateKeyExit");
                 return outJson;
-                
+
             }
-            
-            
+
             String preText = "";
             int preInx = 0;
             int status0 = 0;
@@ -155,7 +166,7 @@ public class ConsoleMain {
                 moduleStatusA = scla.syncData.sspaModuleStatusAA;
 
             }
-            
+
             if (act.equals("selfTestStartAll")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2008, null);
@@ -171,14 +182,13 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            
+
             if (scla.appId == 0) {
                 return outJson;
             }
-            
-            
-            int powerOn_f;
-            int moduleOn_f;
+
+            int powerOn_f = 0;
+            int moduleOn_f = 0;
             for (int i = 0; i < 36; i++) {
                 if (((powerStatusA[i] >> 4) & 1) == 1) {
                     powerOn_f = 1;
@@ -188,6 +198,7 @@ public class ConsoleMain {
                 }
 
             }
+
             int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
             int ready_f = scla.syncData.systemStatus0 & 3;
 
@@ -285,6 +296,13 @@ public class ConsoleMain {
 
         }
         return outJson;
+
+    }
+
+    public void setEasyCommand(int cmd, int para0) {
+        easyParas = para0;
+        easyCommand = cmd;
+        easyCommandTime = 0;
 
     }
 
@@ -479,12 +497,21 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
-        errStr = cmdFunc("openComPort");
+        errStr = cmdFunc("openComPort0");
         if (errStr != null) {
             System.out.println(errStr);
         } else {
-            System.out.println("open com port ok.");
+            System.out.println("open com port 0 ok.");
         }
+
+        errStr = cmdFunc("openComPort1");
+        if (errStr != null) {
+            System.out.println(errStr);
+        } else {
+            System.out.println("open com port 1 ok.");
+        }
+
+        
         //=====================================
         System.out.println("ConsoleMain Ready.");
         while (true) {
@@ -557,9 +584,13 @@ public class ConsoleMain {
                         for (int i = 0; i < 12; i++) {
                             syncData.slotDataAA[i] = bk.lookShort();
                         }
+                        ibuf0 = bk.lookInt() ^ syncData.systemStatus0;
+                        ibuf0 = ibuf0 & 0xfe7fffff;
+                        syncData.systemStatus0 ^= ibuf0;
 
-                        syncData.systemStatus0 = bk.lookInt();
-                        syncData.systemStatus1 = bk.lookInt();
+                        ibuf0 = bk.lookInt() ^ syncData.systemStatus1;
+                        ibuf0 = ibuf0 & 0x03ffffff;
+                        syncData.systemStatus1 ^= ibuf0;
 
                         for (;;) {
                             ibuf = bk.lookByteInt();
@@ -770,6 +801,8 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("wgProtectFlag");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 27;
+                            sysFlag0 = systemFlag0;
+                            sysFlag1 = systemFlag1;
 
                             //=============================================
                             int sspaPowerV32OnDly = (int) GB.paraSetMap.get(preText + "SspaPowerV32OnDly");//32V 延遲啟動時間 unit 0.1s 8bit
@@ -938,6 +971,196 @@ public class ConsoleMain {
         return errStr;
     }
 
+    public String openUart1() {
+        if (uart1.uartSeted_f != 0) {
+            return null;
+        }
+        uart1.portName = "COM" + (int) GB.paraSetMap.get("uart1Port");
+        if (GB.prgMode == 1) {
+            uart1.portName = "ttyACM2";
+        }
+        System.out.println(uart1.portName);
+
+        uart1.boudrate = (int) 115200;
+        uart1.parity = "None";
+        uart1.stopBit = 1;
+        uart1.dataBit = 8;
+        uart1.txEncMode = 1;
+        uart1.rxEncMode = 1;
+        //&w
+        uart1.setCallBack(new BytesCallback() {
+            @Override
+            public String prg(byte[] bytes, int len) {
+                int inx = 0;
+                ByteLook bk = new ByteLook(bytes);
+                int deviceId = bk.lookShortInt();
+                int serialId = bk.lookShortInt();
+                int groupId = bk.lookShortInt();
+                int groupLen = bk.lookShortInt();
+                int cmd = bk.lookShortInt();
+                int para0 = bk.lookShortInt();
+                int para1 = bk.lookShortInt();
+                int para2 = bk.lookShortInt();
+                int para3 = bk.lookShortInt();
+                if (deviceId != 0x1737 || serialId != 0x0000) {
+                    return null;
+                }
+                if (groupId != 0xab00) {
+                    return null;
+                }
+                if (cmd != 0x1000) {
+                    return null;
+                }
+                int ibuf = 0;
+                int ibuf0, ibuf1, ibuf2, ibuf3;
+                uart1.rxSerialCnt++;
+                uart1.rxSerialCnt &= 0xffff;
+                if (uart1.rxSerialCnt != para1) {
+                    uart1.rxErrCnt++;
+                }
+                uart1.rxSerialCnt = para1;
+                uart1.rxPackageCnt++;
+                if ((uart1.rxPackageCnt
+                        % 100) == 0) {
+                    System.out.print(" uart1Rx-" + uart1.rxErrCnt);
+                    if ((uart1.rxPackageCnt % 1000) == 0) {
+                        System.out.print("\n");
+                    }
+                }
+                //===============================================================
+                /*
+                    0x01:0x02:0x03:0x04:0x05:0x06 POWER ,LOCAL/REMOTE, ENABLE, RADIATION, ANT, EMERGENCY                    
+                    bit 0~3 press key
+                    bit 4~7 release key
+                    bit 8~11 continue key
+                
+                
+                 */
+                if (para0 != 0) {
+                    int keyInId = para0;//
+                    if (keyInId == 1) {
+                        if ((syncData.systemStatus0 & (1 << 23)) == 0) {
+                            scla.setEasyCommand(0x2000, -1);
+                        } else {
+                            scla.setEasyCommand(0x2001, -1);
+                        }
+                    }
+                    if (keyInId == 2) {
+                        //ibuf=Lib.readParaSet("ctr1PulseSource", -1);
+                        ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
+                        if (ibuf >= 0) {
+                            ibuf ^= 1;
+                            ibuf = (int) GB.paraSetMap.put("ctr1PulseSource", ibuf);
+                            Lib.writeParaSet("ctr1PulseSource", ibuf);
+                        }
+
+                    }
+                    if (keyInId == 3) {
+                        if ((syncData.systemStatus0 & (1 << 24)) == 0) {
+                            scla.setEasyCommand(0x2002, -1);
+                        } else {
+                            scla.setEasyCommand(0x2003, -1);
+                        }
+                    }
+                    if (keyInId == 4) {
+                        if ((syncData.systemStatus0 & (1 << 25)) == 0) {
+                            ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
+                            int ibx = (int) GB.paraSetMap.get("localPulseGenCh");
+                            if(ibuf == 0)
+                                scla.setEasyCommand(0x2004, 254);
+                            else
+                                scla.setEasyCommand(0x2004, ibx);
+                        } else {
+                            scla.setEasyCommand(0x2005, 0);
+                        }
+                    }
+                    if (keyInId == 5) {
+                        //ibuf=Lib.readParaSet("ctr1PulseSource", -1);
+                        ibuf = (int) GB.paraSetMap.get("ctr1TxLoad");
+                        if (ibuf < 0) {
+                            return null;
+                        }
+                        ibuf ^= 1;
+                        ibuf = (int) GB.paraSetMap.put("ctr1TxLoad", ibuf);
+                        Lib.writeParaSet("ctr1TxLoad", ibuf);
+                    }
+                    if (keyInId == 6) {
+                        if ((syncData.systemStatus0 & (1 << 26)) == 0) {
+                            scla.setEasyCommand(0x2006, 0);
+                        } else {
+                            scla.setEasyCommand(0x2007, 0);
+                        }
+                    }
+                }
+                String preText;
+                String preText1;
+
+                try {
+                    if (cmd == 0x1000) {//tick
+                        uart1.txDeviceId = myDeviceId;
+                        uart1.txSerialId = mySerialId;
+                        uart1.txGroupId = 0xac00;
+                        uart1.txCmd = cmd;
+                        uart1.txPara0 = 0;
+                        if ((syncData.systemStatus0 & (1 << 23)) != 0) {
+                            uart1.txPara0 |= (1 << 0);
+                        }
+                        if ((sysFlag0 & (1 << 6)) == 0) {
+                            uart1.txPara0 |= (1 << 1);
+                        }
+                        if ((syncData.systemStatus0 & (1 << 24)) != 0) {
+                            uart1.txPara0 |= (1 << 2);
+                        }
+                        if ((syncData.systemStatus0 & (1 << 25)) != 0) {
+                            uart1.txPara0 |= (1 << 3);
+                        }
+                        if ((sysFlag0 & (1 << 8)) != 0) {
+                            uart1.txPara0 |= (1 << 4);
+                        }
+                        if ((syncData.systemStatus0 & (1 << 26)) != 0) {
+                            uart1.txPara0 |= (1 << 5);
+                        }
+                        //========================
+                        uart1.txPara0 |= (1 << 8);
+                        if ((sysFlag0 & (1 << 6)) != 0) {
+                            uart1.txPara0 |= (1 << 9);
+                        }
+                        if ((sysFlag0 & (1 << 6)) == 0) {
+                            uart1.txPara0 |= (1 << 10);
+                        }
+                        if ((sysFlag0 & (1 << 8)) == 0) {
+                            uart1.txPara0 |= (1 << 11);
+                        }
+                        if ((sysFlag0 & (1 << 8)) != 0) {
+                            uart1.txPara0 |= (1 << 12);
+                        }
+                        if ((sysFlag0 & (1 << 7)) != 0) {
+                            uart1.txPara0 |= (1 << 13);
+                        }
+                        if ((syncData.systemStatus0 & (1 << 25)) != 0) {
+                            uart1.txPara0 |= (1 << 14);
+                        }
+
+                        uart1.txPara1 = 0x0000;
+                        uart1.txPara2 = 0x0000;
+                        uart1.txPara3 = 0x0000;
+                        uart1.txBufferLen = 0;
+                        uart1.encSend();
+                        return null;
+                    }
+                } catch (Exception ex) {
+
+                }
+                //===============================================================
+                //uart1.encSend(new byte[]{0x23, 0x02, 0x00, 0x02, 0x00, 0x00, 0x01}, 7);
+
+                return null;
+            }
+        });
+        String errStr = uart1.open();
+        return errStr;
+    }
+
     public void txUartTest() {
         uart0.txDeviceId = 0x1234;
         uart0.txSerialId = 0x5678;
@@ -1036,7 +1259,6 @@ public class ConsoleMain {
         }
         String[] strCmdA = cmdstr.split(" ");
 
-
         if (strCmdA[0].equals("changeIp")) {
 
             //String winCmds="netsh interface ip set address name=乙太網路 source=static addr="+ipStr;
@@ -1085,7 +1307,7 @@ public class ConsoleMain {
             System.exit(0);
             return errStr;
         }
-        
+
         if (cmdstr.equals("simulateKeyExit")) {
             try {
                 Robot robot = new Robot();
@@ -1098,7 +1320,6 @@ public class ConsoleMain {
             }
 
         }
-        
 
         if (cmdstr.equals("listComPort")) {
             String[] list = Uart.listComPort();
@@ -1113,11 +1334,15 @@ public class ConsoleMain {
             return errStr;
         }
 
-        if (cmdstr.equals("openComPort")) {
+        if (cmdstr.equals("openComPort0")) {
             errStr = openUart0();
             return errStr;
         }
-        if (cmdstr.equals("closeComPort")) {
+        if (cmdstr.equals("openComPort1")) {
+            errStr = openUart1();
+            return errStr;
+        }
+        if (cmdstr.equals("closeComPort0")) {
             uart0.close();
             return errStr;
         }
@@ -1221,6 +1446,43 @@ class ConsoleMainTm1 extends TimerTask {
                 cla.syncData.pulseFormAddBufA0[cla.syncData.pulseFormAddBufA0Inx1 & 255] = 20 * 1000 * 160 * 2;
                 cla.syncData.pulseFormAddBufA0Inx1++;
 
+            }
+
+            byte[] powerStatusA = cla.syncData.sspaPowerStatusAA;
+            byte[] moduleStatusA = cla.syncData.sspaModuleStatusAA;
+            int powerOn_f = 0;
+            int moduleOn_f = 0;
+            for (int i = 0; i < 36; i++) {
+                if (((powerStatusA[i] >> 4) & 1) == 1) {
+                    powerOn_f = 1;
+                }
+                if (((moduleStatusA[i] >> 1) & 1) == 1) {
+                    moduleOn_f = 1;
+                }
+            }
+            if (powerOn_f != 0) {
+                cla.syncData.systemStatus0 |= 1 << 23;
+            } else {
+                cla.syncData.systemStatus0 &= (1 << 23) ^ 0xffffffff;
+            }
+            if (moduleOn_f != 0) {
+                cla.syncData.systemStatus0 |= 1 << 24;
+            } else {
+                cla.syncData.systemStatus0 &= (1 << 24) ^ 0xffffffff;
+            }
+
+            int ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
+            if (ibuf != 0) {
+                cla.syncData.systemStatus1 |= 1 << 26;
+            } else {
+                cla.syncData.systemStatus1 &= (1 << 26) ^ 0xffffffff;
+            }
+
+            ibuf = (int) GB.paraSetMap.get("ctr1TxLoad");
+            if (ibuf != 0) {
+                cla.syncData.systemStatus1 |= 1 << 27;
+            } else {
+                cla.syncData.systemStatus1 &= (1 << 27) ^ 0xffffffff;
             }
 
             //===============================

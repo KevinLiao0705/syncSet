@@ -5,7 +5,11 @@
  */
 package base3;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.nio.channels.FileChannel;
@@ -102,6 +107,44 @@ public class Lib {
         } finally {
             is.close();
             os.close();
+        }
+    }
+
+    static int readParaSet(String keyName,int errOut) {
+        int ibuf=errOut;
+        try {
+            Gson gson = new Gson();
+            String content = Lib.readFile("paraSet.json");
+            JsonObject jsPara = JsonParser.parseString(content).getAsJsonObject();
+            ibuf = jsPara.get(keyName).getAsInt();
+            return ibuf;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return ibuf;
+    }
+    
+    static void writeParaSet(String keyName, int ibuf) {
+        try {
+            Gson gson = new Gson();
+            String content = Lib.readFile("paraSet.json");
+            JsonObject jsPara = JsonParser.parseString(content).getAsJsonObject();
+            ibuf = jsPara.get(keyName).getAsInt();
+            ibuf ^= 1;
+            jsPara.add(keyName, gson.toJsonTree(ibuf));
+            content = jsPara.toString();
+            BufferedWriter outf = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream("paraSet.json"), "UTF-8"));
+            try {
+                outf.write(content);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                outf.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -1708,13 +1751,13 @@ class KvJson {
         keyCnt++;
     }
 
-    void jadd(String key, int[] ia,int len) {
+    void jadd(String key, int[] ia, int len) {
         if (keyCnt != 0) {
             jstr += ",";
         }
         jstr += "\"" + key + "\":";
         jstr += "[";
-        int iaLen=len;
+        int iaLen = len;
         if (ia != null) {
             for (int i = 0; i < iaLen; i++) {
                 if (i != 0) {
@@ -1726,8 +1769,7 @@ class KvJson {
         jstr += "]";
         keyCnt++;
     }
-    
-    
+
     void jadd(String key, short[] ia) {
         if (keyCnt != 0) {
             jstr += ",";

@@ -5,17 +5,17 @@
             <url>src/base3/ConsoleMain.java</url>
             <bookmark id="8">
                 <name/>
-                <line>141</line>
+                <line>152</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>584</line>
+                <line>615</line>
                 <key/>
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>784</line>
+                <line>817</line>
                 <key/>
             </bookmark>
         </file>
@@ -31,14 +31,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/KvWebSocketServer.java</file>
-            <file>file:/E:/kevin/myCode/syncSet/src/base3/CommPortReceiver.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Lib.java</file>
-            <file>file:/E:/kevin/myCode/syncSet/src/base3/Uart.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/GB.java</file>
-            <file>file:/E:/kevin/myCode/syncSet/src/base3/MyStm.java</file>
+            <file>file:/E:/kevin/myCode/syncSet/src/base3/Uart.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/ConsoleMain.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Base3.java</file>
-            <file>file:/E:/kevin/myCode/syncSet/src/base3/CommPortSender.java</file>
         </group>
     </open-files>
 </project-private>
