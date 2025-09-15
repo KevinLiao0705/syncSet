@@ -15,7 +15,7 @@
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>817</line>
+                <line>823</line>
                 <key/>
             </bookmark>
         </file>
@@ -30,10 +30,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/E:/kevin/myCode/syncSet/src/base3/CommPortReceiver.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/KvWebSocketServer.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Lib.java</file>
-            <file>file:/E:/kevin/myCode/syncSet/src/base3/GB.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Uart.java</file>
+            <file>file:/E:/kevin/myCode/syncSet/src/base3/GB.java</file>
+            <file>file:/E:/kevin/myCode/syncSet/src/base3/KvWebSocketClient.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/ConsoleMain.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Base3.java</file>
         </group>

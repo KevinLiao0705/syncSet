@@ -801,6 +801,12 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("wgProtectFlag");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 27;
+                            
+                            ibuf = (int) GB.paraSetMap.get("rfDriverOutChannel");
+                            ibuf &= 3;
+                            systemFlag0 |= ibuf << 28;
+                            
+                            
                             sysFlag0 = systemFlag0;
                             sysFlag1 = systemFlag1;
 
