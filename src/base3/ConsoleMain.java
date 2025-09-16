@@ -30,6 +30,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.IOException;
+
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import java.lang.annotation.Native;
+import javax.swing.JFrame;
 
 //asterisk sound location: usr/share/asterisk/sounds/en/
 //admintx 123456789 192.168.0.219
@@ -51,6 +57,8 @@ public class ConsoleMain {
     Uart uart0 = new Uart();
     Uart uart1 = new Uart();
     SyncData syncData = new SyncData();
+    LogicThread logicThread = null;
+    ChromeThread chromeThread = null;
     int appId = 0;
     int easyCommand = 0;
     int easyParas = 0;
@@ -121,9 +129,15 @@ public class ConsoleMain {
             }
 
             if (act.equals("closeUi")) {
-                scla.cmdFunc("simulateKeyExit");
-                return outJson;
+                //scla.cmdFunc("simulateKeyExit");
+                System.exit(0);
+                //return outJson;
 
+            }
+
+            if (act.equals("exeLogic")) {
+                scla.cmdFunc("exeLogic");
+                return outJson;
             }
 
             String preText = "";
@@ -510,10 +524,10 @@ public class ConsoleMain {
         } else {
             System.out.println("open com port 1 ok.");
         }
-
-        
+        cmdFunc("exeChrome");
         //=====================================
         System.out.println("ConsoleMain Ready.");
+
         while (true) {
             Scanner input = new Scanner(System.in);
             str = input.nextLine().trim();
@@ -801,12 +815,11 @@ public class ConsoleMain {
                             ibuf = (int) GB.paraSetMap.get("wgProtectFlag");
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 27;
-                            
+
                             ibuf = (int) GB.paraSetMap.get("rfDriverOutChannel");
                             ibuf &= 3;
                             systemFlag0 |= ibuf << 28;
-                            
-                            
+
                             sysFlag0 = systemFlag0;
                             sysFlag1 = systemFlag1;
 
@@ -1072,10 +1085,11 @@ public class ConsoleMain {
                         if ((syncData.systemStatus0 & (1 << 25)) == 0) {
                             ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
                             int ibx = (int) GB.paraSetMap.get("localPulseGenCh");
-                            if(ibuf == 0)
+                            if (ibuf == 0) {
                                 scla.setEasyCommand(0x2004, 254);
-                            else
+                            } else {
                                 scla.setEasyCommand(0x2004, ibx);
+                            }
                         } else {
                             scla.setEasyCommand(0x2005, 0);
                         }
@@ -1368,6 +1382,52 @@ public class ConsoleMain {
             }
             return errStr;
         }
+
+        if (cmdstr.equals("exeLogic")) {
+
+            JFrame frame = new JFrame("JNA Always On Top");
+
+            frame.setSize(300, 200);
+
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.setVisible(true);
+
+            HWND hwnd = new HWND();
+
+            User32.INSTANCE.SetWindowPos(hwnd, User32.HWND_TOPMOST, 0, 0, 0, 0, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
+
+            if (logicThread == null) {
+                logicThread = new LogicThread();
+                logicThread.start(); // 啟動執行緒            
+                System.out.println("LA Starting.... ");
+            } else {
+                if (logicThread.isAlive()) {
+                    System.out.println("LA is still running.");
+                } else {
+                    System.out.println("LA has finished.");
+                    logicThread = null;
+                }
+            }
+            return errStr;
+        }
+
+        if (cmdstr.equals("exeChrome")) {
+            if (chromeThread == null) {
+                chromeThread = new ChromeThread();
+                chromeThread.start(); // 啟動執行緒            
+                System.out.println("Chrome Starting.... ");
+            } else {
+                if (chromeThread.isAlive()) {
+                    System.out.println("Chrome is still running.");
+                } else {
+                    System.out.println("Chrome has finished.");
+                    chromeThread = null;
+                }
+            }
+            return errStr;
+        }
+
         String[] strCmdA = cmdstr.split(" ");
 
         if (strCmdA[0].equals("txsskui")) {
@@ -1810,4 +1870,42 @@ class ByteLoad {
         bta[inx++] = (byte) ((data >> 24) & 255);
     }
 
+}
+
+class LogicThread extends Thread {
+
+    ConsoleMain cla = ConsoleMain.scla;
+
+    public void run() {
+        try {
+            // Replace "path/to/your/program.exe" with the actual path
+            Process process = Runtime.getRuntime().exec(GB.logicPath);
+            // Optionally, wait for the process to complete and get its exit code
+            int exitCode = process.waitFor();
+            System.out.println("LA program exited with code: " + exitCode);
+            cla.logicThread = null;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+class ChromeThread extends Thread {
+
+    ConsoleMain cla = ConsoleMain.scla;
+
+    public void run() {
+        try {
+            // Replace "path/to/your/program.exe" with the actual path
+            Process process = Runtime.getRuntime().exec(GB.chromePath + " " + GB.chromeAddress);
+            // Optionally, wait for the process to complete and get its exit code
+            int exitCode = process.waitFor();
+            System.out.println("Chrome program exited with code: " + exitCode);
+            cla.chromeThread = null;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

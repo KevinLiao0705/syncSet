@@ -24,6 +24,11 @@ public class GB {
     public static int webSocketPort = 8899;
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
+    
+    public static String logicPath="C:/Program Files/Logic/Logic.exe";
+    public static String chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
+    public static String chromeAddress="http://localhost/webBase/index.jsp";
+    
     //=====================================================
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
     static int os_inx = 1;     //0:windows 1://linux    
@@ -99,6 +104,7 @@ public class GB {
             GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
             GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
+            GB.logicPath="C:/Program Files/Logic/Logic.exe";
             //GB.logPath = "./log";
 
         }
@@ -111,6 +117,12 @@ public class GB {
             GB.paraSetPath = "/home/admintx/syncSetExe/paraSet.json";
             GB.logSetPath = "/home/admintx/syncSetExe";
             GB.logPath = "/home/admintx/syncSetExe/log";
+            
+            GB.paraSetPath = "/home/kevin/myCode/syncSet/paraSet.json";
+            GB.logSetPath = "/home/kevin/myCode/syncSet";
+            GB.logPath = "/home/kevin/myCode/syncSet/log";
+            
+            
 
         }
         //=============================================================

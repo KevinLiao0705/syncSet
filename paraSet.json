@@ -6,7 +6,7 @@
         "readOnly_f": 1,
         "getType": "floatStr"
     },
-    "webSocketAddr": "192.168.0.93",
+    "webSocketAddr": "127.0.0.1",
     "dsc~webSocketAddr": {
         "title": "webSocketAddr",
         "getType": "ipStr"
