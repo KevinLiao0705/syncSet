@@ -524,7 +524,7 @@ public class ConsoleMain {
         } else {
             System.out.println("open com port 1 ok.");
         }
-        cmdFunc("exeChrome");
+        //cmdFunc("exeChrome");
         //=====================================
         System.out.println("ConsoleMain Ready.");
 
@@ -1385,17 +1385,6 @@ public class ConsoleMain {
 
         if (cmdstr.equals("exeLogic")) {
 
-            JFrame frame = new JFrame("JNA Always On Top");
-
-            frame.setSize(300, 200);
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            frame.setVisible(true);
-
-            HWND hwnd = new HWND();
-
-            User32.INSTANCE.SetWindowPos(hwnd, User32.HWND_TOPMOST, 0, 0, 0, 0, User32.SWP_NOMOVE | User32.SWP_NOSIZE);
 
             if (logicThread == null) {
                 logicThread = new LogicThread();

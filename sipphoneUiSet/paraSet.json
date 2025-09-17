@@ -1,0 +1,112 @@
+{
+    "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA,ipStr",
+    "systemName": "JOSN SIP PHONE",
+    "dsc~systemName": {
+        "title": "車載二合一 電話系統",
+        "readOnly_f": 1,
+        "getType": "strView"
+    },
+    "version": "1.0",
+    "dsc~version": {
+        "title": "版本",
+        "readOnly_f": 1,
+        "getType": "strView"
+    },
+    "ipType": 0,
+    "dsc~ipType": {
+        "title": "IP 類型",
+        "enum": [
+            "Static",
+            "DHCP"
+        ],
+        "getType": "buttonRadio"
+    },
+    "systemIpAddress": "0.0.0.0",
+    "dsc~systemIpAddress": {
+        "title": "系統IP 位址",
+        "getType": "ipStr"
+    },
+    "systemNetMask": "255.255.0.0",
+    "dsc~systemNetMask": {
+        "title": "網路遮罩",
+        "getType": "ipStr"
+    },
+    "systemGateWay": "255.255.0.0",
+    "dsc~systemGateWay": {
+        "title": "預設閘道器",
+        "getType": "ipStr"
+    },
+
+
+    "systemMacAddress": "0.0.0.0.0.0.0.0",
+    "dsc~systemMacAddress": {
+        "title": "MAC 位址",
+        "readOnly_f": 1,
+        "getType": "strView"
+    },
+    "systemId": "12345",
+    "dsc~systemId": {
+        "title": "系統 ID",
+        "readOnly_f": 1,
+        "getType": "strView"
+    },
+
+    "nowCarTypeName": "主雷達車 1 號",
+    "dsc~nowCarTypeName": {
+        "title": "本車 型號",
+        "getType": "str"
+    },
+
+    "nowCarGroupNo": 0,
+    "dsc~nowCarGroupNo": {
+        "title": "車輛群組號碼",
+        "getType": "nature"
+    },
+
+
+
+
+    "sipphoneIpAddress": "0.0.0.0",
+    "dsc~sipphoneIpAddress": {
+        "title": "電話IP 位址",
+        "getType": "ipStr"
+    },
+
+    "switchIpAddress": "0.0.0.0",
+    "dsc~switchIpAddress": {
+        "title": "閘道器IP 位址",
+        "getType": "ipStr"
+    },
+
+
+    "sipServerAddress": "0.0.0.0",
+    "dsc~sipServerAddress": {
+        "title": "SIP 伺服器位址",
+        "getType": "ipStr"
+    },
+    "ntpServerAddress": "0.0.0.0",
+    "dsc~ntpServerAddress": {
+        "title": "NTP 伺服器位址",
+        "getType": "ipStr"
+    },
+
+    "carTypeNames": [
+        "carType1",
+        "carType2",
+        "carType3",
+        "carType4",
+        "carType5",
+        "carType6",
+        "carType7",
+        "carType8",
+        "carType9",
+        "carType10111"
+    ],
+
+
+
+
+    
+
+    "dsc~end": 0
+}
