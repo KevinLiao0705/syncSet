@@ -25,7 +25,8 @@ public class GB {
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
     //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
     
-    public static String logicPath="C:/Program Files/Logic/Logic.exe";
+    public static String laPath="C:/Program Files/Logic";
+    public static String laAppName="Logic.exe";
     public static String chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
     public static String chromeAddress="http://localhost/webBase/index.jsp";
     
@@ -104,9 +105,8 @@ public class GB {
             GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
             GB.logSetPath = ".";
             GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
-            GB.logicPath="C:/Program Files/Logic/Logic.exe";
-            
-            GB.logicPath="C:/Program Files/Logic/Logic.exe";
+            GB.laPath="C:/Program Files/Logic";
+            GB.laAppName="Logic.exe";
             GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
             GB.chromeAddress="http://localhost/webBase/index.jsp";
             //GB.logPath = "./log";
@@ -125,7 +125,8 @@ public class GB {
             GB.logSetPath = "/home/kevin/myCode/syncSet";
             GB.logPath = "/home/kevin/myCode/syncSet/log";
             
-            GB.logicPath="/home/kevin/myCode/la.AppImage";
+            GB.laPath="/home/kevin/myCode";
+            GB.laAppName="./la.sh";
             GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
             GB.chromeAddress="http://localhost/webBase/index.jsp";
             

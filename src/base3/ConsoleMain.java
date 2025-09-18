@@ -34,6 +34,7 @@ import java.io.IOException;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import java.io.File;
 import java.lang.annotation.Native;
 import javax.swing.JFrame;
 
@@ -1384,8 +1385,29 @@ public class ConsoleMain {
         }
 
         if (cmdstr.equals("exeLogic")) {
+            /*
+            String exeStr = "";
+            String exePath = GB.laPath + "/";
+            Process process = null;
+            try {
+                if (GB.os_inx == 0) { //window
+                    exePath = GB.laPath + "/";
+                    exeStr = GB.laAppName;
+                    process = Runtime.getRuntime().exec(exePath + exeStr, null, new File(exePath));
+                } else { //linux
+                    exePath = GB.laPath;
+                    exeStr = GB.laAppName+" --now-sandbox" ;
+                    exePath = "/home/kevin/myCode/syncSet/";
+                    exeStr= "la.sh";
+                    process = Runtime.getRuntime().exec("./la.sh");
+                    //process = Runtime.getRuntime().exec(exeStr, null, new File(exePath));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            */
 
-
+            
             if (logicThread == null) {
                 logicThread = new LogicThread();
                 logicThread.start(); // 啟動執行緒            
@@ -1399,6 +1421,7 @@ public class ConsoleMain {
                 }
             }
             return errStr;
+
         }
 
         if (cmdstr.equals("exeChrome")) {
@@ -1868,7 +1891,7 @@ class LogicThread extends Thread {
     public void run() {
         try {
             // Replace "path/to/your/program.exe" with the actual path
-            Process process = Runtime.getRuntime().exec(GB.logicPath);
+            Process process = Runtime.getRuntime().exec(GB.laAppName);
             // Optionally, wait for the process to complete and get its exit code
             int exitCode = process.waitFor();
             System.out.println("LA program exited with code: " + exitCode);
