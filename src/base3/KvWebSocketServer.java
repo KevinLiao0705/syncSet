@@ -103,7 +103,7 @@ public class KvWebSocketServer extends WebSocketServer {
         putJson(outJson, "act", actStr + "~react");
         putJson(outJson, "wsSysJson", wsSysJson.toString());
         switch (deviceId) {
-            case "dummyTarget":
+            case "syncSet":
                 outJson = ConsoleMain.wsCallBack(userName, mesJson, actStr, outJson);
                 break;
         }
@@ -125,16 +125,6 @@ public class KvWebSocketServer extends WebSocketServer {
     public static void serverStart() {
         KvWebSocketServer server = new KvWebSocketServer(GB.webSocketAddr, GB.webSocketPort);
         server.start();
-        URI uri;
-        try {
-            uri = new URI("ws://127.0.0.1:" + GB.webSocketPort);
-            //KvWebSocketClient client = new KvWebSocketClient(uri);
-            //client.connectBlocking();
-            //client.send("Web Socket Test");
-            //client.close();
-        } catch (Exception ex) {
-            //Logger.getLogger(KvWebSocketServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
     }
 }

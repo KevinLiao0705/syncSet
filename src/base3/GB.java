@@ -18,8 +18,8 @@ public class GB {
     public static String logSetPath = ".";
     public static String logPath = "./log";
     public static String appName = "syncSet";
-    public static String webSocketAddr = null;
-    //public static String webSocketAddr = "127.0.0.1";
+    //public static String webSocketAddr = null;
+    public static String webSocketAddr = "127.0.0.1";
     //public static String webSocketAddr = "192.168.121.10";
     public static int webSocketPort = 8899;
     public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
@@ -122,11 +122,11 @@ public class GB {
             GB.logPath = "/home/admintx/syncSetExe/log";
             
             GB.paraSetPath = "/home/kevin/myCode/syncSet/paraSet.json";
-            GB.logSetPath = "/home/kevin/myCode/syncSet";
-            GB.logPath = "/home/kevin/myCode/syncSet/log";
+            GB.logSetPath = "/home/admintx/syncSetExe";
+            GB.logPath = "/home/admintx/syncSetExe/log";
             
-            GB.laPath="/home/kevin/myCode";
-            GB.laAppName="./la.sh";
+            GB.laPath="/home/admintx/syncSetExe";
+            GB.laAppName="la.sh";
             GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
             GB.chromeAddress="http://localhost/webBase/index.jsp";
             

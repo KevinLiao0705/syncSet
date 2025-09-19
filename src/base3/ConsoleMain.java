@@ -486,7 +486,7 @@ public class ConsoleMain {
         }
 
         final ConsoleMain cla = this;
-        //KvWebSocketServer.serverStart();
+        KvWebSocketServer.serverStart();
         //=======================================================
         rxMap = new HashMap<String, ChkRxA>();
         taskMap = new HashMap<String, CmdTask>();
@@ -512,19 +512,21 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
+        
         errStr = cmdFunc("openComPort0");
         if (errStr != null) {
             System.out.println(errStr);
         } else {
             System.out.println("open com port 0 ok.");
         }
-
+        
         errStr = cmdFunc("openComPort1");
         if (errStr != null) {
             System.out.println(errStr);
         } else {
             System.out.println("open com port 1 ok.");
         }
+                
         //cmdFunc("exeChrome");
         //=====================================
         System.out.println("ConsoleMain Ready.");
@@ -1891,13 +1893,14 @@ class LogicThread extends Thread {
     public void run() {
         try {
             // Replace "path/to/your/program.exe" with the actual path
-            Process process = Runtime.getRuntime().exec(GB.laAppName);
+            Process process = Runtime.getRuntime().exec(GB.laPath+"/"+GB.laAppName);
             // Optionally, wait for the process to complete and get its exit code
             int exitCode = process.waitFor();
             System.out.println("LA program exited with code: " + exitCode);
             cla.logicThread = null;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            cla.logicThread = null;
         }
 
     }
@@ -1917,6 +1920,7 @@ class ChromeThread extends Thread {
             cla.chromeThread = null;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            cla.chromeThread = null;
         }
 
     }

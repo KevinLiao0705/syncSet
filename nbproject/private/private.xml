@@ -10,12 +10,12 @@
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>630</line>
+                <line>632</line>
                 <key/>
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>837</line>
+                <line>839</line>
                 <key/>
             </bookmark>
         </file>
@@ -33,6 +33,7 @@
             <file>file:/E:/kevin/myCode/syncSet/src/base3/KvWebSocketServer.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Lib.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/GB.java</file>
+            <file>file:/E:/kevin/myCode/syncSet/src/base3/Uart.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/KvWebSocketClient.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/ConsoleMain.java</file>
             <file>file:/E:/kevin/myCode/syncSet/src/base3/Base3.java</file>
