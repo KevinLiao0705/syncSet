@@ -70,6 +70,8 @@ public class ConsoleMain {
     int addBufDebugCnt = 0;
     int sysFlag0 = 0;
     int sysFlag1 = 0;
+    short emuPowerValueCnt = 0;
+    short emuSspaValueCnt = 0;
 
     //===========================
     //dataToFpga
@@ -141,47 +143,6 @@ public class ConsoleMain {
                 return outJson;
             }
 
-            String preText = "";
-            int preInx = 0;
-            int status0 = 0;
-            int shift = 0;
-            byte[] powerStatusA = null;
-            byte[] moduleStatusA = null;
-            if (scla.appId == 1) {
-                preText = "sub1";
-                preInx = 0;
-                shift = 22;
-                status0 = scla.syncData.systemStatus0 >> 22;
-                powerStatusA = scla.syncData.sspaPowerStatusAA;
-                moduleStatusA = scla.syncData.sspaModuleStatusAA;
-            }
-            if (scla.appId == 2) {
-                preText = "sub2";
-                preInx = 1;
-                shift = 27;
-                status0 = scla.syncData.systemStatus0 >> 27;
-                powerStatusA = scla.syncData.sspaPowerStatusAA;
-                moduleStatusA = scla.syncData.sspaModuleStatusAA;
-
-            }
-            if (scla.appId == 3) {
-                preText = "ctr1";
-                preInx = 0;
-                shift = 22;
-                status0 = scla.syncData.systemStatus0 >> 22;
-                powerStatusA = scla.syncData.sspaPowerStatusAA;
-                moduleStatusA = scla.syncData.sspaModuleStatusAA;
-            }
-            if (scla.appId == 4) {
-                preText = "ctr2";
-                preInx = 1;
-                shift = 27;
-                status0 = scla.syncData.systemStatus0 >> 27;
-                powerStatusA = scla.syncData.sspaPowerStatusAA;
-                moduleStatusA = scla.syncData.sspaModuleStatusAA;
-
-            }
-
             if (act.equals("selfTestStartAll")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2008, null);
@@ -202,106 +163,59 @@ public class ConsoleMain {
                 return outJson;
             }
 
-            int powerOn_f = 0;
-            int moduleOn_f = 0;
-            for (int i = 0; i < 36; i++) {
-                if (((powerStatusA[i] >> 4) & 1) == 1) {
-                    powerOn_f = 1;
-                }
-                if (((moduleStatusA[i] >> 1) & 1) == 1) {
-                    moduleOn_f = 1;
-                }
+            int emergency = scla.syncData.systemStatus0 & (1 << 25);
+            int ready_f = scla.syncData.systemStatus0 & (3 >> (scla.appId * 2));
 
-            }
-
-            int emergency = scla.syncData.systemStatus0 & (1 << (shift + 4));
-            int ready_f = scla.syncData.systemStatus0 & 3;
-
-            if (act.equals(preText + "SspaPowerOn")) {
-                if (GB.emulate == 2) {
-                    if ((ready_f != 2) || (emergency != 0)) {
-                        return outJson;
-                    }
-                    obj = paras.get(0);
-                    int index = (int) obj;
-                    if (index >= 0) {
-                        powerStatusA[index] |= 0x1d;
-                        return outJson;
-                    }
-                    for (int i = 0; i < 36; i++) {
-                        powerStatusA[i] |= 0x1d;
-                    }
-                    return outJson;
-                }
-                if (GB.emulate == 0) {
-                    scla.setEasyCommand(0x2000, paras);
-                }
+            if (act.contains("SspaPowerOn")) {
+                scla.setEasyCommand(0x2000, paras);
                 return outJson;
             }
-            if (act.equals(preText + "SspaPowerOff")) {
-                if (GB.emulate == 2) {
-                    obj = paras.get(0);
-                    int index = (int) obj;
-                    if (index >= 0) {
-                        powerStatusA[index] &= 0xffffffe2;
-                        return outJson;
-                    }
-                    for (int i = 0; i < 36; i++) {
-                        powerStatusA[i] &= 0xffffffe2;
-                    }
-                }
-
-                if (GB.emulate == 0) {
-                    scla.setEasyCommand(0x2001, paras);
-                }
+            if (act.contains("SspaPowerOff")) {
+                scla.setEasyCommand(0x2001, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "SspaModuleOn")) {
-                if (GB.emulate == 1) {
-                }
+            if (act.contains("SspaModuleOn")) {
                 scla.setEasyCommand(0x2002, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "SspaModuleOff")) {
-                if (GB.emulate == 1) {
-                }
+            if (act.contains("SspaModuleOff")) {
                 scla.setEasyCommand(0x2003, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "RadiationOn")) {
+            if (act.contains("RadiationOn")) {
                 scla.setEasyCommand(0x2004, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "RadiationOff")) {
+            if (act.contains("RadiationOff")) {
                 scla.setEasyCommand(0x2005, null);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.equals(preText + "EmergencyOn")) {
+            if (act.contains("EmergencyOn")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2006, null);
                 return outJson;
             }
-            if (act.equals(preText + "EmergencyOff")) {
+            if (act.contains("EmergencyOff")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2007, null);
                 return outJson;
             }
-            if (act.equals(preText + "PulseSource")) {
+            if (act.contains("PulseSource")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x200d, paras);
                 return outJson;
             }
-            if (act.equals(preText + "TxLoad")) {
+            if (act.contains("TxLoad")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x200e, paras);
                 return outJson;
             }
-            if (act.equals(preText + "BatShort")) {
+            if (act.contains("BatShort")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x200f, paras);
                 return outJson;
@@ -351,6 +265,7 @@ public class ConsoleMain {
                 kj.jadd("gngga1", syncData.gngga1);
                 kj.jadd("gngga2", syncData.gngga2);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                kj.jadd("conRxA", syncData.conRxA);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
@@ -362,6 +277,7 @@ public class ConsoleMain {
                 kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
+                kj.jadd("conRxA", syncData.conRxA);
                 if (appId == 1) {
                     kj.jadd("gngga1", syncData.gngga1);
                 }
@@ -375,6 +291,93 @@ public class ConsoleMain {
             }
 
             if (appId == 3 || appId == 4) {
+                if (GB.emuMeterStatus_f != 0) {
+                    for (int i = 0; i < syncData.meterStatusAA.length; i++) {
+                        syncData.meterStatusAA[i]++;
+                        if (syncData.meterStatusAA[i] >= 1000) {
+                            syncData.meterStatusAA[i] = 0;
+                        }
+                    }
+                }
+                /*
+                    //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed 
+                    byte[] sspaPowerStatusAA = new byte[36];
+                    short[] sspaPowerV50vAA = new short[36];
+                    short[] sspaPowerV50iAA = new short[36];
+                    short[] sspaPowerV50tAA = new short[36];
+                    short[] sspaPowerV32vAA = new short[36];
+                    short[] sspaPowerV32iAA = new short[36];
+                    short[] sspaPowerV32tAA = new short[36];
+                 */
+                //=============================================
+
+                int sf = 0x10;
+                if (GB.emuPowerValue_f != 0) {
+                    for (int i = 0; i < 36; i++) {
+                        if (emuPowerValueCnt > 50) {
+                            sf |= 0x01;
+                        }
+                        if (emuPowerValueCnt > 100) {
+                            sf |= 0x02;
+                        }
+                        if (emuPowerValueCnt > 150) {
+                            sf |= 0x04;
+                        }
+                        if (emuPowerValueCnt > 200) {
+                            sf |= 0x08;
+                        }
+                        syncData.sspaPowerStatusAA[i] = (byte) sf;
+                        syncData.sspaPowerV50vAA[i] = emuPowerValueCnt;
+                        syncData.sspaPowerV50iAA[i] = emuPowerValueCnt;
+                        syncData.sspaPowerV50tAA[i] = emuPowerValueCnt;
+                        syncData.sspaPowerV32vAA[i] = emuPowerValueCnt;
+                        syncData.sspaPowerV32iAA[i] = emuPowerValueCnt;
+                        syncData.sspaPowerV32tAA[i] = emuPowerValueCnt;
+                    }
+                    if (++emuPowerValueCnt >= 300) {
+                        emuPowerValueCnt = 0;
+                    }
+                }
+                /*
+                0:connect, 1:致能, 2 保護觸發, 3:工作比過高, 4:脈寬過高, 5:溫度過高, 6:反射過高, 
+                byte[] sspaModuleStatusAA = new byte[36];
+                short[] sspaModuleRfOutAA = new short[36];
+                short[] sspaModuleTemprAA = new short[36];
+                 */
+                sf = 0;
+                if (GB.emuSspaValue_f != 0) {
+                    for (int i = 0; i < 36; i++) {
+                        if (emuSspaValueCnt > 30) {
+                            sf |= 0x01;
+                        }
+                        if (emuSspaValueCnt > 60) {
+                            sf |= 0x02;
+                        }
+                        if (emuSspaValueCnt > 90) {
+                            sf |= 0x04;
+                        }
+                        if (emuSspaValueCnt > 120) {
+                            sf |= 0x08;
+                        }
+                        if (emuSspaValueCnt > 150) {
+                            sf |= 0x10;
+                        }
+                        if (emuSspaValueCnt > 180) {
+                            sf |= 0x20;
+                        }
+                        if (emuSspaValueCnt > 210) {
+                            sf |= 0x40;
+                        }
+
+                        syncData.sspaModuleStatusAA[i] = (byte) sf;
+                        syncData.sspaModuleRfOutAA[i] = emuSspaValueCnt;
+                        syncData.sspaModuleTemprAA[i] = emuSspaValueCnt;
+                    }
+                    if (++emuSspaValueCnt >= 300) {
+                        emuSspaValueCnt = 0;
+                    }
+                }
+
                 KvJson kj = new KvJson();
                 kj.jStart();
                 kj.jadd("slotDataAA", syncData.slotDataAA);
@@ -393,6 +396,7 @@ public class ConsoleMain {
                 kj.jadd("sspaModuleRfOutAA", syncData.sspaModuleRfOutAA);
                 kj.jadd("sspaModuleTemprAA", syncData.sspaModuleTemprAA);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                kj.jadd("conRxA", syncData.conRxA);
                 //=================================
                 /*
                 syncData.pulseFormAddBufA0Len=6;
@@ -486,6 +490,13 @@ public class ConsoleMain {
         }
 
         final ConsoleMain cla = this;
+        
+            GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
+            if (GB.webSocketAddr.length() == 0) {
+                GB.webSocketAddr = GB.real_ip_str;
+            }
+        
+        
         KvWebSocketServer.serverStart();
         //=======================================================
         rxMap = new HashMap<String, ChkRxA>();
@@ -512,21 +523,21 @@ public class ConsoleMain {
             cla.tm1 = new Timer();
             tm1.schedule(new ConsoleMainTm1(cla), 1000, 20);
         }
-        
+
         errStr = cmdFunc("openComPort0");
         if (errStr != null) {
             System.out.println(errStr);
         } else {
             System.out.println("open com port 0 ok.");
         }
-        
+
         errStr = cmdFunc("openComPort1");
         if (errStr != null) {
             System.out.println(errStr);
         } else {
             System.out.println("open com port 1 ok.");
         }
-                
+
         //cmdFunc("exeChrome");
         //=====================================
         System.out.println("ConsoleMain Ready.");
@@ -593,21 +604,24 @@ public class ConsoleMain {
                 }
                 int ibuf = 0;
                 int ibuf0, ibuf1, ibuf2, ibuf3;
+                syncData.conRxA[24]++;
                 if (cmd == 0x1000) {
-                    //if (para0 == 3 || para0 == 4)//fpgaId
-                    if (true)//fpgaId
+                    if (para0 == 2)//fpgaId
                     {
                         connectFpgaCnt = 0;
                         for (int i = 0; i < 12; i++) {
                             syncData.slotDataAA[i] = bk.lookShort();
                         }
+                        /*
                         ibuf0 = bk.lookInt() ^ syncData.systemStatus0;
                         ibuf0 = ibuf0 & 0xfe7fffff;
                         syncData.systemStatus0 ^= ibuf0;
-
                         ibuf0 = bk.lookInt() ^ syncData.systemStatus1;
                         ibuf0 = ibuf0 & 0x03ffffff;
                         syncData.systemStatus1 ^= ibuf0;
+                         */
+                        syncData.systemStatus0 = bk.lookInt();
+                        syncData.systemStatus1 = bk.lookInt();
 
                         for (;;) {
                             ibuf = bk.lookByteInt();
@@ -618,7 +632,11 @@ public class ConsoleMain {
                                 ibuf = bk.lookByteInt();
                                 syncData.enviStatusA[0] = bk.lookInt();
                                 for (int i = 0; i < 6; i++) {
-                                    syncData.meterStatusAA[i] = bk.lookShort();
+                                    if (GB.emuMeterStatus_f != 0) {
+                                        bk.lookShort();
+                                    } else {
+                                        syncData.meterStatusAA[i] = bk.lookShort();
+                                    }
                                 }
                                 continue;
                             }
@@ -628,16 +646,32 @@ public class ConsoleMain {
                                 if (ibuf >= 36) {
                                     return null;
                                 }
-                                syncData.sspaPowerStatusAA[ibuf] = bk.lookByte();
-                                syncData.sspaPowerV50vAA[ibuf] = bk.lookShort();
-                                syncData.sspaPowerV50iAA[ibuf] = bk.lookShort();
-                                syncData.sspaPowerV50tAA[ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32vAA[ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32iAA[ibuf] = bk.lookShort();
-                                syncData.sspaPowerV32tAA[ibuf] = bk.lookShort();
-                                syncData.sspaModuleStatusAA[ibuf] = bk.lookByte();
-                                syncData.sspaModuleRfOutAA[ibuf] = bk.lookShort();
-                                syncData.sspaModuleTemprAA[ibuf] = bk.lookShort();
+                                if (GB.emuPowerValue_f != 0) {
+                                    bk.lookByte();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                } else {
+                                    syncData.sspaPowerStatusAA[ibuf] = bk.lookByte();
+                                    syncData.sspaPowerV50vAA[ibuf] = bk.lookShort();
+                                    syncData.sspaPowerV50iAA[ibuf] = bk.lookShort();
+                                    syncData.sspaPowerV50tAA[ibuf] = bk.lookShort();
+                                    syncData.sspaPowerV32vAA[ibuf] = bk.lookShort();
+                                    syncData.sspaPowerV32iAA[ibuf] = bk.lookShort();
+                                    syncData.sspaPowerV32tAA[ibuf] = bk.lookShort();
+                                }
+                                if (GB.emuSspaValue_f != 0) {
+                                    bk.lookByte();
+                                    bk.lookShort();
+                                    bk.lookShort();
+                                } else {
+                                    syncData.sspaModuleStatusAA[ibuf] = bk.lookByte();
+                                    syncData.sspaModuleRfOutAA[ibuf] = bk.lookShort();
+                                    syncData.sspaModuleTemprAA[ibuf] = bk.lookShort();
+                                }
                                 drvDataClrBuf[ibuf] = 0;
                                 continue;
                             }
@@ -687,12 +721,132 @@ public class ConsoleMain {
 
                             if (ibuf == 0xb1) {
                                 ibuf = bk.lookByteInt();
-                                if (ibuf != 9) {
+                                if (ibuf != 10) {
                                     break;
                                 }
                                 syncData.pulseFormLowPeriod = bk.lookInt();
                                 syncData.pulseFormHighPeriod = bk.lookInt();
                                 syncData.pulseFormFreq = bk.lookByte();
+                                syncData.conRxA[18] = bk.lookByte();
+                                continue;
+                            }
+                            if (ibuf == 0xb2) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 16) {
+                                    break;
+                                }
+                                syncData.conRxA[0] = bk.lookByte();
+                                syncData.conRxA[1] = bk.lookByte();
+                                syncData.conRxA[2] = bk.lookByte();
+                                syncData.conRxA[3] = bk.lookByte();
+                                syncData.conRxA[4] = bk.lookByte();
+                                syncData.conRxA[5] = bk.lookByte();
+                                syncData.conRxA[6] = bk.lookByte();
+                                syncData.conRxA[7] = bk.lookByte();
+                                syncData.conRxA[8] = bk.lookByte();
+                                syncData.conRxA[9] = bk.lookByte();
+                                syncData.conRxA[10] = bk.lookByte();
+                                syncData.conRxA[11] = bk.lookByte();
+                                syncData.conRxA[12] = bk.lookByte();
+                                syncData.conRxA[13] = bk.lookByte();
+                                syncData.conRxA[14] = bk.lookByte();
+                                syncData.conRxA[15] = bk.lookByte();
+                                continue;
+                            }
+                            break;
+
+                        }
+
+                    }
+
+                    if (para0 == 1)//fpgaId
+                    {
+                        connectFpgaCnt = 0;
+                        for (int i = 0; i < 12; i++) {
+                            syncData.slotDataAA[i] = bk.lookShort();
+                        }
+                        /*
+                        ibuf0 = bk.lookInt() ^ syncData.systemStatus0;
+                        ibuf0 = ibuf0 & 0xfe7fffff;
+                        syncData.systemStatus0 ^= ibuf0;
+                        ibuf0 = bk.lookInt() ^ syncData.systemStatus1;
+                        ibuf0 = ibuf0 & 0x03ffffff;
+                        syncData.systemStatus1 ^= ibuf0;
+                         */
+                        syncData.systemStatus0 = bk.lookInt();
+                        syncData.systemStatus1 = bk.lookInt();
+
+                        for (;;) {
+                            ibuf = bk.lookByteInt();
+                            if (ibuf == 0xcd) {
+                                break;
+                            }
+                            if (ibuf == 0xac) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 32) {
+                                    return null;
+                                }
+                                for (int i = 0; i < 8; i++) {
+                                    syncData.viewDatas[ibuf * 8 + i] = bk.lookInt();
+                                }
+                                continue;
+                            }
+
+                            if (ibuf == 0xad || ibuf == 0xae || ibuf == 0xaf) {
+                                byte[] byteA = null;
+                                if (ibuf == 0xad) {
+                                    byteA = syncData.gngga0;
+                                }
+                                if (ibuf == 0xae) {
+                                    byteA = syncData.gngga1;
+                                }
+                                if (ibuf == 0xaf) {
+                                    byteA = syncData.gngga2;
+                                }
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 64) {
+                                    return null;
+                                }
+                                for (int i = 0; i < ibuf; i++) {
+                                    byteA[i] = bk.lookByte();
+                                }
+                                continue;
+                            }
+
+                            if (ibuf == 0xb0) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf >= 16) {
+                                    break;
+                                }
+                                for (int i = 0; i < ibuf; i++) {
+                                    syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx0 & 255] = bk.lookInt();
+                                    syncData.pulseFormAddBufA0Inx0++;
+                                }
+                                continue;
+                            }
+
+                            if (ibuf == 0xb1) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 10) {
+                                    break;
+                                }
+                                syncData.pulseFormLowPeriod = bk.lookInt();
+                                syncData.pulseFormHighPeriod = bk.lookInt();
+                                syncData.pulseFormFreq = bk.lookByte();
+                                syncData.conRxA[18] = bk.lookByte();
+                                continue;
+                            }
+                            if (ibuf == 0xb2) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 6) {
+                                    break;
+                                }
+                                syncData.conRxA[0] = bk.lookByte();
+                                syncData.conRxA[1] = bk.lookByte();
+                                syncData.conRxA[2] = bk.lookByte();
+                                syncData.conRxA[3] = bk.lookByte();
+                                syncData.conRxA[16] = bk.lookByte();
+                                syncData.conRxA[17] = bk.lookByte();
                                 continue;
                             }
                             break;
@@ -776,7 +930,7 @@ public class ConsoleMain {
                             ibuf &= 1;
                             systemFlag0 |= ibuf << 8;
 
-                            ibuf = (int) GB.paraSetMap.get("sp4tCnt");//輸出裝置 0:假負載 1:天線
+                            ibuf = (int) GB.paraSetMap.get("sp4tCnt");//
                             ibuf &= 7;
                             systemFlag0 |= ibuf << 9;
                             //=======
@@ -1030,6 +1184,9 @@ public class ConsoleMain {
                 if (groupId != 0xab00) {
                     return null;
                 }
+
+                syncData.conRxA[25]++;
+
                 if (cmd != 0x1000) {
                     return null;
                 }
@@ -1376,7 +1533,7 @@ public class ConsoleMain {
 
         if (cmdstr.equals("test1")) {
             try {
-                Path file = Paths.get(GB.paraSetPath);
+                Path file = Paths.get(GB.paraSetFullName);
                 BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class
                 );
                 System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
@@ -1407,9 +1564,8 @@ public class ConsoleMain {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            */
+             */
 
-            
             if (logicThread == null) {
                 logicThread = new LogicThread();
                 logicThread.start(); // 啟動執行緒            
@@ -1566,7 +1722,7 @@ class ConsoleMainTm1 extends TimerTask {
             }
 
             //===============================
-            Path file = Paths.get(GB.paraSetPath);
+            Path file = Paths.get(GB.paraSetFullName);
             BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
             String nowParaSetTime = attr.lastModifiedTime().toString();
             if (!preParaSetTime.equals(nowParaSetTime)) {
@@ -1582,10 +1738,6 @@ class ConsoleMainTm1 extends TimerTask {
                 }
                 cla.appId = (int) GB.paraSetMap.get("appId");
                 GB.emulate = (int) GB.paraSetMap.get("emulate");
-                if (GB.webSocketAddr == null) {
-                    GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
-                    KvWebSocketServer.serverStart();
-                }
 
             }
 
@@ -1722,8 +1874,8 @@ class SyncData {
      ctr1 SSPA致能[24] 			==> 0:停止 1:啟動
      ctr1 本地脈波啟動[25] 		==> 0:停止 1:啟動
      ctr1 緊急停止[26] 			==> 0:備便 1:停止
-     //===
-     ctr2 rfPulse detect flag[27] ==> 0:none  1:OK
+     //===================================================
+     ctr2 rfPulse detect flag[27] ==> 0:none  1:OK          //mast use 
      ctr2 電源啟動[28] 			==> 0:停止 1:啟動
      ctr2 SSPA致能[29] 			==> 0:停止 1:啟動
      ctr2 本地脈波啟動[30] 		==> 0:停止 1:啟動
@@ -1733,13 +1885,11 @@ class SyncData {
     /*=================================================
     sub1 光纖連線狀態[0]	==> 0:未連線, 1:未連線
     sub1 RF連線狀態[1]          ==> 0:未連線, 1:未連線
-    sub2 光纖連線狀態[2] 	==> 0:未連線, 1:未連線
-    sub2 RF連線狀態[3]          ==> 0:未連線, 1:未連線
-    ctr1 遠端遙控[4]      ==> 0:關閉, 1:開啟
-    ctr2 遠端遙控[5]      ==> 0:關閉, 1:開啟
-    mast spPulseExist[6]	==  0:none 1:exist
-
-    
+    sub2 光纖連線狀態[2] 	==> 0:未連線, 1:未連線      mast use
+    sub2 RF連線狀態[3]          ==> 0:未連線, 1:未連線      mast use
+    ctr1 遠端遙控[4]      ==> 0:關閉, 1:開啟                    
+    ctr2 遠端遙控[5]      ==> 0:關閉, 1:開啟                mast use
+    mast spPulseExist[6]	==  0:none 1:exist          mast use
      */
     int systemStatus1;
 
@@ -1767,7 +1917,7 @@ class SyncData {
      */
     short[] meterStatusAA = new short[6];
     //=============================================
-    //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50t, 7:v32v, 8:v32i, 9:v32t
+    //0 connectFlag, 1 faultLed, 2:v50enLed, 3:v32enLed  4:powerOn_f
     byte[] sspaPowerStatusAA = new byte[36];
     short[] sspaPowerV50vAA = new short[36];
     short[] sspaPowerV50iAA = new short[36];
@@ -1806,6 +1956,17 @@ class SyncData {
     int pulseFormLowPeriod = 0;
     int pulseFormHighPeriod = 0;
     byte pulseFormFreq = 0;
+
+    /*
+	 subA->ctrA,subB->ctrB,ctrA->subA,ctrB->subB
+	 ctrA->drvaA,ctrB->drvaB,devaA->ctrA,devaB->ctrB
+	 ctrA->drvbA,ctrB->drvbB,devbA->ctrA,devbB->ctrB
+	 ctrA->meterA,ctrB->meterB,meterA->ctrA,meterB->ctrB
+	 s1FiberRx,s1RfRx,s1RxPackCnt,xxx
+	 hostS1FiberRx,,hostS1RfRx,hostS2FiberRx,,hostS2RfRx,
+	 uart0,uart1,xxx,xxx
+     */
+    byte[] conRxA = new byte[28];
 
     SyncData() {
     }
@@ -1893,7 +2054,7 @@ class LogicThread extends Thread {
     public void run() {
         try {
             // Replace "path/to/your/program.exe" with the actual path
-            Process process = Runtime.getRuntime().exec(GB.laPath+"/"+GB.laAppName);
+            Process process = Runtime.getRuntime().exec(GB.laPath + "/" + GB.laAppName);
             // Optionally, wait for the process to complete and get its exit code
             int exitCode = process.waitFor();
             System.out.println("LA program exited with code: " + exitCode);

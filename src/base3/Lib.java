@@ -1796,7 +1796,7 @@ class KvJson {
             if (i != 0) {
                 jstr += ",";
             }
-            jstr += ia[i];
+            jstr += ia[i]&255;
         }
         jstr += "]";
         keyCnt++;

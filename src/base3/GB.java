@@ -1,5 +1,6 @@
 package base3;
 
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,12 @@ import java.util.logging.Logger;
 
 public class GB {
     //0: window ConsoleMain 1:linux
-    static int prgMode = 1;
+    static int prgMode = 0;
+    static int emuMeterStatus_f = 0;
+    static int emuPowerValue_f = 0;
+    static int emuSspaValue_f = 0;
+    
+    
     static int debug_f=0;
     static String version = "1.2";
     static int emulate = 0;
@@ -18,12 +24,11 @@ public class GB {
     public static String logSetPath = ".";
     public static String logPath = "./log";
     public static String appName = "syncSet";
-    //public static String webSocketAddr = null;
-    public static String webSocketAddr = "127.0.0.1";
-    //public static String webSocketAddr = "192.168.121.10";
+    public static String webSocketAddr = "";
     public static int webSocketPort = 8899;
-    public static String paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
-    //public static String paraSetPath = "e:/home//myCode/syncSet/paraSet.json";
+    public static String winParaSetFullName = "e:/kevin/myCode/syncSet/paraSet.json";
+    public static String linuxParaSetFullName = "/home/admintx/syncSetExe/paraSet.json";
+    public static String paraSetFullName ="";
     
     public static String laPath="C:/Program Files/Logic";
     public static String laAppName="Logic.exe";
@@ -102,7 +107,7 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "./interfaces";
-            GB.paraSetPath = "e:/kevin/myCode/syncSet/paraSet.json";
+            GB.paraSetFullName = GB.winParaSetFullName;
             GB.logSetPath = ".";
             GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
             GB.laPath="C:/Program Files/Logic";
@@ -117,14 +122,9 @@ public class GB {
             GB.setdata_xml = "./setdata.xml";
             GB.setdata_db = "./setdata.db";
             GB.interfaces_path = "/etc/network/interfaces";
-            GB.paraSetPath = "/home/admintx/syncSetExe/paraSet.json";
+            GB.paraSetFullName = GB.linuxParaSetFullName;
             GB.logSetPath = "/home/admintx/syncSetExe";
             GB.logPath = "/home/admintx/syncSetExe/log";
-            
-            GB.paraSetPath = "/home/kevin/myCode/syncSet/paraSet.json";
-            GB.logSetPath = "/home/admintx/syncSetExe";
-            GB.logPath = "/home/admintx/syncSetExe/log";
-            
             GB.laPath="/home/admintx/syncSetExe";
             GB.laAppName="la.sh";
             GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -288,5 +288,9 @@ public class GB {
         }
         return 0;
     }
+    
+    
+    
+    
 
 }
