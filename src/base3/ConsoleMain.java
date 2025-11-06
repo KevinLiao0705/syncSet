@@ -271,26 +271,21 @@ public class ConsoleMain {
                 outJson.put("syncData", syncJson);
             }
 
-            if (appId == 1 || appId == 2) {
+            if (appId == 1) {
                 KvJson kj = new KvJson();
                 kj.jStart();
                 kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 kj.jadd("conRxA", syncData.conRxA);
-                if (appId == 1) {
-                    kj.jadd("gngga1", syncData.gngga1);
-                }
-                if (appId == 2) {
-                    kj.jadd("gngga2", syncData.gngga2);
-                }
+                kj.jadd("gngga1", syncData.gngga1);
                 kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
             }
 
-            if (appId == 3 || appId == 4) {
+            if (appId == 2) {
                 if (GB.emuMeterStatus_f != 0) {
                     for (int i = 0; i < syncData.meterStatusAA.length; i++) {
                         syncData.meterStatusAA[i]++;

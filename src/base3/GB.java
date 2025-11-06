@@ -13,8 +13,6 @@ public class GB {
     static int emuMeterStatus_f = 0;
     static int emuPowerValue_f = 0;
     static int emuSspaValue_f = 0;
-    
-    
     static int debug_f=0;
     static String version = "1.2";
     static int emulate = 0;
@@ -26,7 +24,7 @@ public class GB {
     public static String appName = "syncSet";
     public static String webSocketAddr = "";
     public static int webSocketPort = 8899;
-    public static String winParaSetFullName = "e:/kevin/myCode/syncSet/paraSet.json";
+    public static String winParaSetFullName = "e:/kevin/myCode/webSet/syncSet/paraSet.json";
     public static String linuxParaSetFullName = "/home/admintx/syncSetExe/paraSet.json";
     public static String paraSetFullName ="";
     
