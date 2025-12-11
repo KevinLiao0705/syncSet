@@ -72,6 +72,9 @@ public class ConsoleMain {
     int sysFlag1 = 0;
     short emuPowerValueCnt = 0;
     short emuSspaValueCnt = 0;
+    int powerOn_f=0;
+    int moduleOn_f=0;
+    
 
     //===========================
     //dataToFpga
@@ -1213,7 +1216,7 @@ public class ConsoleMain {
                 if (para0 != 0) {
                     int keyInId = para0;//
                     if (keyInId == 1) {
-                        if ((syncData.systemStatus0 & (1 << 23)) == 0) {
+                        if (scla.powerOn_f == 0) {
                             scla.setEasyCommand(0x2000, -1);
                         } else {
                             scla.setEasyCommand(0x2001, -1);
@@ -1230,7 +1233,7 @@ public class ConsoleMain {
 
                     }
                     if (keyInId == 3) {
-                        if ((syncData.systemStatus0 & (1 << 24)) == 0) {
+                        if (scla.moduleOn_f == 0) {
                             scla.setEasyCommand(0x2002, -1);
                         } else {
                             scla.setEasyCommand(0x2003, -1);
@@ -1277,13 +1280,13 @@ public class ConsoleMain {
                         uart1.txGroupId = 0xac00;
                         uart1.txCmd = cmd;
                         uart1.txPara0 = 0;
-                        if ((syncData.systemStatus0 & (1 << 23)) != 0) {
+                        if (powerOn_f != 0) {
                             uart1.txPara0 |= (1 << 0);
                         }
                         if ((sysFlag0 & (1 << 6)) == 0) {
                             uart1.txPara0 |= (1 << 1);
                         }
-                        if ((syncData.systemStatus0 & (1 << 24)) != 0) {
+                        if (moduleOn_f != 0) {
                             uart1.txPara0 |= (1 << 2);
                         }
                         if ((syncData.systemStatus0 & (1 << 25)) != 0) {
@@ -1691,6 +1694,10 @@ class ConsoleMainTm1 extends TimerTask {
                     moduleOn_f = 1;
                 }
             }
+            cla.powerOn_f=powerOn_f;
+            cla.moduleOn_f=moduleOn_f;
+            
+            /*
             if (powerOn_f != 0) {
                 cla.syncData.systemStatus0 |= 1 << 23;
             } else {
@@ -1701,6 +1708,7 @@ class ConsoleMainTm1 extends TimerTask {
             } else {
                 cla.syncData.systemStatus0 &= (1 << 24) ^ 0xffffffff;
             }
+            */
 
             int ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
             if (ibuf != 0) {
