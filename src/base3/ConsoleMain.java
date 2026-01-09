@@ -60,7 +60,6 @@ public class ConsoleMain {
     SyncData syncData = new SyncData();
     LogicThread logicThread = null;
     ChromeThread chromeThread = null;
-    int appId = 0;
     int easyCommand = 0;
     int easyParas = 0;
     int easyCommandTime = 0;
@@ -72,9 +71,9 @@ public class ConsoleMain {
     int sysFlag1 = 0;
     short emuPowerValueCnt = 0;
     short emuSspaValueCnt = 0;
-    int powerOn_f=0;
-    int moduleOn_f=0;
-    
+    int powerOn_f = 0;
+    int moduleOn_f = 0;
+    int writeBackParaSet_f = 0;
 
     //===========================
     //dataToFpga
@@ -120,7 +119,7 @@ public class ConsoleMain {
             }
 
             outJson.put("status", "ok");
-            if (scla.appId == 0) {
+            if (GB.appId == 0) {
                 if (act.equals("mastPulseEnable")) {
                     scla.setEasyCommand(0x200b, paras);
                     outJson.put("status", "ok");
@@ -161,13 +160,25 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
+            
+            if (act.contains("RadiationOn")) {
+                scla.setEasyCommand(0x2004, paras);
+                outJson.put("status", "ok");
+                return outJson;
+            }
+            if (act.contains("RadiationOff")) {
+                scla.setEasyCommand(0x2005, null);
+                outJson.put("status", "ok");
+                return outJson;
+            }
+            
 
-            if (scla.appId == 0) {
+            if (GB.appId == 0) {
                 return outJson;
             }
 
             int emergency = scla.syncData.systemStatus0 & (1 << 25);
-            int ready_f = scla.syncData.systemStatus0 & (3 >> (scla.appId * 2));
+            int ready_f = scla.syncData.systemStatus0 & (3 >> (GB.appId * 2));
 
             if (act.contains("SspaPowerOn")) {
                 scla.setEasyCommand(0x2000, paras);
@@ -188,16 +199,17 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.contains("RadiationOn")) {
-                scla.setEasyCommand(0x2004, paras);
+            if (act.contains("remoteRadOn")) {
+                scla.setEasyCommand(0x2010, paras);
                 outJson.put("status", "ok");
                 return outJson;
             }
-            if (act.contains("RadiationOff")) {
-                scla.setEasyCommand(0x2005, null);
+            if (act.contains("remoteRadOff")) {
+                scla.setEasyCommand(0x2011, null);
                 outJson.put("status", "ok");
                 return outJson;
             }
+
             if (act.contains("EmergencyOn")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2006, null);
@@ -213,6 +225,18 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x200d, paras);
                 return outJson;
             }
+
+            if (act.contains("sub1TxLoad")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2012, paras);
+                return outJson;
+            }
+            if (act.contains("sub1BatShort")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2013, paras);
+                return outJson;
+            }
+
             if (act.contains("TxLoad")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x200e, paras);
@@ -258,7 +282,14 @@ public class ConsoleMain {
 
     public void transSyncData(JSONObject outJson) {
         try {
-            if (appId == 0) {
+            String paraSetStr = null;
+            if (writeBackParaSet_f == 1) {
+                File file = new File(GB.paraSetFullName);
+                paraSetStr = Lib.readStringFile(GB.paraSetFullName);
+                writeBackParaSet_f = 0;
+            }
+
+            if (GB.appId == 0) {
                 KvJson kj = new KvJson();
                 kj.jStart();
                 kj.jadd("slotDataAA", syncData.slotDataAA);
@@ -269,12 +300,34 @@ public class ConsoleMain {
                 kj.jadd("gngga2", syncData.gngga2);
                 kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jadd("conRxA", syncData.conRxA);
+
+                int[] intA = new int[256];
+                int pinx = 0;
+                for (;;) {
+                    int chgInx = (syncData.pulseFormAddBufA0Inx0 ^ syncData.pulseFormAddBufA0Inx1) & 255;
+                    if (chgInx == 0) {
+                        break;
+                    }
+                    intA[pinx++] = syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx1 & 255];
+                    syncData.pulseFormAddBufA0Inx1++;
+                    if (pinx >= 256);
+                    break;
+                }
+                kj.jadd("pulseFormAddBufA0", intA, pinx);
+                intA[0] = syncData.pulseFormLowPeriod;
+                intA[1] = syncData.pulseFormHighPeriod;
+                intA[2] = syncData.pulseFormFreq;
+                kj.jadd("pulseFormInf", intA, 3);
+
+                if (paraSetStr != null) {
+                    kj.jadd("paraSetStr", paraSetStr);
+                }
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
             }
 
-            if (appId == 1) {
+            if (GB.appId == 1) {
                 KvJson kj = new KvJson();
                 kj.jStart();
                 kj.jadd("slotDataAA", syncData.slotDataAA);
@@ -283,12 +336,35 @@ public class ConsoleMain {
                 kj.jadd("conRxA", syncData.conRxA);
                 kj.jadd("gngga1", syncData.gngga1);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                //================================
+                int[] intA = new int[256];
+                int pinx = 0;
+                for (;;) {
+                    int chgInx = (syncData.pulseFormAddBufA0Inx0 ^ syncData.pulseFormAddBufA0Inx1) & 255;
+                    if (chgInx == 0) {
+                        break;
+                    }
+                    intA[pinx++] = syncData.pulseFormAddBufA0[syncData.pulseFormAddBufA0Inx1 & 255];
+                    syncData.pulseFormAddBufA0Inx1++;
+                    if (pinx >= 256);
+                    break;
+                }
+                kj.jadd("pulseFormAddBufA0", intA, pinx);
+                intA[0] = syncData.pulseFormLowPeriod;
+                intA[1] = syncData.pulseFormHighPeriod;
+                intA[2] = syncData.pulseFormFreq;
+                kj.jadd("pulseFormInf", intA, 3);
+                //==========================================
+
+                if (paraSetStr != null) {
+                    kj.jadd("paraSetStr", paraSetStr);
+                }
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 outJson.put("syncData", syncJson);
             }
 
-            if (appId == 2) {
+            if (GB.appId == 2) {
                 if (GB.emuMeterStatus_f != 0) {
                     for (int i = 0; i < syncData.meterStatusAA.length; i++) {
                         syncData.meterStatusAA[i]++;
@@ -405,6 +481,7 @@ public class ConsoleMain {
                 syncData.pulseFormAddBufA0[4]=323000*2+1;
                 syncData.pulseFormAddBufA0[5]=956000*2+0;
                  */
+
                 int[] intA = new int[256];
                 int pinx = 0;
                 for (;;) {
@@ -423,6 +500,9 @@ public class ConsoleMain {
                 intA[2] = syncData.pulseFormFreq;
                 kj.jadd("pulseFormInf", intA, 3);
 
+                if (paraSetStr != null) {
+                    kj.jadd("paraSetStr", paraSetStr);
+                }
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
                 syncData.pulseFormAddBufA0Len = 0;
@@ -488,13 +568,12 @@ public class ConsoleMain {
         }
 
         final ConsoleMain cla = this;
-        
-            GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
-            if (GB.webSocketAddr.length() == 0) {
-                GB.webSocketAddr = GB.real_ip_str;
-            }
-        
-        
+
+        GB.webSocketAddr = (String) GB.paraSetMap.get("webSocketAddr");
+        if (GB.webSocketAddr.length() == 0) {
+            GB.webSocketAddr = GB.real_ip_str;
+        }
+
         KvWebSocketServer.serverStart();
         //=======================================================
         rxMap = new HashMap<String, ChkRxA>();
@@ -620,6 +699,21 @@ public class ConsoleMain {
                          */
                         syncData.systemStatus0 = bk.lookInt();
                         syncData.systemStatus1 = bk.lookInt();
+                        int ipcCmd = bk.lookShortInt();
+                        int ipcCmdPara = bk.lookShortInt();
+                        if (ipcCmd != 0) {
+                            if (ipcCmd == 0x2012) {
+                                GB.paraSaveMap.put("ctr1TxLoad", ipcCmdPara);
+                                GB.saveParaSet();
+                                GB.checkParaSet();
+                                writeBackParaSet_f = 1;
+                            }
+                            if (ipcCmd == 0x2013) {
+                                GB.paraSaveMap.put("ctr1BatShort", ipcCmdPara);
+                                GB.saveParaSet();
+                                writeBackParaSet_f = 1;
+                            }
+                        }
 
                         for (;;) {
                             ibuf = bk.lookByteInt();
@@ -757,7 +851,7 @@ public class ConsoleMain {
 
                     }
 
-                    if (para0 == 1)//fpgaId
+                    if (para0 == 1 || para0 == 0)//fpgaId
                     {
                         connectFpgaCnt = 0;
                         for (int i = 0; i < 12; i++) {
@@ -773,6 +867,9 @@ public class ConsoleMain {
                          */
                         syncData.systemStatus0 = bk.lookInt();
                         syncData.systemStatus1 = bk.lookInt();
+
+                        int ipcCmd = bk.lookShortInt();
+                        int ipcCmdPara = bk.lookShortInt();
 
                         for (;;) {
                             ibuf = bk.lookByteInt();
@@ -836,13 +933,17 @@ public class ConsoleMain {
                             }
                             if (ibuf == 0xb2) {
                                 ibuf = bk.lookByteInt();
-                                if (ibuf != 6) {
+                                if (ibuf != 10) {
                                     break;
                                 }
                                 syncData.conRxA[0] = bk.lookByte();
                                 syncData.conRxA[1] = bk.lookByte();
                                 syncData.conRxA[2] = bk.lookByte();
                                 syncData.conRxA[3] = bk.lookByte();
+                                syncData.conRxA[4] = bk.lookByte();
+                                syncData.conRxA[5] = bk.lookByte();
+                                syncData.conRxA[6] = bk.lookByte();
+                                syncData.conRxA[7] = bk.lookByte();
                                 syncData.conRxA[16] = bk.lookByte();
                                 syncData.conRxA[17] = bk.lookByte();
                                 continue;
@@ -1694,9 +1795,9 @@ class ConsoleMainTm1 extends TimerTask {
                     moduleOn_f = 1;
                 }
             }
-            cla.powerOn_f=powerOn_f;
-            cla.moduleOn_f=moduleOn_f;
-            
+            cla.powerOn_f = powerOn_f;
+            cla.moduleOn_f = moduleOn_f;
+
             /*
             if (powerOn_f != 0) {
                 cla.syncData.systemStatus0 |= 1 << 23;
@@ -1708,8 +1809,7 @@ class ConsoleMainTm1 extends TimerTask {
             } else {
                 cla.syncData.systemStatus0 &= (1 << 24) ^ 0xffffffff;
             }
-            */
-
+             */
             int ibuf = (int) GB.paraSetMap.get("ctr1PulseSource");
             if (ibuf != 0) {
                 cla.syncData.systemStatus1 |= 1 << 26;
@@ -1725,25 +1825,7 @@ class ConsoleMainTm1 extends TimerTask {
             }
 
             //===============================
-            Path file = Paths.get(GB.paraSetFullName);
-            BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
-            String nowParaSetTime = attr.lastModifiedTime().toString();
-            if (!preParaSetTime.equals(nowParaSetTime)) {
-                preParaSetTime = nowParaSetTime;
-                System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
-                String content = Lib.readFile("paraSet.json");
-                GB.paraSetMap.clear();
-                JSONObject jsPara = new JSONObject(content);
-                Iterator<String> it = jsPara.keys();
-                while (it.hasNext()) {
-                    String key = it.next();
-                    GB.paraSetMap.put(key, jsPara.get(key));
-                }
-                cla.appId = (int) GB.paraSetMap.get("appId");
-                GB.emulate = (int) GB.paraSetMap.get("emulate");
-
-            }
-
+            GB.checkParaSet();
             cla.cexe.exeTaskMap();
         } catch (Exception ex) {
             //System.out.println(ex.toString());

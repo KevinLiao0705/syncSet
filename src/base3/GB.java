@@ -1,11 +1,26 @@
 package base3;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Iterator;
+import org.json.JSONObject;
+
 
 public class GB {
     //0: window ConsoleMain 1:linux
@@ -53,6 +68,7 @@ public class GB {
     static String syssec = "123-125-222-456-111-123";
     static String web_password = "1234";
 
+    static int appId = 0;
     //================================================
     //sipmd ui use
     //================================================
@@ -93,9 +109,12 @@ public class GB {
     static int action_inx = 0;
     static int action_step = 0;
     static int action_tim = 0;
+    static String preParaSetTime = "";
+
     //==================================================================
     public static Map<String, Object> paraSetMap = new HashMap();
     public static HashMap<String, ConnectCla> connectMap = new HashMap();
+    public static HashMap<String, Object> paraSaveMap = new HashMap();
 
     //=================================================================
     static void initGB() {
@@ -289,6 +308,72 @@ public class GB {
     
     
     
-    
 
+    public static void saveParaSet() {
+        if(GB.paraSaveMap.size()==0)
+            return;
+        try {
+            Gson gson = new Gson();
+            String content = Lib.readFile(GB.paraSetFullName);
+            JsonObject jsPara = JsonParser.parseString(content).getAsJsonObject();
+            //=======================================================================
+            String[] strA;
+            String keyName="";
+            String dataType="str";
+            for (String key : GB.paraSaveMap.keySet()) {
+                strA = key.split("~");
+                keyName=strA[0];
+                if(strA.length==2){
+                    dataType=strA[1];
+                }
+                Object value=GB.paraSaveMap.get(key);
+                jsPara.add(keyName, gson.toJsonTree(value));
+                System.out.println("Save paraSet: "+keyName+ "  "+value);
+            }
+            GB.paraSaveMap.clear();
+            //=======================================================================
+            content = jsPara.toString();
+            BufferedWriter outf = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(GB.paraSetFullName), "UTF-8"));
+            try {
+                outf.write(content);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                outf.close();
+                //Path file = Paths.get(GB.paraSetPath);
+                //BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+                //GB.preParaSetTime = attr.lastModifiedTime().toString();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    public static void checkParaSet() {
+        try{
+            Path file = Paths.get(GB.paraSetFullName);
+            BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+            String nowParaSetTime = attr.lastModifiedTime().toString();
+            if (!GB.preParaSetTime.equals(nowParaSetTime)) {
+                GB.preParaSetTime = nowParaSetTime;
+                System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
+                String content = Lib.readFile(GB.paraSetFullName);
+                GB.paraSetMap.clear();
+                JSONObject jsPara = new JSONObject(content);
+                Iterator<String> it = jsPara.keys();
+                while (it.hasNext()) {
+                    String key = it.next();
+                    GB.paraSetMap.put(key, jsPara.get(key));
+                }
+                GB.appId = (int) GB.paraSetMap.get("appId");
+                GB.emulate = (int) GB.paraSetMap.get("emulate");
+
+            }
+        }
+        catch(Exception ex){
+            
+        }
+    }     
 }

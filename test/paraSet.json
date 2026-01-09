@@ -1,28 +1,36 @@
 {
     "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA,ipStr",
-    "version": "1.0",
+    "version": "2.0",
     "dsc~version": {
         "title": "版本",
         "readOnly_f": 1,
         "getType": "floatStr"
     },
-    "webSocketAddr": "192.168.0.219",
+    "systemName": "dummyTarget",
+    "dsc~systemName": {
+        "title": "系統名稱",
+        "getType": "str"
+    },
+    "webSocketAddr": "",
     "dsc~webSocketAddr": {
         "title": "webSocketAddr",
         "getType": "ipStr"
     },
-    "appId": 3,
+    "appId": 2,
     "dsc~appId": {
         "title": "軟體名稱",
         "enum": [
-            "主控 同步控制器",
-            "副控1 同步控制器",
-            "副控2 同步控制器",
-            "副控1 中央控制器",
-            "副控2 中央控制器",
-            "SSPA驅動控制器"
+            "1: 主控發射機 同步控制器",
+            "2: 副控發射機 同步控制器",
+            "3: 副控發射機 中央控制器"
         ],
         "getType": "incEnum"
+    },
+    "subNumber": 0,
+    "dsc~subNumber": {
+        "title": "副控發射機 編號",
+        "getType": "nature",
+        "max": 1
     },
     "emulate": 0,
     "dsc~emulate": {
@@ -42,19 +50,18 @@
         ],
         "getType": "buttonRadio"
     },
-    "paraSetPassword": "1234",
+    "paraSetPassword": "12345",
     "dsc~paraSetPassword": {
         "title": "參數設定密碼",
         "getType": "natureStr"
     },
-    "uart0Port": 2,
+    "uart0Port": 28,
     "dsc~uart0Port": {
         "title": "串列通道1位址",
         "getType": "nature",
         "min": 1,
         "max": 99
     },
-
     "uart1Port": 26,
     "dsc~uart1Port": {
         "title": "串列通道2位址",
@@ -62,8 +69,7 @@
         "min": 1,
         "max": 99
     },
- 
-    "laGroupCh": 0,
+    "laGroupCh": 7,
     "dsc~laGroupCh": {
         "title": "數位波形群組",
         "getType": "nature",
@@ -89,21 +95,10 @@
     "locationFromSource": 0,
     "dsc~locationFromSource": {
         "getType": "buttonRadio",
-        "title": "雷達位置來源",
+        "title": "發射機位置來源",
         "enum": [
             "手動輸入",
             "GPS天線"
-        ]
-    },
-    "sp4tCnt": 3,
-    "dsc~sp4tCnt": {
-        "getType": "incEnum",
-        "title": "功率輸出測試頻道",
-        "enum": [
-            "輸入功率",
-            "前置放大器輸出功率",
-            "驅動放大器輸出功率",
-            "順向輸出功率"
         ]
     },
     "dsc~line1": "===============================================================================",
@@ -228,7 +223,7 @@
         "title": "副控1姿態設定"
     },
     "dsc~line21": "===================",
-    "ctr1Remote": 0,
+    "ctr1Remote": 1,
     "dsc~ctr1Remote": {
         "getType": "buttonRadio",
         "title": "中控1 遠端遙控",
@@ -246,7 +241,7 @@
             "本機脈波"
         ]
     },
-    "ctr1BatShort": 1,
+    "ctr1BatShort": 0,
     "dsc~ctr1BatShort": {
         "getType": "buttonRadio",
         "title": "中控1 戰備短路",
@@ -576,18 +571,18 @@
         "title": "SSPA模組致能"
     },
     "dsc~line2c": "===========================================",
-    "ctr1InRfpowFilter": 200,
+    "ctr1InRfpowFilter": 1,
     "dsc~ctr1InRfpowFilter": {
         "getType": "nature",
         "max": 256,
         "title": "RF輸入功率濾波長度"
     },
-    "ctr1InRfpowOffs": 0,
+    "ctr1InRfpowOffs": 480,
     "dsc~ctr1InRfpowOffs": {
         "getType": "int",
         "title": "RF輸入功率偏移"
     },
-    "ctr1InRfpowGain": 0.028,
+    "ctr1InRfpowGain": 0.175,
     "dsc~ctr1InRfpowGain": {
         "getType": "float",
         "title": "RF輸入功率放大"
@@ -608,18 +603,18 @@
         "title": "RF輸入功率上限"
     },
     "dsc~line2d": "===========================================",
-    "ctr1PreAmpOutRfpowFilter": 100,
+    "ctr1PreAmpOutRfpowFilter": 10,
     "dsc~ctr1PreAmpOutRfpowFilter": {
         "getType": "nature",
         "max": 256,
         "title": "前置RF輸出功率濾波長度"
     },
-    "ctr1PreAmpOutRfpowOffs": 0,
+    "ctr1PreAmpOutRfpowOffs": 577,
     "dsc~ctr1PreAmpOutRfpowOffs": {
         "getType": "int",
         "title": "前置RF輸出功率偏移"
     },
-    "ctr1PreAmpOutRfpowGain": 0.035,
+    "ctr1PreAmpOutRfpowGain": 0.231,
     "dsc~ctr1PreAmpOutRfpowGain": {
         "getType": "float",
         "title": "前置RF輸出功率放大"
@@ -629,29 +624,29 @@
         "getType": "nature",
         "title": "前置RF輸出功率零點"
     },
-    "ctr1PreAmpOutRfpowLimD": 20,
+    "ctr1PreAmpOutRfpowLimD": 10,
     "dsc~ctr1PreAmpOutRfpowLimD": {
         "getType": "int",
         "title": "前置RF輸出功率下限"
     },
-    "ctr1PreAmpOutRfpowLimU": 30,
+    "ctr1PreAmpOutRfpowLimU": 20,
     "dsc~ctr1PreAmpOutRfpowLimU": {
         "getType": "nature",
         "title": "前置RF輸出功率上限"
     },
     "dsc~line2f": "===========================================",
-    "ctr1DriverAmpOutRfpowFilter": 100,
+    "ctr1DriverAmpOutRfpowFilter": 10,
     "dsc~ctr1DriverAmpOutRfpowFilter": {
         "getType": "nature",
         "max": 256,
         "title": "驅動RF輸出功率濾波長度"
     },
-    "ctr1DriverAmpOutRfpowOffs": 0,
+    "ctr1DriverAmpOutRfpowOffs": 440,
     "dsc~ctr1DriverAmpOutRfpowOffs": {
         "getType": "int",
         "title": "驅動RF輸出功率偏移"
     },
-    "ctr1DriverAmpOutRfpowGain": 0.05,
+    "ctr1DriverAmpOutRfpowGain": 0.253,
     "dsc~ctr1DriverAmpOutRfpowGain": {
         "getType": "float",
         "title": "驅動RF輸出功率放大"
@@ -671,19 +666,25 @@
         "getType": "nature",
         "title": "驅動RF輸出功率上限"
     },
+    "ctr1DriverAmpOutRfpowAtt": 10,
+    "dsc~ctr1DriverAmpOutRfpowAtt": {
+        "getType": "nature",
+        "unit": "DB",
+        "title": "驅動RF輸出功率 輸入衰減"
+    },
     "dsc~line2g": "===========================================",
-    "ctr1CwAmpOutRfpowFilter": 100,
+    "ctr1CwAmpOutRfpowFilter": 10,
     "dsc~ctr1CwAmpOutRfpowFilter": {
         "getType": "nature",
         "max": 256,
         "title": "順向RF輸出功率濾波長度"
     },
-    "ctr1CwAmpOutRfpowOffs": 0,
+    "ctr1CwAmpOutRfpowOffs": 437,
     "dsc~ctr1CwAmpOutRfpowOffs": {
         "getType": "int",
         "title": "順向RF輸出功率偏移"
     },
-    "ctr1CwAmpOutRfpowGain": 0.08,
+    "ctr1CwAmpOutRfpowGain": 0.247,
     "dsc~ctr1CwAmpOutRfpowGain": {
         "getType": "float",
         "title": "順向RF輸出功率放大"
@@ -703,19 +704,25 @@
         "getType": "nature",
         "title": "順向RF輸出功率上限"
     },
+    "ctr1CwAmpOutRfpowAtt": 40,
+    "dsc~ctr1CwAmpOutRfpowAtt": {
+        "getType": "nature",
+        "unit": "DB",
+        "title": "順向RF輸出功率 輸入衰減"
+    },
     "dsc~line2h": "===========================================",
-    "ctr1CcwAmpOutRfpowFilter": 100,
+    "ctr1CcwAmpOutRfpowFilter": 10,
     "dsc~ctr1CcwAmpOutRfpowFilter": {
         "getType": "nature",
         "max": 256,
         "title": "反向RF輸出功率濾波長度"
     },
-    "ctr1CcwAmpOutRfpowOffs": 298,
+    "ctr1CcwAmpOutRfpowOffs": 435,
     "dsc~ctr1CcwAmpOutRfpowOffs": {
         "getType": "int",
         "title": "反向RF輸出功率偏移"
     },
-    "ctr1CcwAmpOutRfpowGain": 0.1,
+    "ctr1CcwAmpOutRfpowGain": 0.228,
     "dsc~ctr1CcwAmpOutRfpowGain": {
         "getType": "float",
         "title": "反向RF輸出功率放大"
@@ -735,11 +742,40 @@
         "getType": "nature",
         "title": "反向RF輸出功率上限"
     },
-    "ctr1Attenuator": 61,
+    "ctr1CcwAmpOutRfpowAtt": 32,
+    "dsc~ctr1CcwAmpOutRfpowAtt": {
+        "getType": "nature",
+        "unit": "DB",
+        "title": "反向RF輸出功率  輸入衰減"
+    },
+    "ctr1Attenuator": 0,
     "dsc~ctr1Attenuator": {
         "getType": "nature",
         "max": 127,
         "title": "衰減器"
+    },
+    "sp4tCnt": 2,
+    "dsc~sp4tCnt": {
+        "getType": "incEnum",
+        "title": "功率輸出測試頻道",
+        "enum": [
+            "無",
+            "輸入功率",
+            "前置放大器輸出功率",
+            "驅動放大器輸出功率",
+            "順向輸出功率"
+        ]
+    },
+    "rfDriverOutChannel": 0,
+    "dsc~rfDriverOutChannel": {
+        "getType": "incEnum",
+        "title": "RF Driver 輸出頻道",
+        "enum": [
+            "RF1",
+            "RF2",
+            "50Ω 1",
+            "50Ω 2"
+        ]
     },
     "dsc~line3": "===============================================================================",
     "ctr2Remote": 0,
@@ -998,44 +1034,46 @@
         "getType": "natureA",
         "title": "Test"
     },
-    "localPulseGenCh": 255,
+    "localPulseGenCh": 3,
     "dsc~localPulseGenCh": {
         "getType": "nature",
+        "max": 31,
+        "min": 0,
         "title": "本地脈波頻道"
     },
     "localPulseGenParas": [
-        "1 12 1 2.9 5",
-        "1 0 1 3.3 5",
-        "1 13 5 2.9 1",
-        "1 5 10 2.9 3",
-        "1 3 16 2.9 3",
-        "1 5 10 2.9 3",
-        "0 6 10 2.9 3",
-        "0 7 20 2.9 3",
-        "0 0 2.3 3.2 3",
-        "0 9 2.3 3.2 3",
-        "0 10 2.3 3.2 3",
-        "0 11 2.3 3.2 3",
-        "0 12 2.3 3.2 3",
-        "0 13 2.3 3.2 3",
-        "0 14 2.3 3.2 3",
-        "0 15 2.3 3.2 3",
-        "0 16 2.3 3.2 3",
-        "0 17 2.3 3.2 3",
-        "0 0 2.3 3.2 3",
-        "0 19 2.3 3.2 3",
-        "0 20 2.3 3.2 3",
-        "0 21 2.3 3.2 3",
-        "0 22 2.3 3.2 3",
-        "0 23 2.3 3.2 3",
-        "0 24 2.3 3.2 3",
-        "0 25 2.3 3.2 3",
-        "1 10 1 3.2 3",
-        "1 12 2 3.2 3",
-        "1 30 1 3.2 3",
-        "1 30 10 3.2 3",
-        "1 31 1 3.2 3",
-        "1 31 10 3.5 3"
+        "0 0 1 2.9 3",
+        "0 0 2 2.9 3",
+        "1 0 4 3.2 3",
+        "1 0 5 3.2 3",
+        "0 5 1 3.2 3",
+        "0 5 5 3.2 3",
+        "1 5 10 3.2 3",
+        "1 5 20 3.2 3",
+        "0 13 1 3.4 3",
+        "0 13 5 3.4 3",
+        "1 13 10 3.2 3",
+        "1 13 20 3.2 3",
+        "0 17 1 3.49 3",
+        "0 17 5 3.49 3",
+        "0 17 10 3.49 3",
+        "0 17 20 3.49 3",
+        "1 18 1 3.2 3",
+        "1 18 5 3.2 3",
+        "0 18 10 3.3 3",
+        "0 18 20 3.3 3",
+        "0 20 1 3.1 3",
+        "0 20 5 3.1 3",
+        "0 20 10 3.1 3",
+        "0 20 20 3.1 3",
+        "1 22 1 3.2 3",
+        "1 22 5 3.2 3",
+        "0 22 10 3.2 3",
+        "0 22 20 3.2 3",
+        "1 27 5 3.2 3",
+        "0 27 10 3.2 3",
+        "1 31 5 3.2 3",
+        "0 31 10 3.2 3"
     ],
     "dsc~localPulseGenParas": {
         "getType": "floatAStrA",
@@ -1159,6 +1197,7 @@
     "dsc~preTrigTime": {
         "getType": "nature",
         "unit": "0.1us",
+        "unitWidth": 50,
         "max": 999,
         "title": "pre wg trig time"
     },
@@ -1166,6 +1205,7 @@
     "dsc~preRfOutTime": {
         "getType": "nature",
         "unit": "0.1us",
+        "unitWidth": 50,
         "max": 255,
         "title": "pre rfout time"
     },
@@ -1173,6 +1213,7 @@
     "dsc~afterRfOutTime": {
         "getType": "nature",
         "unit": "0.1us",
+        "unitWidth": 50,
         "max": 255,
         "title": "after rf out time"
     },
