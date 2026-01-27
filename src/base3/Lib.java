@@ -92,6 +92,53 @@ public class Lib {
             return 1;
         }
     }
+    public static int chkProcessExist(String processName) {
+            String exeCmdStr="tasklist";
+            if (GB.osName.equals("linux")) {
+                exeCmdStr="ps -ef";
+            }
+            String retStr=Lib.exeCmdRet(exeCmdStr);
+            if(retStr!=null){
+                String[] strA=retStr.split("\n");
+                for(int i=0;i<strA.length;i++){
+                    if(strA[i].contains(processName))
+                        return 1;
+                }
+            }
+            return 0;    
+        
+        
+    }
+    public static String exeCmdRet(String cmd) {
+        String retStr = null;
+        String[] command=new String[]{"cmd.exe", "/c",""};
+        if (GB.osName.equals("linux")) {
+            command=new String[]{"sh", "-c",""};
+        }
+        command[2]=cmd;
+        try {
+            // Create a ProcessBuilder instance
+            ProcessBuilder builder = new ProcessBuilder(command);
+            // Optionally, redirect error stream to output stream
+            builder.redirectErrorStream(true);
+            // Start the process
+            Process process = builder.start();
+            // Read the output from the process
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+            System.out.println("Exited with code: " + exitCode);
+            return output.toString();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return retStr;
+    }
 
     static void copyFileUsingStream(File source, File dest) throws IOException {
         InputStream is = null;
@@ -110,21 +157,21 @@ public class Lib {
         }
     }
 
-    static int readParaSet(String keyName,int errOut) {
-        int ibuf=errOut;
+    static int readParaSet(String keyName, int errOut) {
+        int ibuf = errOut;
         try {
             Gson gson = new Gson();
             String content = Lib.readFile("paraSet.json");
             JsonObject jsPara = JsonParser.parseString(content).getAsJsonObject();
             ibuf = jsPara.get(keyName).getAsInt();
             return ibuf;
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return ibuf;
     }
-    
+
     static void writeParaSet(String keyName, int ibuf) {
         try {
             Gson gson = new Gson();
@@ -1796,7 +1843,7 @@ class KvJson {
             if (i != 0) {
                 jstr += ",";
             }
-            jstr += ia[i]&255;
+            jstr += ia[i] & 255;
         }
         jstr += "]";
         keyCnt++;

@@ -34,7 +34,9 @@ import java.io.IOException;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.annotation.Native;
 import javax.swing.JFrame;
 
@@ -160,7 +162,7 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            
+
             if (act.contains("RadiationOn")) {
                 scla.setEasyCommand(0x2004, paras);
                 outJson.put("status", "ok");
@@ -171,7 +173,6 @@ public class ConsoleMain {
                 outJson.put("status", "ok");
                 return outJson;
             }
-            
 
             if (GB.appId == 0) {
                 return outJson;
@@ -300,6 +301,7 @@ public class ConsoleMain {
                 kj.jadd("gngga2", syncData.gngga2);
                 kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jadd("conRxA", syncData.conRxA);
+                kj.jadd("commOkRateA", syncData.commOkRateA);
 
                 int[] intA = new int[256];
                 int pinx = 0;
@@ -650,7 +652,7 @@ public class ConsoleMain {
             return null;
         }
         uart0.portName = "COM" + (int) GB.paraSetMap.get("uart0Port");
-        if (GB.prgMode == 1) {
+        if (GB.osName.equals("linux")) {
             uart0.portName = "ttyUSB0";
         }
         System.out.println(uart0.portName);
@@ -948,6 +950,16 @@ public class ConsoleMain {
                                 syncData.conRxA[17] = bk.lookByte();
                                 continue;
                             }
+                            
+                            if (ibuf == 0xb3) {
+                                ibuf = bk.lookByteInt();
+                                syncData.commOkRateA[0]=bk.lookShort();
+                                syncData.commOkRateA[1]=bk.lookShort();
+                                
+                                continue;
+                            }
+                            
+                            
                             break;
 
                         }
@@ -1251,7 +1263,7 @@ public class ConsoleMain {
             return null;
         }
         uart1.portName = "COM" + (int) GB.paraSetMap.get("uart1Port");
-        if (GB.prgMode == 1) {
+        if (GB.osName.equals("linux")) {
             uart1.portName = "ttyACM2";
         }
         System.out.println(uart1.portName);
@@ -1642,6 +1654,13 @@ public class ConsoleMain {
             return errStr;
         }
 
+        if (cmdstr.equals("testExe")) {
+            int exist=Lib.chkProcessExist("Logic.exe");
+            return errStr;
+        }
+        
+        
+
         if (cmdstr.equals("exeLogic")) {
             /*
             String exeStr = "";
@@ -1665,6 +1684,11 @@ public class ConsoleMain {
             }
              */
 
+            int exist=Lib.chkProcessExist("Logic.exe");
+            if(exist==1){
+                System.out.println("LA is still running.");
+                return errStr;
+            }
             if (logicThread == null) {
                 logicThread = new LogicThread();
                 logicThread.start(); // 啟動執行緒            
@@ -1682,6 +1706,8 @@ public class ConsoleMain {
         }
 
         if (cmdstr.equals("exeChrome")) {
+            
+            
             if (chromeThread == null) {
                 chromeThread = new ChromeThread();
                 chromeThread.start(); // 啟動執行緒            

@@ -23,8 +23,6 @@ import org.json.JSONObject;
 
 
 public class GB {
-    //0: window ConsoleMain 1:linux
-    static int prgMode = 0;
     static int emuMeterStatus_f = 0;
     static int emuPowerValue_f = 0;
     static int emuSspaValue_f = 0;
@@ -52,6 +50,7 @@ public class GB {
     static int process_inx = 3;   //0:console sipph,1:desktop sipph,2:PhoneUi,3:Phone6in1 
     static int os_inx = 1;     //0:windows 1://linux    
     static String asteriskConfPath = "./asteridkConfPath";
+    static String osName="win";
 
     //===============================
     static int cursorOff_f = 0;
@@ -118,7 +117,20 @@ public class GB {
 
     //=================================================================
     static void initGB() {
-        if (GB.prgMode == 0) {
+        String osName = System.getProperty("os.name");
+        System.out.println("osName: "+osName);
+        if (osName != null) {
+            if (osName.toLowerCase().contains("win")) {
+                GB.osName = "win";
+            } else {
+                GB.osName = "linux";
+            }
+        }    
+        System.out.println("os: "+GB.osName);
+        
+        
+        
+        if (GB.osName.equals("win")) {
             GB.process_inx = 0; //0:consoleMain, 
             GB.os_inx = 0;     //0:windows 1://linux    
             GB.setdata_xml = "./setdata.xml";
@@ -133,7 +145,7 @@ public class GB {
             GB.chromeAddress="http://localhost/webBase/index.jsp";
             //GB.logPath = "./log";
         }
-        if (GB.prgMode == 1) {
+        if (GB.osName.equals("linux")) {        
             GB.process_inx = 0; //0:consoleMain
             GB.os_inx = 1;     //0:windows 1://linux    
             GB.setdata_xml = "./setdata.xml";
