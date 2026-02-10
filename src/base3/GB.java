@@ -372,7 +372,7 @@ public class GB {
                 GB.preParaSetTime = nowParaSetTime;
                 System.out.println("lastModifiedTime: " + attr.lastModifiedTime());
                 String content = Lib.readFile(GB.paraSetFullName);
-                GB.paraSetMap.clear();
+                //GB.paraSetMap.clear();
                 JSONObject jsPara = new JSONObject(content);
                 Iterator<String> it = jsPara.keys();
                 while (it.hasNext()) {

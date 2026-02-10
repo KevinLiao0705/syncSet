@@ -132,6 +132,16 @@ public class ConsoleMain {
                     outJson.put("status", "ok");
                     return outJson;
                 }
+                if (act.equals("mastSubRadarSet")) {
+                    scla.setEasyCommand(0x2010, paras);
+                    outJson.put("status", "ok");
+                    return outJson;
+                }
+                if (act.equals("mastSubRadarCtr")) {
+                    scla.setEasyCommand(0x2011, paras);
+                    outJson.put("status", "ok");
+                    return outJson;
+                }
 
             }
 
@@ -147,6 +157,12 @@ public class ConsoleMain {
                 return outJson;
             }
 
+            if (act.equals("powerDown")) {
+                scla.cmdFunc("powerDown");
+                return outJson;
+            }
+            
+            
             if (act.equals("selfTestStartAll")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2008, null);
@@ -302,6 +318,7 @@ public class ConsoleMain {
                 kj.jadd("viewDatas", syncData.viewDatas);
                 kj.jadd("conRxA", syncData.conRxA);
                 kj.jadd("commOkRateA", syncData.commOkRateA);
+                kj.jadd("subStatusA", syncData.subStatusA);
 
                 int[] intA = new int[256];
                 int pinx = 0;
@@ -336,8 +353,18 @@ public class ConsoleMain {
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
                 kj.jadd("conRxA", syncData.conRxA);
+                kj.jadd("gngga0", syncData.gngga0);
                 kj.jadd("gngga1", syncData.gngga1);
+                kj.jadd("gngga2", syncData.gngga2);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                int ii;
+                if(syncData.commOkRateA[1]!=0){
+                    ii=syncData.commOkRateA[1];
+                    int kk=ii;
+                    int uu=kk;
+                }    
+                    
+                kj.jadd("commOkRateA", syncData.commOkRateA);
                 //================================
                 int[] intA = new int[256];
                 int pinx = 0;
@@ -472,6 +499,7 @@ public class ConsoleMain {
                 kj.jadd("sspaModuleRfOutAA", syncData.sspaModuleRfOutAA);
                 kj.jadd("sspaModuleTemprAA", syncData.sspaModuleTemprAA);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                kj.jadd("ioInA", syncData.ioInA);
                 kj.jadd("conRxA", syncData.conRxA);
                 //=================================
                 /*
@@ -771,7 +799,7 @@ public class ConsoleMain {
                             }
                             if (ibuf == 0xac) {
                                 ibuf = bk.lookByteInt();
-                                if (ibuf >= 32) {
+                                if (ibuf >= 8) {
                                     return null;
                                 }
                                 for (int i = 0; i < 8; i++) {
@@ -847,9 +875,20 @@ public class ConsoleMain {
                                 syncData.conRxA[15] = bk.lookByte();
                                 continue;
                             }
+                            
+                            if (ibuf == 0xb4) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 12) {
+                                    break;
+                                }
+                                for(int i=0;i<6;i++)
+                                    syncData.ioInA[i] = bk.lookShort();
+                                continue;
+                            }
                             break;
-
                         }
+                        
+                        
 
                     }
 
@@ -900,10 +939,18 @@ public class ConsoleMain {
                                 if (ibuf == 0xaf) {
                                     byteA = syncData.gngga2;
                                 }
+                                if(para0==1){
+                                    int subNumber=(int) GB.paraSetMap.get("subNumber");                                    
+                                    if(subNumber==0)
+                                        byteA = syncData.gngga1;
+                                    else
+                                        byteA = syncData.gngga2;
+                                }
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 64) {
                                     return null;
                                 }
+                                byteA[0]=0; 
                                 for (int i = 0; i < ibuf; i++) {
                                     byteA[i] = bk.lookByte();
                                 }
@@ -950,16 +997,36 @@ public class ConsoleMain {
                                 syncData.conRxA[17] = bk.lookByte();
                                 continue;
                             }
-                            
+
                             if (ibuf == 0xb3) {
                                 ibuf = bk.lookByteInt();
-                                syncData.commOkRateA[0]=bk.lookShort();
-                                syncData.commOkRateA[1]=bk.lookShort();
-                                
+                                syncData.commOkRateA[0] = bk.lookShort();
+                                syncData.commOkRateA[1] = bk.lookShort();
+                                if(syncData.commOkRateA[0]<=997){
+                                    int bb=1;
+                                }
+
                                 continue;
                             }
-                            
-                            
+                            if (ibuf == 0xb4) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 12) {
+                                    break;
+                                }
+                                for(int i=0;i<6;i++)
+                                    syncData.ioInA[i] = bk.lookShort();
+                                continue;
+                            }
+                            if (ibuf == 0xb5) {
+                                ibuf = bk.lookByteInt();
+                                if (ibuf != 8) {
+                                    break;
+                                }
+                                for(int i=0;i<2;i++)
+                                    syncData.subStatusA[i] = bk.lookInt();
+                                continue;
+                            }
+
                             break;
 
                         }
@@ -1222,8 +1289,8 @@ public class ConsoleMain {
                             lb.wByteInt(sub2ChRfRxCh);
                             //==========================================
                             lb.wByteInt(laGroupCh);
-                            lb.wByteInt(ctrChDelay);
                             lb.wByteInt(subChDelay);
+                            lb.wByteInt(ctrChDelay);
                             lb.wByteInt(drvChDelay);
                             lb.wByteInt(meterChDelay);
                             //=========================================
@@ -1655,12 +1722,16 @@ public class ConsoleMain {
         }
 
         if (cmdstr.equals("testExe")) {
-            int exist=Lib.chkProcessExist("Logic.exe");
+            int exist = Lib.chkProcessExist("Logic.exe");
+            return errStr;
+        }
+
+        if (cmdstr.equals("powerDown")) {
+            String cmdStr = "sudo shutdown -h now";
+            Lib.exe(cmdStr);
             return errStr;
         }
         
-        
-
         if (cmdstr.equals("exeLogic")) {
             /*
             String exeStr = "";
@@ -1684,8 +1755,8 @@ public class ConsoleMain {
             }
              */
 
-            int exist=Lib.chkProcessExist("Logic.exe");
-            if(exist==1){
+            int exist = Lib.chkProcessExist("Logic.exe");
+            if (exist == 1) {
                 System.out.println("LA is still running.");
                 return errStr;
             }
@@ -1706,8 +1777,7 @@ public class ConsoleMain {
         }
 
         if (cmdstr.equals("exeChrome")) {
-            
-            
+
             if (chromeThread == null) {
                 chromeThread = new ChromeThread();
                 chromeThread.start(); // 啟動執行緒            
@@ -2054,11 +2124,15 @@ class SyncData {
     short[] commPackageCntA = new short[2];
     short[] commOkRateA = new short[2];
     short[] rfRxPowerA = new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
+    short[] ioInA = new short[6];
+    int[] subStatusA=new int[2];
+
+    
 
     int[] pulseWaveA = new int[256];
     int pulseWaveInx = 0;
 
-    int[] viewDatas = new int[256];
+    int[] viewDatas = new int[64];
     //ArrayList<int> list = new ArrayList<int>();
     int pulseFormAddBufA0Len = 0;
     int pulseFormAddBufA0Inx0 = 0;
