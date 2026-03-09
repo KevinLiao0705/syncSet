@@ -831,7 +831,7 @@ public class ConsoleMain {
 
                             if (ibuf == 0xb0) {
                                 ibuf = bk.lookByteInt();
-                                if (ibuf >= 16) {
+                                if (ibuf >= 32) {
                                     break;
                                 }
                                 for (int i = 0; i < ibuf; i++) {
@@ -959,7 +959,7 @@ public class ConsoleMain {
 
                             if (ibuf == 0xb0) {
                                 ibuf = bk.lookByteInt();
-                                if (ibuf >= 16) {
+                                if (ibuf >= 32) {
                                     break;
                                 }
                                 for (int i = 0; i < ibuf; i++) {
