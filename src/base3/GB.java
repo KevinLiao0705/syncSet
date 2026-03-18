@@ -43,7 +43,8 @@ public class GB {
     
     public static String laPath="C:/Program Files/Logic";
     public static String laAppName="Logic.exe";
-    public static String chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
+    public static String chromePath="C:/Program Files/Google/Chrome/Application";
+    public static String chromeAppName="chrome.exe";
     public static String chromeAddress="http://localhost/webBase/index.jsp";
     
     //=====================================================
@@ -141,8 +142,9 @@ public class GB {
             GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
             GB.laPath="C:/Program Files/Logic";
             GB.laAppName="Logic.exe";
-            GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
-            GB.chromeAddress="http://localhost/webBase/index.jsp";
+            GB.chromePath="C:/Program Files/Google/Chrome/Application";
+            GB.chromeAppName="chrome.exe";
+            GB.chromeAddress="http://localhost:8080/webBase/index.jsp";
             //GB.logPath = "./log";
         }
         if (GB.osName.equals("linux")) {        
@@ -156,8 +158,9 @@ public class GB {
             GB.logPath = "/home/admintx/syncSetExe/log";
             GB.laPath="/home/admintx/syncSetExe";
             GB.laAppName="la.sh";
-            GB.chromePath="C:/Program Files/Google/Chrome/Application/chrome.exe";
-            GB.chromeAddress="http://localhost/webBase/index.jsp";
+            GB.chromePath="/usr/bin";
+            GB.chromeAppName="google-chrome-stable --disable-session-crashed-bubble --no-sandbox";
+            GB.chromeAddress="http://127.0.0.1";
             
 
         }

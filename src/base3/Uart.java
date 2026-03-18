@@ -17,6 +17,7 @@ public class Uart {
     public SerialPort hdUart;
     public int uartSeted_f = 0;
     public int uartConnected_f = 0;
+    public int uartConnectTime = 0;
     public CommPortSender uartTx;
     public CommPortReceiver uartRx;
     public BytesCallback cbk = null;

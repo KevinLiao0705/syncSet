@@ -76,6 +76,7 @@ public class ConsoleMain {
     int powerOn_f = 0;
     int moduleOn_f = 0;
     int writeBackParaSet_f = 0;
+    String writeBackName = "";
 
     //===========================
     //dataToFpga
@@ -162,7 +163,12 @@ public class ConsoleMain {
                 return outJson;
             }
             
+            if (act.equals("fullScreenOff")) {
+                scla.cmdFunc("fullScreenOff");
+                return outJson;
+            }
             
+
             if (act.equals("selfTestStartAll")) {
                 outJson.put("status", "ok");
                 scla.setEasyCommand(0x2008, null);
@@ -339,7 +345,7 @@ public class ConsoleMain {
                 kj.jadd("pulseFormInf", intA, 3);
 
                 if (paraSetStr != null) {
-                    kj.jadd("paraSetStr", paraSetStr);
+                    kj.jadd("paraSetStr#" + writeBackName, paraSetStr);
                 }
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
@@ -357,13 +363,16 @@ public class ConsoleMain {
                 kj.jadd("gngga1", syncData.gngga1);
                 kj.jadd("gngga2", syncData.gngga2);
                 kj.jadd("viewDatas", syncData.viewDatas);
+                if (paraSetStr != null) {
+                    kj.jadd("paraSetStr#" + writeBackName, paraSetStr);
+                }
                 int ii;
-                if(syncData.commOkRateA[1]!=0){
-                    ii=syncData.commOkRateA[1];
-                    int kk=ii;
-                    int uu=kk;
-                }    
-                    
+                if (syncData.commOkRateA[1] != 0) {
+                    ii = syncData.commOkRateA[1];
+                    int kk = ii;
+                    int uu = kk;
+                }
+
                 kj.jadd("commOkRateA", syncData.commOkRateA);
                 //================================
                 int[] intA = new int[256];
@@ -531,7 +540,7 @@ public class ConsoleMain {
                 kj.jadd("pulseFormInf", intA, 3);
 
                 if (paraSetStr != null) {
-                    kj.jadd("paraSetStr", paraSetStr);
+                    kj.jadd("paraSetStr#" + writeBackName, paraSetStr);
                 }
                 kj.jEnd();
                 JSONObject syncJson = new JSONObject(kj.jstr);
@@ -737,11 +746,13 @@ public class ConsoleMain {
                                 GB.saveParaSet();
                                 GB.checkParaSet();
                                 writeBackParaSet_f = 1;
+                                writeBackName = "ctr1TxLoad";
                             }
                             if (ipcCmd == 0x2013) {
                                 GB.paraSaveMap.put("ctr1BatShort", ipcCmdPara);
                                 GB.saveParaSet();
                                 writeBackParaSet_f = 1;
+                                writeBackName = "ctr1BatShort";
                             }
                         }
 
@@ -875,20 +886,19 @@ public class ConsoleMain {
                                 syncData.conRxA[15] = bk.lookByte();
                                 continue;
                             }
-                            
+
                             if (ibuf == 0xb4) {
                                 ibuf = bk.lookByteInt();
                                 if (ibuf != 12) {
                                     break;
                                 }
-                                for(int i=0;i<6;i++)
+                                for (int i = 0; i < 6; i++) {
                                     syncData.ioInA[i] = bk.lookShort();
+                                }
                                 continue;
                             }
                             break;
                         }
-                        
-                        
 
                     }
 
@@ -939,18 +949,19 @@ public class ConsoleMain {
                                 if (ibuf == 0xaf) {
                                     byteA = syncData.gngga2;
                                 }
-                                if(para0==1){
-                                    int subNumber=(int) GB.paraSetMap.get("subNumber");                                    
-                                    if(subNumber==0)
+                                if (para0 == 1) {
+                                    int subNumber = (int) GB.paraSetMap.get("subNumber");
+                                    if (subNumber == 0) {
                                         byteA = syncData.gngga1;
-                                    else
+                                    } else {
                                         byteA = syncData.gngga2;
+                                    }
                                 }
                                 ibuf = bk.lookByteInt();
                                 if (ibuf >= 64) {
                                     return null;
                                 }
-                                byteA[0]=0; 
+                                byteA[0] = 0;
                                 for (int i = 0; i < ibuf; i++) {
                                     byteA[i] = bk.lookByte();
                                 }
@@ -1002,8 +1013,8 @@ public class ConsoleMain {
                                 ibuf = bk.lookByteInt();
                                 syncData.commOkRateA[0] = bk.lookShort();
                                 syncData.commOkRateA[1] = bk.lookShort();
-                                if(syncData.commOkRateA[0]<=997){
-                                    int bb=1;
+                                if (syncData.commOkRateA[0] <= 997) {
+                                    int bb = 1;
                                 }
 
                                 continue;
@@ -1013,8 +1024,9 @@ public class ConsoleMain {
                                 if (ibuf != 12) {
                                     break;
                                 }
-                                for(int i=0;i<6;i++)
+                                for (int i = 0; i < 6; i++) {
                                     syncData.ioInA[i] = bk.lookShort();
+                                }
                                 continue;
                             }
                             if (ibuf == 0xb5) {
@@ -1022,8 +1034,9 @@ public class ConsoleMain {
                                 if (ibuf != 8) {
                                     break;
                                 }
-                                for(int i=0;i<2;i++)
+                                for (int i = 0; i < 2; i++) {
                                     syncData.subStatusA[i] = bk.lookInt();
+                                }
                                 continue;
                             }
 
@@ -1042,12 +1055,20 @@ public class ConsoleMain {
                 }
                 uart0.rxSerialCnt = para1;
                 uart0.rxPackageCnt++;
+                uart0.uartConnectTime = 0;
+                if (uart0.uartConnected_f == 0) {
+                    System.out.print("uart0 connected.\n");
+                    uart0.uartConnected_f = 1;
+                }
+
                 if ((uart0.rxPackageCnt
                         % 100) == 0) {
+                    /*
                     System.out.print(" uart0Rx-" + uart0.rxErrCnt);
                     if ((uart0.rxPackageCnt % 1000) == 0) {
                         System.out.print("\n");
                     }
+                     */
                 }
                 //===============================================================
                 String preText;
@@ -1732,6 +1753,37 @@ public class ConsoleMain {
             return errStr;
         }
         
+        if (cmdstr.equals("fullScreenOff")) {
+            /*
+            String cmdStr = "sudo pkill -f kiosk";
+            Lib.exe(cmdStr);
+            cmdStr = "/usr/bin/google-chrome-stable --disable-session-crashed-bubble http://127.0.0.1";
+            Lib.exe(cmdStr);
+            */
+            return errStr;
+        }
+        if(cmdstr.equals("exeChromeXxx")){
+            String exeStr = "";
+            String exePath = GB.chromePath + "/";
+            Process process = null;
+            try {
+                if (GB.os_inx == 0) { //window
+                    exePath = GB.chromePath + "/";
+                    exeStr = GB.chromeAppName;
+                    process = Runtime.getRuntime().exec(exePath + exeStr, null, new File(exePath));
+                } else { //linux
+                    process = Runtime.getRuntime().exec("./chrome.sh");
+                    //process = Runtime.getRuntime().exec(exeStr, null, new File(exePath));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return errStr;
+            
+            
+            
+        }
+
         if (cmdstr.equals("exeLogic")) {
             /*
             String exeStr = "";
@@ -1777,7 +1829,6 @@ public class ConsoleMain {
         }
 
         if (cmdstr.equals("exeChrome")) {
-
             if (chromeThread == null) {
                 chromeThread = new ChromeThread();
                 chromeThread.start(); // 啟動執行緒            
@@ -1844,6 +1895,14 @@ class ConsoleMainTm1 extends TimerTask {
         try {
             //===============================
 
+            cla.uart0.uartConnectTime++;
+            if (cla.uart0.uartConnectTime > 50) {
+                if (cla.uart0.uartConnected_f == 1) {
+                    System.out.print("uart0 stop !!!\n");
+                }
+                cla.uart0.uartConnected_f = 0;
+            }
+
             if (GB.emulate == 2) {
                 cla.syncData.systemStatus0 &= 0xfffffffc;
                 cla.syncData.systemStatus0 |= 0x00000002;
@@ -1870,13 +1929,18 @@ class ConsoleMainTm1 extends TimerTask {
 
             }
             cla.connectFpgaCnt++;
-            if (cla.connectFpgaCnt > 100) {
-                cla.syncData.systemStatus0 &= 0xfffffffc;
+            if (cla.connectFpgaCnt > 50) {
+                cla.connectFpgaCnt = 0;
+                cla.syncData.systemStatus0 &= 0xf8fffffc;
                 cla.syncData.pulseFormHighPeriod = 0;
                 cla.syncData.pulseFormLowPeriod = 0;
                 cla.syncData.pulseFormAddBufA0[cla.syncData.pulseFormAddBufA0Inx1 & 255] = 20 * 1000 * 160 * 2;
                 cla.syncData.pulseFormAddBufA0Inx1++;
 
+                for (int i = 0; i < 36; i++) {
+                    cla.syncData.sspaPowerStatusAA[i] = 0;
+                    cla.syncData.sspaModuleStatusAA[i] = 0;
+                }
             }
 
             byte[] powerStatusA = cla.syncData.sspaPowerStatusAA;
@@ -1892,7 +1956,7 @@ class ConsoleMainTm1 extends TimerTask {
                 }
             }
             cla.powerOn_f = powerOn_f;
-            cla.moduleOn_f = moduleOn_f;
+            cla.moduleOn_f = (cla.syncData.systemStatus0 >> 24) & 1;
 
             /*
             if (powerOn_f != 0) {
@@ -2125,9 +2189,7 @@ class SyncData {
     short[] commOkRateA = new short[2];
     short[] rfRxPowerA = new short[4];//mast rx1,mast rx1,sub1 rx sub2 rx
     short[] ioInA = new short[6];
-    int[] subStatusA=new int[2];
-
-    
+    int[] subStatusA = new int[2];
 
     int[] pulseWaveA = new int[256];
     int pulseWaveInx = 0;
@@ -2259,8 +2321,14 @@ class ChromeThread extends Thread {
     public void run() {
         try {
             // Replace "path/to/your/program.exe" with the actual path
-            Process process = Runtime.getRuntime().exec(GB.chromePath + " " + GB.chromeAddress);
+            Process process=null;
+            if(GB.os_inx == 0)
+                process = Runtime.getRuntime().exec(GB.chromePath + "/"+GB.chromeAppName+" " + GB.chromeAddress);
+            else
+                process = Runtime.getRuntime().exec("./chrome.sh");
             // Optionally, wait for the process to complete and get its exit code
+            
+            
             int exitCode = process.waitFor();
             System.out.println("Chrome program exited with code: " + exitCode);
             cla.chromeThread = null;
