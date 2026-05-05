@@ -134,12 +134,12 @@ public class ConsoleMain {
                     return outJson;
                 }
                 if (act.equals("mastSubRadarSet")) {
-                    scla.setEasyCommand(0x2010, paras);
+                    scla.setEasyCommand(0x2020, paras);
                     outJson.put("status", "ok");
                     return outJson;
                 }
                 if (act.equals("mastSubRadarCtr")) {
-                    scla.setEasyCommand(0x2011, paras);
+                    scla.setEasyCommand(0x2021, paras);
                     outJson.put("status", "ok");
                     return outJson;
                 }
@@ -270,6 +270,13 @@ public class ConsoleMain {
                 scla.setEasyCommand(0x200f, paras);
                 return outJson;
             }
+            if (act.contains("SetFlags")) {
+                outJson.put("status", "ok");
+                scla.setEasyCommand(0x2020, paras);
+                return outJson;
+            }
+            
+            
 
         } catch (Exception ex) {
 
@@ -358,6 +365,10 @@ public class ConsoleMain {
                 kj.jadd("slotDataAA", syncData.slotDataAA);
                 kj.jadd("systemStatus0", syncData.systemStatus0);
                 kj.jadd("systemStatus1", syncData.systemStatus1);
+                kj.jadd("webReturnCmd",syncData.webReturnCmd );
+                kj.jadd("webReturnCmdPara",syncData.webReturnCmdPara );
+                if(syncData.webReturnCmd!=0)
+                    syncData.webReturnCmd=0;
                 kj.jadd("conRxA", syncData.conRxA);
                 kj.jadd("gngga0", syncData.gngga0);
                 kj.jadd("gngga1", syncData.gngga1);
@@ -754,6 +765,19 @@ public class ConsoleMain {
                                 writeBackParaSet_f = 1;
                                 writeBackName = "ctr1BatShort";
                             }
+                            if (ipcCmd == 0x2020) {
+                                int ib=(ipcCmdPara>>2)&1;
+                                GB.paraSaveMap.put("ctr1TxLoad", ib);
+                                ib=(ipcCmdPara>>3)&1;
+                                GB.paraSaveMap.put("ctr1BatShort", ib);
+                                GB.saveParaSet();
+                                writeBackParaSet_f = 1;
+                                writeBackName = "ctr1TxLoad~ctr1BatShort";
+                            }
+                            
+                            
+                            
+                            
                         }
 
                         for (;;) {
@@ -919,8 +943,13 @@ public class ConsoleMain {
                         syncData.systemStatus0 = bk.lookInt();
                         syncData.systemStatus1 = bk.lookInt();
 
-                        int ipcCmd = bk.lookShortInt();
-                        int ipcCmdPara = bk.lookShortInt();
+                        short ipcCmd = bk.lookShort();
+                        short ipcCmdPara = bk.lookShort();
+                        if(ipcCmd!=0){
+                            syncData.webReturnCmd=ipcCmd;
+                            syncData.webReturnCmdPara=ipcCmdPara;
+                            
+                        }
 
                         for (;;) {
                             ibuf = bk.lookByteInt();
@@ -1945,6 +1974,7 @@ class ConsoleMainTm1 extends TimerTask {
 
             byte[] powerStatusA = cla.syncData.sspaPowerStatusAA;
             byte[] moduleStatusA = cla.syncData.sspaModuleStatusAA;
+            /*
             int powerOn_f = 0;
             int moduleOn_f = 0;
             for (int i = 0; i < 36; i++) {
@@ -1955,7 +1985,8 @@ class ConsoleMainTm1 extends TimerTask {
                     moduleOn_f = 1;
                 }
             }
-            cla.powerOn_f = powerOn_f;
+            */
+            cla.powerOn_f = (cla.syncData.systemStatus0 >> 23) & 1;;
             cla.moduleOn_f = (cla.syncData.systemStatus0 >> 24) & 1;
 
             /*
@@ -2203,6 +2234,9 @@ class SyncData {
     int pulseFormLowPeriod = 0;
     int pulseFormHighPeriod = 0;
     byte pulseFormFreq = 0;
+    short webReturnCmd=0;
+    short webReturnCmdPara=0;
+            
 
     /*
 	 subA->ctrA,subB->ctrB,ctrA->subA,ctrB->subB

@@ -10,12 +10,12 @@
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>883</line>
+                <line>907</line>
                 <key/>
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>1261</line>
+                <line>1290</line>
                 <key/>
             </bookmark>
         </file>
@@ -30,10 +30,11 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/Uart.java</file>
             <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/ConsoleMain.java</file>
             <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/Lib.java</file>
             <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/GB.java</file>
+            <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/Uart.java</file>
+            <file>file:/E:/kevin/myCode/webSet/syncSet/src/base3/Base3.java</file>
         </group>
     </open-files>
 </project-private>

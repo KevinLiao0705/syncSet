@@ -34,7 +34,7 @@ public class GB {
     static int lang = 1;//0:english 1:chinese 
     public static String logSetPath = ".";
     public static String logPath = "./log";
-    public static String appName = "syncSet";
+    public static String appName = "MyAppName";
     public static String webSocketAddr = "";
     public static int webSocketPort = 8899;
     public static String winParaSetFullName = "e:/kevin/myCode/webSet/syncSet/paraSet.json";
