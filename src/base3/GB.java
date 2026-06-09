@@ -37,7 +37,7 @@ public class GB {
     public static String appName = "MyAppName";
     public static String webSocketAddr = "";
     public static int webSocketPort = 8899;
-    public static String winParaSetFullName = "d:/kevin/myCode/webSet/syncSet/paraSet.json";
+    public static String winParaSetFullName = "e:/kevin/myCode/webSet/syncSet/paraSet.json";
     public static String linuxParaSetFullName = "/home/admintx/syncSetExe/paraSet.json";
     public static String paraSetFullName ="";
     
@@ -139,7 +139,7 @@ public class GB {
             GB.interfaces_path = "./interfaces";
             GB.paraSetFullName = GB.winParaSetFullName;
             GB.logSetPath = ".";
-            GB.logPath ="d:/kevin/myCode/webServletBase/web/log";
+            GB.logPath ="e:/kevin/myCode/webServletBase/web/log";
             GB.laPath="C:/Program Files/Logic";
             GB.laAppName="Logic.exe";
             GB.chromePath="C:/Program Files/Google/Chrome/Application";
